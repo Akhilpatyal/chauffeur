@@ -1,203 +1,97 @@
-import React, { useState } from 'react';
-import { Star, Clock, MapPin, ArrowRight, Compass, Sparkles } from 'lucide-react';
+﻿import React from 'react';
+import { ArrowRight, Clock3, Flag, MapPin, Mountain, Play, Sparkles, Star, Users } from 'lucide-react';
 import { journeys } from '../../data/journeys';
 
-export default function HandpickedJourneys({ onSelectJourney, onExploreAll }) {
-  const [activeIdx, setActiveIdx] = useState(0);
+function FlightPath() {
+  return (
+    <svg className="pointer-events-none absolute left-[28%] top-7 hidden h-28 w-[40%] lg:block" viewBox="0 0 620 120" fill="none" aria-hidden="true">
+      <path d="M5 93 C70 112 102 61 174 65 C265 71 270 76 328 61 C387 45 354 1 390 8 C435 18 376 99 442 90 C501 83 549 40 604 7" stroke="#31574d" strokeWidth="1.4" strokeDasharray="4 8" strokeLinecap="round" opacity=".72" />
+      <path d="M601 2 L614 10 L603 13 L600 20 L596 12 L587 8 L596 6 Z" fill="#073F32" />
+    </svg>
+  );
+}
 
-  const compactJourneys = [
-    {
-      id: 'kashmir-lakes',
-      title: 'Kashmir Great Lakes',
-      duration: '6 Days · Moderate',
-      price: 'From ₹18,499',
-      rating: 4.8,
-      image: 'https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=400&q=80',
-      fullJourney: journeys[1]
-    },
-    {
-      id: 'ladakh-expedition',
-      title: 'Ladakh Road Expedition',
-      duration: '8 Days · Road Trip',
-      price: 'From ₹24,999',
-      rating: 4.9,
-      image: 'https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=400&q=80',
-      fullJourney: journeys[2]
-    },
-    {
-      id: 'himachal-escape',
-      title: 'Himachal Escape',
-      duration: '5 Days · Easy',
-      price: 'From ₹9,999',
-      rating: 4.7,
-      image: 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=400&q=80',
-      fullJourney: journeys[4]
-    },
-    {
-      id: 'meghalaya-explorer',
-      title: 'Meghalaya Explorer',
-      duration: '4 Days · Easy',
-      price: 'From ₹8,499',
-      rating: 4.6,
-      image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=400&q=80',
-      fullJourney: journeys[3]
-    },
-    {
-      id: 'uttarakhand-trails',
-      title: 'Uttarakhand Trails',
-      duration: '6 Days · Moderate',
-      price: 'From ₹12,499',
-      rating: 4.8,
-      image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=400&q=80',
-      fullJourney: journeys[0]
-    }
+function JourneyRow({ item, onClick }) {
+  const highlighted = item.id === 'ladakh-expedition';
+  return (
+    <button onClick={onClick} className={`group relative flex w-full shrink-0 items-center gap-3 rounded-[18px] border bg-[#fffdf7] p-3 text-left shadow-[0_5px_18px_rgba(7,63,50,.05)] transition duration-300 hover:-translate-y-1 hover:border-[#0b604b] hover:shadow-[0_12px_25px_rgba(7,63,50,.1)] sm:p-3.5 ${highlighted ? 'border-[#13805f] ring-1 ring-[#13805f]/20' : 'border-[#ded8c9]'}`}>
+      {highlighted && <span className="absolute right-[-2px] top-[-2px] rounded-bl-lg rounded-tr-[15px] bg-[#073f32] px-2 py-1 text-[8px] font-bold tracking-[.16em] text-[#e2bd74]">POPULAR</span>}
+      <img src={item.image} alt="" className="h-14 w-14 shrink-0 rounded-xl object-cover transition duration-500 group-hover:scale-105 sm:h-16 sm:w-16" />
+      <span className="min-w-0 flex-1">
+        <span className="block truncate font-display text-base leading-tight text-[#123d34] sm:text-lg">{item.title}</span>
+        <span className="mt-1 block text-xs text-[#718078]">{item.duration}</span>
+        <span className="mt-1 block text-sm font-bold text-[#123d34]">{item.price}</span>
+      </span>
+      <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-[#123d34]"><Star className="h-3.5 w-3.5 fill-[#c69a52] text-[#c69a52]" />{item.rating}</span>
+    </button>
+  );
+}
+
+function FeaturedJourneyCard({ onClick }) {
+  return (
+    <button onClick={onClick} className="group relative min-h-[460px] overflow-hidden rounded-[24px] text-left shadow-[0_14px_30px_rgba(7,63,50,.17)] sm:min-h-[590px]">
+      <img src={journeys[0].image} alt="Spiti Valley mountain landscape" className="absolute inset-0 h-full w-full object-cover transition duration-[1200ms] group-hover:scale-105" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#021e1a] via-[#032f27]/25 to-[#032f27]/5" />
+      <span className="absolute left-6 top-6 inline-flex items-center gap-1.5 rounded-lg bg-[#073f32]/90 px-3 py-2 text-[10px] font-bold tracking-wider text-[#e2bd74] backdrop-blur-sm"><Star className="h-3 w-3 fill-current" /> FEATURED JOURNEY</span>
+      <span className="absolute right-6 top-6 flex items-center">
+        <span className="mr-3 font-editorial text-xl leading-none text-white/90">Watch<br />the magic</span>
+        <span className="grid h-16 w-16 place-items-center rounded-full border border-white/70 bg-white text-[#073f32] shadow-[0_0_0_7px_rgba(255,255,255,.12)] transition group-hover:scale-110"><Play className="ml-1 h-5 w-5 fill-current" /></span>
+      </span>
+      <span className="absolute right-[83px] top-[92px] font-editorial text-2xl text-white/85">?</span>
+      <span className="absolute bottom-6 left-6 right-6 text-white">
+        <span className="font-display text-4xl leading-none sm:text-5xl">Spiti Valley</span>
+        <span className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-sm text-white/90"><span className="inline-flex items-center gap-1"><Clock3 className="h-3.5 w-3.5 text-[#d8b56a]" />6 Days</span><span className="inline-flex items-center gap-1"><Mountain className="h-3.5 w-3.5 text-[#d8b56a]" />High Altitude</span><span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5 text-[#d8b56a]" />Small Group</span></span>
+        <span className="my-4 block h-px bg-white/25" />
+        <span className="flex items-center justify-between gap-3"><span className="flex flex-wrap items-center gap-x-4 gap-y-1"><span className="inline-flex items-center gap-1 text-sm text-[#f0d28d]"><Star className="h-4 w-4 fill-current" />4.9 (120 Reviews)</span><span className="text-lg font-bold">From ?14,999</span></span><span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-[#073f32] transition duration-300 group-hover:translate-x-1"><ArrowRight className="h-5 w-5" /></span></span>
+      </span>
+    </button>
+  );
+}
+
+function FeaturedExpedition({ onClick }) {
+  return (
+    <article className="relative min-h-[450px] overflow-hidden rounded-[24px] bg-[#032f27] p-7 text-[#fffdf7] shadow-[0_14px_30px_rgba(7,63,50,.17)] sm:min-h-[590px]">
+      <img src={journeys[0].secondaryImage || journeys[0].image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-55" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#032f27]/95 via-[#073f32]/78 to-[#032f27]/95" />
+      <div className="relative z-10 flex h-full min-h-[394px] flex-col justify-between sm:min-h-[534px]">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-md bg-[#073f32]/85 px-2.5 py-2 text-[10px] font-bold tracking-[.14em] text-[#e2bd74]"><Flag className="h-3.5 w-3.5 fill-current" />FEATURED EXPEDITION</span>
+          <h3 className="mt-7 font-display text-4xl leading-[.88] sm:text-5xl">Spiti<br />Beyond the<br />Ordinary</h3>
+          <div className="mt-6 flex flex-wrap gap-2 text-[10px] font-semibold tracking-wider text-[#f7e5bd]"><span className="inline-flex items-center gap-1.5 rounded-md bg-[#22634f]/70 px-2.5 py-2"><Clock3 className="h-3.5 w-3.5 text-[#e2bd74]" />6 DAYS</span><span className="inline-flex items-center gap-1.5 rounded-md bg-[#22634f]/70 px-2.5 py-2"><Users className="h-3.5 w-3.5 text-[#e2bd74]" />SMALL GROUP</span><span className="inline-flex items-center gap-1.5 rounded-md bg-[#22634f]/70 px-2.5 py-2"><Mountain className="h-3.5 w-3.5 text-[#e2bd74]" />HIGH ALTITUDE</span></div>
+        </div>
+        <div>
+          <svg className="mb-4 h-20 w-full opacity-60" viewBox="0 0 300 70" fill="none" aria-hidden="true"><path d="M38 49 C74 24 103 57 142 42 C181 27 182 18 219 25 C246 30 258 18 278 8" stroke="#e8e1c9" strokeWidth="1.2" strokeDasharray="3 6" /><circle cx="38" cy="49" r="5" stroke="#e2bd74" strokeWidth="2" /><path d="M276 5 L286 9 L279 13 Z" fill="#e2bd74" /></svg>
+          <button onClick={onClick} className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[#c69a52] px-4 py-4 text-sm font-bold tracking-wide text-[#073f32] transition hover:-translate-y-0.5 hover:bg-[#d8b56a]">DISCOVER THE JOURNEY <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></button>
+          <div className="mt-5 flex items-center justify-between text-[10px] font-mono tracking-wide text-[#f5f1e8]/80"><span>32°14'32"N 77°10'18"E</span><MapPin className="h-5 w-5 text-[#e2bd74]" /></div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+export default function HandpickedJourneys({ onSelectJourney, onExploreAll }) {
+  const items = [
+    { id: 'kashmir-lakes', title: 'Kashmir Great Lakes', duration: '6 Days · Moderate', price: 'From ?18,499', rating: '4.8', image: journeys[1].image, journey: journeys[1] },
+    { id: 'ladakh-expedition', title: 'Ladakh Road Expedition', duration: '8 Days · Road Trip', price: 'From ?24,999', rating: '4.9', image: journeys[2].image, journey: journeys[2] },
+    { id: 'himachal-escape', title: 'Himachal Escape', duration: '5 Days · Easy', price: 'From ?9,999', rating: '4.7', image: journeys[4].image, journey: journeys[4] },
+    { id: 'meghalaya-explorer', title: 'Meghalaya Explorer', duration: '4 Days · Easy', price: 'From ?8,499', rating: '4.6', image: journeys[3].image, journey: journeys[3] },
+    { id: 'uttarakhand-trails', title: 'Uttarakhand Trails', duration: '6 Days · Moderate', price: 'From ?12,499', rating: '4.8', image: journeys[0].image, journey: journeys[0] },
   ];
 
   return (
-    <section id="journeys" className="py-16 sm:py-20 bg-[#F4F1E8] text-[#003B24]">
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-          <div>
-            <span className="text-[11px] font-mono font-bold tracking-[0.2em] uppercase text-[#B89A5A] block mb-1">
-              HANDPICKED JOURNEYS
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-normal text-[#003B24]">
-              Your next adventure starts here.
-            </h2>
-          </div>
+    <section id="journeys" className="relative overflow-hidden bg-[#f5f1e8] py-16 text-[#123d34] sm:py-24">
+      <FlightPath />
+      <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        <header className="relative mb-10 flex flex-col gap-5 lg:mb-12 lg:flex-row lg:items-start lg:justify-between">
+          <div><span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[.16em] text-[#31574d]"><Sparkles className="h-3.5 w-3.5 text-[#c69a52]" />EXPLORE THE WORLD</span><h2 className="mt-3 max-w-2xl font-display text-5xl leading-[.86] tracking-tight sm:text-6xl lg:text-7xl">Your next adventure<br /><span className="italic text-[#c69a52]">starts</span> here.</h2></div>
+          <button onClick={onExploreAll} className="group mt-2 inline-flex items-center gap-2 self-start text-xs font-bold tracking-[.12em] text-[#123d34] transition hover:text-[#c69a52]">VIEW ALL JOURNEYS <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></button>
+        </header>
 
-          <button
-            onClick={onExploreAll}
-            className="inline-flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-wider text-[#003B24] hover:text-[#075333] transition-colors cursor-pointer"
-          >
-            <span>View all journeys</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+        <div className="grid items-stretch gap-7 lg:grid-cols-[1.25fr_.95fr_.82fr]">
+          <FeaturedJourneyCard onClick={() => onSelectJourney(journeys[0])} />
+          <div className="order-3 flex gap-3 overflow-x-auto pb-2 lg:order-2 lg:flex-col lg:overflow-visible lg:pb-0">{items.map((item) => <JourneyRow key={item.id} item={item} onClick={() => onSelectJourney(item.journey)} />)}</div>
+          <div className="order-2 lg:order-3"><FeaturedExpedition onClick={() => onSelectJourney(journeys[0])} /></div>
         </div>
-
-        {/* 3-Column Layout Matching Exact Mockup */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-          
-          {/* Column 1: Featured Spiti Valley Card (Span 5 cols, ~42%) */}
-          <div
-            onClick={() => onSelectJourney(journeys[0])}
-            className="lg:col-span-5 rounded-2xl overflow-hidden relative shadow-md hover:shadow-xl transition-all duration-300 group cursor-pointer h-[420px] sm:h-[480px] lg:h-auto"
-          >
-            <img
-              src={journeys[0].image}
-              alt="Spiti Valley"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-
-            {/* Badge */}
-            <div className="absolute top-4 left-4">
-              <span className="px-3 py-1 rounded-md text-[10px] font-mono font-bold bg-[#003B24] text-[#B89A5A] tracking-wider uppercase">
-                FEATURED JOURNEY
-              </span>
-            </div>
-
-            {/* Bottom Overlay Content */}
-            <div className="absolute bottom-5 left-5 right-5 text-white">
-              <h3 className="font-display text-3xl sm:text-4xl text-white font-normal mb-1">
-                Spiti Valley
-              </h3>
-              <p className="text-xs text-white/80 font-sans mb-3">
-                6 Days · High Altitude · Small Group
-              </p>
-
-              <div className="flex items-center justify-between pt-2 border-t border-white/20">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-mono text-[#B89A5A]">★ 4.9 (120 Reviews)</span>
-                  <span className="text-xs text-white/60">·</span>
-                  <span className="text-sm font-bold text-white">From ₹14,999</span>
-                </div>
-
-                <div className="w-8 h-8 rounded-full bg-white text-[#003B24] flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Column 2: 5 Stacked Compact Rows (Span 3.5 cols, ~28%) */}
-          <div className="lg:col-span-4 flex flex-col justify-between gap-2.5">
-            {compactJourneys.map((item, idx) => (
-              <div
-                key={item.id}
-                onClick={() => onSelectJourney(item.fullJourney)}
-                className="p-2.5 sm:p-3 rounded-xl bg-white border border-[#DDD4C1] hover:border-[#003B24] hover:shadow-md transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-12 rounded-lg overflow-hidden shrink-0">
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                  </div>
-                  <div>
-                    <h4 className="font-display text-sm text-[#003B24] font-normal leading-snug group-hover:text-[#075333]">
-                      {item.title}
-                    </h4>
-                    <p className="text-[11px] text-[#003B24]/60 font-sans">{item.duration}</p>
-                    <p className="text-[11px] font-bold text-[#003B24] font-sans">{item.price}</p>
-                  </div>
-                </div>
-
-                <div className="text-right shrink-0 flex items-center gap-1 text-xs font-mono text-[#003B24]">
-                  <Star className="w-3 h-3 text-[#B89A5A] fill-[#B89A5A]" />
-                  <span>{item.rating}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Column 3: Featured Spiti Beyond The Ordinary Card (Span 3.5 cols, ~30%) */}
-          <div className="lg:col-span-3 rounded-2xl overflow-hidden bg-[#003B24] text-[#F4F1E8] p-6 flex flex-col justify-between relative shadow-md">
-            {/* Background image & overlay */}
-            <div className="absolute inset-0 opacity-20 pointer-events-none">
-              <img
-                src="https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=800&q=80"
-                alt="Mountain road"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="relative z-10 space-y-4">
-              <span className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase text-[#B89A5A] block">
-                FEATURED EXPEDITION
-              </span>
-
-              <h3 className="font-display text-2xl sm:text-3xl text-white font-normal leading-tight">
-                SPITI <br />
-                BEYOND THE <br />
-                ORDINARY
-              </h3>
-
-              <div className="flex flex-wrap gap-2 text-[10px] font-mono text-[#DDD4C1] pt-1">
-                <span className="px-2 py-1 rounded bg-white/10">⏱ 6 DAYS</span>
-                <span className="px-2 py-1 rounded bg-white/10">👥 SMALL GROUP</span>
-                <span className="px-2 py-1 rounded bg-white/10">🏔 HIGH ALTITUDE</span>
-              </div>
-            </div>
-
-            <div className="relative z-10 pt-6 space-y-4">
-              <button
-                onClick={() => onSelectJourney(journeys[0])}
-                className="w-full py-3 px-4 rounded-lg bg-[#B89A5A] hover:bg-[#A88849] text-[#003B24] text-xs font-sans font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <span>Discover the Journey</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-
-              <div className="flex items-center justify-between text-[10px] font-mono text-[#DDD4C1]/60 pt-1">
-                <span>32°14'32"N 77°10'18"E</span>
-                <Compass className="w-4 h-4 text-[#B89A5A]/50" />
-              </div>
-            </div>
-          </div>
-
-        </div>
-
       </div>
     </section>
   );

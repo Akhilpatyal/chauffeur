@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Oswald:wght@300;400;500&display=swap');@import "tailwindcss";
 
 @theme {
   --color-primary: #012C18;
@@ -96,3 +96,4 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
