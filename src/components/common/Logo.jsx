@@ -1,35 +1,41 @@
 import React from 'react';
-import logoLight from '../../assets/images/logo-light.jpg';
-import logoDark from '../../assets/images/logo-dark.jpg';
 import { cn } from '../../utils/helpers';
 
+/*
+ * Transparent-background marks, cropped tight from the source art in /public
+ * (white-logo-withoutbg.png and without-bg.png), so the height classes below
+ * are the real height of the wordmark.
+ */
+const LOGO_SRC = {
+  light: '/logo-taifer-white.png',
+  dark: '/logo-taifer.png'
+};
+
+const sizeClasses = {
+  sm: 'h-8 sm:h-9',
+  md: 'h-9 sm:h-10',
+  lg: 'h-12 sm:h-14',
+  xl: 'h-16 sm:h-20'
+};
+
 export default function Logo({
-  variant = 'light', // 'light' (white logo for dark bg) | 'dark' (green logo for light bg)
-  size = 'md',       // 'sm' | 'md' | 'lg' | 'xl'
+  variant = 'light', // 'light' (white mark for dark bg) | 'dark' (green mark for light bg)
+  size = 'md',
   className,
   showTagline = false
 }) {
-  const isLight = variant === 'light'; // white logo for dark bg
-
-  const sizeClasses = {
-    sm: 'h-9 sm:h-10',
-    md: 'h-12 sm:h-14',
-    lg: 'h-16 sm:h-20',
-    xl: 'h-24 sm:h-28'
-  };
+  const isLight = variant === 'light';
 
   return (
     <div className={cn('inline-flex items-center select-none', className)}>
-      <div className={cn('relative overflow-hidden flex items-center justify-center', sizeClasses[size] || sizeClasses.md)}>
-        <img
-          src={isLight ? logoLight : logoDark}
-          alt="TAIFER — The Great Outdoors"
-          className={cn(
-            'h-full w-auto object-contain transition-transform duration-300',
-            isLight ? 'mix-blend-screen' : 'mix-blend-multiply'
-          )}
-        />
-      </div>
+      <img
+        src={isLight ? LOGO_SRC.light : LOGO_SRC.dark}
+        alt="TAIFER — The Great Outdoors"
+        className={cn(
+          'w-auto object-contain transition-transform duration-300',
+          sizeClasses[size] || sizeClasses.md
+        )}
+      />
       {showTagline && (
         <span
           className={cn(

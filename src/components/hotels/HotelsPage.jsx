@@ -1,8 +1,474 @@
-import React,{useMemo,useState}from'react';
-import{ArrowRight,Check,Heart,MapPin,Search,SlidersHorizontal,Star,X}from'lucide-react';
-import{hotels}from'../../data/hotels';
-import Newsletter from'../sections/Newsletter';import Footer from'../footer/Footer';
-const money=n=>'₹'+n.toLocaleString('en-IN');
-function Card({hotel,open}){const[fav,setFav]=useState(false);return <article className="group flex flex-col overflow-hidden rounded-2xl border border-[#ded8c9] bg-[#fffdf7] shadow-sm transition hover:-translate-y-1 hover:border-[#16704e] hover:shadow-xl sm:flex-row"><div className="relative h-52 sm:h-auto sm:w-[38%]"><img src={hotel.image} alt={hotel.name} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-105"/><span className="absolute left-3 top-3 rounded bg-[#073f32] px-2 py-1 text-[9px] font-bold text-[#e2bd74]">{hotel.tag}</span><button onClick={()=>setFav(!fav)} className="absolute right-3 top-3 rounded-full bg-white p-2"><Heart className={fav?'h-4 w-4 fill-[#c69a52] text-[#c69a52]':'h-4 w-4'}/></button></div><div className="flex flex-1 flex-col p-5"><h3 className="font-display text-2xl">{hotel.name}</h3><p className="text-sm text-[#718078]">{hotel.location} · Himachal Pradesh</p><p className="mt-3 text-sm text-[#5e716a]">{hotel.description}</p><p className="mt-3 flex items-center gap-1 text-sm"><Star className="h-4 w-4 fill-[#c69a52] text-[#c69a52]"/><b>{hotel.rating}</b> Exceptional <span className="text-[#718078]">({hotel.reviews} reviews)</span></p><div className="mt-3 flex flex-wrap gap-2">{hotel.amenities.map(a=><span key={a} className="rounded-full bg-[#edf2ed] px-2.5 py-1 text-[10px]">{a}</span>)}</div><div className="mt-5 flex items-end justify-between"><span><b className="text-xl">{money(hotel.price)}</b><small> / night</small><em className="block text-[10px] not-italic text-[#16704e]">Free cancellation</em></span><button onClick={()=>open(hotel)} className="rounded-lg bg-[#073f32] px-4 py-2.5 text-xs font-bold text-white">VIEW ROOMS <ArrowRight className="inline h-3.5 w-3.5"/></button></div></div></article>}
-function Drawer({hotel,close}){if(!hotel)return null;return <div className="fixed inset-0 z-50 bg-black/40 p-4" onClick={close}><aside onClick={e=>e.stopPropagation()} className="ml-auto h-full max-w-lg overflow-auto rounded-2xl bg-[#fffdf7] shadow-2xl"><div className="relative h-72"><img src={hotel.image} alt={hotel.name} className="h-full w-full object-cover"/><button onClick={close} className="absolute right-4 top-4 rounded-full bg-white p-2"><X/></button></div><div className="p-7"><p className="text-xs font-bold tracking-widest text-[#c69a52]">TAIFER CURATED STAY</p><h2 className="mt-2 font-display text-4xl">{hotel.name}</h2><p className="mt-2 text-[#718078]">{hotel.location} · Manali</p><p className="mt-5">{hotel.description}</p><button className="mt-8 w-full rounded-xl bg-[#073f32] py-4 text-sm font-bold text-white">VIEW FULL STAY <ArrowRight className="inline h-4 w-4"/></button></div></aside></div>}
-export default function HotelsPage(){const[q,setQ]=useState('');const[max,setMax]=useState(12000);const[type,setType]=useState('');const[sort,setSort]=useState('Recommended');const[selected,setSelected]=useState(null);const results=useMemo(()=>hotels.filter(h=>h.price<=max&&(!type||h.type===type)&&h.name.toLowerCase().includes(q.toLowerCase())).sort((a,b)=>sort==='Price: Low to High'?a.price-b.price:b.rating-a.rating),[q,max,type,sort]);const clear=()=>{setQ('');setMax(12000);setType('')};return <div className="min-h-screen bg-[#f5f1e8] pt-20 text-[#123d34]"><section className="relative overflow-hidden bg-[#073f32] py-10 text-white"><img src="/banner2.jpg" alt="" className="absolute inset-0 h-full w-full object-cover opacity-30"/><div className="absolute inset-0 bg-[#032f27]/70"/><div className="relative mx-auto max-w-[1360px] px-5 sm:px-8"><p className="text-xs font-bold tracking-[.2em] text-[#e2bd74]">STAYS & HOTELS</p><h1 className="mt-2 font-display text-4xl sm:text-5xl">Find Your Perfect Stay</h1><p className="mt-2 text-white/80">Not just a room. A part of your journey.</p><div className="mt-6 grid rounded-2xl bg-[#fffdf7] p-2 text-[#123d34] shadow-xl md:grid-cols-[1.35fr_1fr_1fr_1fr_auto]">{[['Destination','Manali, Himachal Pradesh'],['Check-in','12 Dec 2026'],['Check-out','15 Dec 2026'],['Guests','2 Adults · 1 Room']].map(x=><button key={x[0]} className="border-b border-[#ded8c9] px-4 py-3 text-left last:border-0 md:border-b-0 md:border-r"><span className="block text-[9px] font-bold uppercase text-[#718078]">{x[0]}</span><span className="text-xs font-bold">{x[1]}</span></button>)}<button className="m-1 rounded-xl bg-[#073f32] px-5 text-xs font-bold text-white">SEARCH STAYS <ArrowRight className="inline h-3.5 w-3.5"/></button></div></div></section><main className="mx-auto max-w-[1360px] px-5 py-8 sm:px-8"><p className="text-xs text-[#718078]">Home › Hotels › Himachal Pradesh › Manali</p><div className="mt-7 flex flex-wrap items-end justify-between gap-4"><div><h2 className="font-display text-4xl">Stays in Manali</h2><p className="text-sm text-[#718078]">{results.length} properties · Handpicked places for your mountain escape.</p></div><label className="rounded-xl border border-[#ded8c9] bg-white px-3 py-2 text-xs">Sort <select value={sort} onChange={e=>setSort(e.target.value)} className="ml-2 bg-transparent font-bold"><option>Recommended</option><option>Price: Low to High</option><option>Guest Rating</option></select></label></div><div className="mt-8 grid gap-7 lg:grid-cols-[250px_1fr]"><aside className="hidden rounded-2xl border border-[#ded8c9] bg-[#fffdf7] p-5 lg:block"><div className="flex justify-between"><h3 className="font-display text-xl">Filters</h3><button onClick={clear} className="text-[10px] font-bold text-[#16704e]">CLEAR ALL</button></div><label className="mt-5 block text-[10px] font-bold">SEARCH HOTEL<input value={q} onChange={e=>setQ(e.target.value)} placeholder="Hotel name..." className="mt-2 w-full rounded-xl border border-[#ded8c9] bg-[#f5f1e8] px-3 py-2.5 text-sm"/></label><label className="mt-6 block text-[10px] font-bold">PRICE PER NIGHT · {money(max)}<input type="range" min="6000" max="15000" step="500" value={max} onChange={e=>setMax(+e.target.value)} className="mt-3 w-full accent-[#073f32]"/></label><p className="mt-6 text-[10px] font-bold">PROPERTY TYPE</p>{['Hotel','Resort','Villa','Homestay','Boutique Stay'].map(t=><label key={t} className="mt-3 block text-xs"><input type="checkbox" checked={type===t} onChange={()=>setType(type===t?'':t)} className="mr-2 accent-[#073f32]"/>{t}</label>)}<p className="mt-6 text-[10px] font-bold">AMENITIES</p>{['Wi-Fi','Breakfast','Mountain View','Bonfire','Restaurant'].map(a=><label key={a} className="mt-3 block text-xs"><input type="checkbox" className="mr-2 accent-[#073f32]"/>{a}</label>)}</aside><section><div className="flex items-center justify-between"><div><h3 className="font-display text-2xl">TAIFER RECOMMENDS <Star className="inline h-5 w-5 fill-[#c69a52] text-[#c69a52]"/></h3><p className="text-xs text-[#718078]">Places we'd choose for the journey.</p></div><button className="lg:hidden rounded-lg border p-2 text-xs"><SlidersHorizontal className="inline h-4 w-4"/> Filters</button></div><div className="mt-4 grid gap-4 sm:grid-cols-3">{hotels.slice(0,3).map(h=><button key={h.id} onClick={()=>setSelected(h)} className="overflow-hidden rounded-2xl bg-[#032f27] text-left text-white"><img src={h.image} alt={h.name} className="h-36 w-full object-cover"/><span className="block p-4"><b className="font-display text-xl">{h.name}</b><small className="mt-1 block text-white/70">{h.location} · ★ {h.rating}</small><small className="mt-3 flex justify-between"><b>{money(h.price)} / night</b><em className="not-italic text-[#e2bd74]">View Stay →</em></small></span></button>)}</div><h3 className="mt-9 font-display text-3xl">All Stays ({results.length})</h3><div className="mt-4 space-y-4">{results.map(h=><Card key={h.id} hotel={h} open={setSelected}/>)}{!results.length&&<div className="rounded-2xl border border-dashed p-10 text-center"><MapPin className="mx-auto text-[#c69a52]"/><h3 className="mt-3 font-display text-2xl">No stays found</h3><button onClick={clear} className="mt-3 text-xs font-bold text-[#16704e]">CLEAR FILTERS</button></div>}</div></section></div><section className="relative mt-16 overflow-hidden rounded-3xl bg-[#032f27] p-10 text-white"><img src="/banner3.jpg" alt="" className="absolute inset-0 h-full w-full object-cover opacity-40"/><div className="relative max-w-md"><h2 className="font-display text-4xl">Stay somewhere<br/>worth remembering.</h2><p className="mt-4 text-white/80">Not every stay is just a room. From mountain cabins to riverside retreats, handpicked places become part of your story.</p><button className="mt-6 rounded-lg border border-[#e2bd74] px-5 py-3 text-xs font-bold text-[#e2bd74]">EXPLORE CURATED STAYS <ArrowRight className="inline h-3.5 w-3.5"/></button></div></section><section className="my-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[['Curated stays','Places selected for the journey.'],['Best value','Transparent pricing.'],['Verified reviews','Real traveler experiences.'],['Human support','Real people when you need help.']].map(x=><article key={x[0]} className="rounded-xl border border-[#ded8c9] bg-white p-5"><Check className="h-5 w-5 text-[#c69a52]"/><h3 className="mt-3 font-display text-xl">{x[0]}</h3><p className="text-sm text-[#718078]">{x[1]}</p></article>)}</section></main><Newsletter/><Footer/><Drawer hotel={selected} close={()=>setSelected(null)}/></div>}
+import React, { useCallback, useMemo, useState } from 'react';
+import {
+  ArrowDown,
+  ArrowRight,
+  ChevronDown,
+  LayoutGrid,
+  List,
+  MapPin,
+  MountainSnow,
+  Play,
+  SlidersHorizontal,
+  Star,
+  X,
+} from 'lucide-react';
+import { guestRatings, featuredStays, hotels, TOTAL_STAYS } from '../../data/hotels';
+import Newsletter from '../sections/Newsletter';
+import Footer from '../footer/Footer';
+import HotelsHero from './HotelsHero';
+import HotelFilters from './HotelFilters';
+import HotelsRightRail from './HotelsRightRail';
+import HotelDetailDrawer from './HotelDetailDrawer';
+import StayCard, { RecommendedCard } from './StayCard';
+import { money } from './hotelUi';
+
+const PAGE_SIZE = 4;
+
+const initialFilters = () => ({
+  query: '',
+  minPrice: 5000,
+  maxPrice: 12000,
+  types: [],
+  stars: [],
+  guestRating: null,
+  amenities: ['Breakfast', 'Mountain View'],
+  locations: [],
+  experiences: [],
+  booking: [],
+});
+
+const sortOptions = [
+  'Recommended',
+  'Price: Low to High',
+  'Price: High to Low',
+  'Guest Rating',
+  'Most Reviewed',
+];
+
+const breadcrumbs = ['Home', 'Hotels', 'Himachal Pradesh', 'Manali'];
+
+/* Removable chip summarising one active filter */
+function FilterChip({ label, onRemove }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#DDD4C1] bg-[#FAF9F5] py-1 pl-3 pr-2 text-[11px] font-medium text-[#3B473F]">
+      {label}
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label={`Remove ${label} filter`}
+        className="text-[#98A09A] transition hover:text-[#D65A3A]"
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </span>
+  );
+}
+
+export default function HotelsPage() {
+  const [destination, setDestination] = useState('Manali, Himachal Pradesh');
+  const [filters, setFilters] = useState(initialFilters);
+  const [sort, setSort] = useState('Recommended');
+  const [view, setView] = useState('list');
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  const [favorites, setFavorites] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [mobileFilters, setMobileFilters] = useState(false);
+
+  const setValue = useCallback((key, value) => {
+    setFilters((f) => ({ ...f, [key]: value }));
+    setVisible(PAGE_SIZE);
+  }, []);
+
+  const toggleValue = useCallback((group, value) => {
+    setFilters((f) => ({
+      ...f,
+      [group]: f[group].includes(value)
+        ? f[group].filter((v) => v !== value)
+        : [...f[group], value],
+    }));
+    setVisible(PAGE_SIZE);
+  }, []);
+
+  const clearFilters = useCallback(() => {
+    setFilters({ ...initialFilters(), amenities: [], minPrice: 1500, maxPrice: 25000 });
+    setVisible(PAGE_SIZE);
+  }, []);
+
+  const toggleFavorite = useCallback((id) => {
+    setFavorites((f) => (f.includes(id) ? f.filter((x) => x !== id) : [...f, id]));
+  }, []);
+
+  const results = useMemo(() => {
+    const any = (group, values) => !group.length || values.some((v) => group.includes(v));
+    const minRating = guestRatings.find((g) => g.label === filters.guestRating)?.min ?? 0;
+
+    const list = hotels.filter(
+      (h) =>
+        h.price >= filters.minPrice &&
+        h.price <= filters.maxPrice &&
+        h.rating >= minRating &&
+        h.name.toLowerCase().includes(filters.query.trim().toLowerCase()) &&
+        (!filters.types.length || filters.types.includes(h.type)) &&
+        (!filters.stars.length || filters.stars.includes(h.star)) &&
+        (!filters.locations.length || filters.locations.includes(h.location)) &&
+        any(filters.amenities, h.amenities) &&
+        any(filters.experiences, h.experience || []) &&
+        any(filters.booking, h.booking || [])
+    );
+
+    const sorted = [...list];
+    if (sort === 'Price: Low to High') sorted.sort((a, b) => a.price - b.price);
+    if (sort === 'Price: High to Low') sorted.sort((a, b) => b.price - a.price);
+    if (sort === 'Guest Rating') sorted.sort((a, b) => b.rating - a.rating);
+    if (sort === 'Most Reviewed') sorted.sort((a, b) => b.reviews - a.reviews);
+    return sorted;
+  }, [filters, sort]);
+
+  const shown = results.slice(0, visible);
+
+  const activeChips = [
+    destination && {
+      label: destination.split(',')[0],
+      onRemove: () => setDestination(''),
+    },
+    {
+      label: `${money(filters.minPrice)} – ${money(filters.maxPrice)}`,
+      onRemove: () => setFilters((f) => ({ ...f, minPrice: 1500, maxPrice: 25000 })),
+    },
+    ...['types', 'locations', 'amenities', 'experiences', 'booking'].flatMap((group) =>
+      filters[group].map((value) => ({
+        label: value,
+        onRemove: () => toggleValue(group, value),
+      }))
+    ),
+    ...filters.stars.map((s) => ({
+      label: `${s} Star`,
+      onRemove: () => toggleValue('stars', s),
+    })),
+    filters.guestRating && {
+      label: `Rating ${filters.guestRating}`,
+      onRemove: () => setValue('guestRating', null),
+    },
+  ].filter(Boolean);
+
+  const filterPanel = (
+    <HotelFilters
+      filters={filters}
+      onSet={setValue}
+      onToggle={toggleValue}
+      onClear={clearFilters}
+      resultCount={TOTAL_STAYS}
+    />
+  );
+
+  return (
+    <div className="min-h-screen bg-[#F4F1E8] text-[#012C18]">
+      <HotelsHero
+        destination={destination}
+        onDestinationChange={setDestination}
+        onSearch={() =>
+          document.getElementById('all-stays')?.scrollIntoView({ behavior: 'smooth' })
+        }
+      />
+
+      <main className="topographic-bg">
+        <div className="mx-auto max-w-[1400px] px-4 pt-6 sm:px-6 lg:px-8">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb">
+            <ol className="flex flex-wrap items-center gap-1.5 text-[11px] text-[#8A9189]">
+              {breadcrumbs.map((crumb, i) => (
+                <li key={crumb} className="flex items-center gap-1.5">
+                  {i > 0 && <span className="text-[#C3C8C1]">›</span>}
+                  <span
+                    className={
+                      i === breadcrumbs.length - 1
+                        ? 'font-medium text-[#012C18]'
+                        : 'transition hover:text-[#075333]'
+                    }
+                  >
+                    {crumb}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </nav>
+
+          <div className="mt-5 grid items-start gap-6 pb-4 lg:grid-cols-[272px_minmax(0,1fr)] xl:grid-cols-[272px_minmax(0,1fr)_296px]">
+            {/* Filters */}
+            <aside className="hidden lg:block">
+              <div className="no-scrollbar sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pb-2">
+                {filterPanel}
+              </div>
+            </aside>
+
+            {/* Results */}
+            <section>
+              {/* Heading + controls */}
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h2 className="flex items-center gap-2 font-display text-[32px] leading-none text-[#012C18] sm:text-[36px]">
+                    Stays in Manali
+                    <MountainSnow
+                      className="h-6 w-6 text-[#B7C0B4]"
+                      strokeWidth={1.25}
+                      aria-hidden="true"
+                    />
+                  </h2>
+                  <p className="mt-2 text-[12.5px] text-[#7C857E]">
+                    {TOTAL_STAYS} properties
+                  </p>
+                  <p className="text-[12.5px] text-[#7C857E]">
+                    Handpicked places for your mountain escape.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setMobileFilters(true)}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-[#DDD4C1] bg-[#FAF9F5] px-3 py-2 text-[11.5px] font-medium text-[#012C18] lg:hidden"
+                  >
+                    <SlidersHorizontal className="h-3.5 w-3.5" />
+                    Filters
+                  </button>
+
+                  <label className="flex items-center gap-2 text-[11.5px] text-[#7C857E]">
+                    Sort by
+                    <span className="relative">
+                      <select
+                        value={sort}
+                        onChange={(e) => setSort(e.target.value)}
+                        className="appearance-none rounded-lg border border-[#DDD4C1] bg-[#FAF9F5] py-2 pl-3 pr-8 text-[11.5px] font-medium text-[#012C18] outline-none transition hover:border-[#B7C4B4]"
+                      >
+                        {sortOptions.map((o) => (
+                          <option key={o}>{o}</option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#8A9189]" />
+                    </span>
+                  </label>
+
+                  <div className="hidden overflow-hidden rounded-lg border border-[#DDD4C1] sm:flex">
+                    {[
+                      { id: 'list', icon: List, label: 'List view' },
+                      { id: 'grid', icon: LayoutGrid, label: 'Grid view' },
+                    ].map(({ id, icon: Icon, label }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        aria-label={label}
+                        aria-pressed={view === id}
+                        onClick={() => setView(id)}
+                        className={`flex h-[34px] w-9 items-center justify-center transition ${
+                          view === id
+                            ? 'bg-[#043A25] text-[#FAF9F5]'
+                            : 'bg-[#FAF9F5] text-[#5E6B63] hover:bg-[#EFEBDF]'
+                        }`}
+                      >
+                        <Icon className="h-3.5 w-3.5" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Taifer recommends */}
+              <div className="mt-7 rounded-2xl border border-[#E3DDCB] bg-[#EFEBDD]/70 p-4">
+                <div className="flex flex-wrap items-end justify-between gap-2">
+                  <div>
+                    <h3 className="flex items-center gap-1.5 text-[13px] font-bold uppercase tracking-[0.12em] text-[#012C18]">
+                      Taifer Recommends
+                      <Star className="h-3.5 w-3.5 fill-[#B89A5A] text-[#B89A5A]" />
+                    </h3>
+                    <p className="mt-1 text-[11.5px] text-[#7C857E]">
+                      Places we&rsquo;d choose for the journey.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      document
+                        .getElementById('all-stays')
+                        ?.scrollIntoView({ behavior: 'smooth' })
+                    }
+                    className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[#075333] transition hover:gap-1.5"
+                  >
+                    See all picks
+                    <ArrowRight className="h-3 w-3" />
+                  </button>
+                </div>
+
+                <div className="mt-3.5 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+                  {featuredStays.map((stay) => (
+                    <RecommendedCard
+                      key={stay.id}
+                      stay={stay}
+                      favorite={favorites.includes(stay.id)}
+                      onToggleFavorite={toggleFavorite}
+                      onOpen={setSelected}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* All stays */}
+              <div
+                id="all-stays"
+                className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 scroll-mt-28"
+              >
+                <h3 className="font-display text-[26px] leading-none text-[#012C18]">
+                  All Stays ({results.length})
+                </h3>
+                {activeChips.map((chip, i) => (
+                  <FilterChip key={`${chip.label}-${i}`} {...chip} />
+                ))}
+                {activeChips.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="text-[11px] font-medium text-[#075333] underline underline-offset-2 transition hover:text-[#012C18]"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+
+              <div
+                className={
+                  view === 'grid'
+                    ? 'mt-4 grid gap-4 sm:grid-cols-2'
+                    : 'mt-4 flex flex-col gap-4'
+                }
+              >
+                {shown.map((stay) => (
+                  <StayCard
+                    key={stay.id}
+                    stay={stay}
+                    layout={view === 'grid' ? 'tile' : 'row'}
+                    favorite={favorites.includes(stay.id)}
+                    onToggleFavorite={toggleFavorite}
+                    onOpen={setSelected}
+                  />
+                ))}
+
+                {!results.length && (
+                  <div className="rounded-2xl border border-dashed border-[#DDD4C1] bg-[#FAF9F5] p-12 text-center">
+                    <MapPin className="mx-auto h-6 w-6 text-[#B89A5A]" />
+                    <h4 className="mt-3 font-display text-[22px] text-[#012C18]">
+                      No stays match these filters
+                    </h4>
+                    <p className="mt-1 text-[12px] text-[#7C857E]">
+                      Try widening your price range or clearing a few filters.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={clearFilters}
+                      className="mt-4 rounded-lg bg-[#043A25] px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] text-[#FAF9F5]"
+                    >
+                      Clear filters
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Pagination */}
+              {results.length > 0 && (
+                <div className="mt-6 flex flex-col items-center">
+                  {visible < results.length && (
+                    <button
+                      type="button"
+                      onClick={() => setVisible((v) => v + PAGE_SIZE)}
+                      className="inline-flex items-center gap-2 rounded-full border border-[#DDD4C1] bg-[#FAF9F5] px-6 py-2.5 text-[11.5px] font-medium text-[#012C18] transition hover:border-[#075333] hover:text-[#075333]"
+                    >
+                      Load More Stays
+                      <ArrowDown className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                  <p className="mt-3 text-[11px] text-[#98A09A]">
+                    Showing {shown.length} of {TOTAL_STAYS} stays
+                  </p>
+                </div>
+              )}
+            </section>
+
+            {/* Map + widgets */}
+            <aside className="hidden xl:block">
+              <HotelsRightRail
+                onOpen={setSelected}
+                onTalkToExpert={() => setSelected(featuredStays[0])}
+              />
+            </aside>
+
+            {/* Closing banner */}
+            <section className="relative mt-4 overflow-hidden rounded-2xl bg-[#02170F] lg:col-start-2 xl:col-span-2">
+              <img
+                src="/banner3.jpg"
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#02170F]/92 via-[#02170F]/70 to-[#02170F]/25" />
+              <div className="relative max-w-[420px] p-8 sm:p-10">
+                <h2 className="font-display text-[30px] uppercase leading-[1.1] text-[#FAF9F5] sm:text-[34px]">
+                  Stay somewhere
+                  <br />
+                  worth remembering.
+                </h2>
+                <p className="mt-4 text-[13px] text-white/80">
+                  Not every stay is just a room.
+                </p>
+                <p className="mt-3 text-[12.5px] leading-relaxed text-white/70">
+                  From mountain cabins to riverside retreats &mdash; handpicked places
+                  that become part of your story.
+                </p>
+                <button
+                  type="button"
+                  className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#B89A5A] px-5 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#012C18] transition hover:bg-[#A88849]"
+                >
+                  Explore Curated Stays
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <button
+                type="button"
+                aria-label="Play stay film"
+                className="absolute bottom-6 right-6 flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30"
+              >
+                <Play className="h-4 w-4 fill-current" />
+              </button>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <Newsletter />
+      <Footer />
+
+      <HotelDetailDrawer stay={selected} onClose={() => setSelected(null)} />
+
+      {/* Mobile filter sheet */}
+      {mobileFilters && (
+        <div
+          className="fixed inset-0 z-[60] bg-[#02170F]/55 lg:hidden"
+          onClick={() => setMobileFilters(false)}
+          role="presentation"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="h-full w-full max-w-[340px] overflow-y-auto bg-[#F4F1E8] p-4"
+          >
+            <button
+              type="button"
+              onClick={() => setMobileFilters(false)}
+              className="mb-3 ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-[#FAF9F5] text-[#012C18]"
+              aria-label="Close filters"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            {filterPanel}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

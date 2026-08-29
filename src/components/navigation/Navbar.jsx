@@ -28,17 +28,32 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
     { name: 'Weekend Escapes', href: '#destinations' },
     { name: 'Hotels', href: '#hotels' },
     { name: 'Stories', href: '#community' },
-    { name: 'About', href: '#why-us' },
+    { name: 'About', href: '#about' },
   ];
+
+  /* Hash values that swap the whole page rather than scroll to a section */
+  const pageRoutes = ['#hotels', '#about'];
 
   const handleLinkClick = (e, href) => {
     e.preventDefault();
     setMobileMenuOpen(false);
-    if (href === '#hotels') { window.location.hash = 'hotels'; return; }
+
+    if (pageRoutes.includes(href)) {
+      window.location.hash = href.slice(1);
+      return;
+    }
+
     const target = document.querySelector(href);
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
+      return;
     }
+
+    /* Section lives on the home page - go there first, then scroll */
+    window.location.hash = '';
+    window.setTimeout(() => {
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    }, 160);
   };
 
   return (
@@ -59,6 +74,10 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
             className="flex items-center gap-3 focus:outline-none"
             onClick={(e) => {
               e.preventDefault();
+              if (activePage !== 'home') {
+                window.location.hash = '';
+                return;
+              }
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           >
@@ -77,8 +96,11 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
                 href={link.href}
                 onClick={(e) => handleLinkClick(e, link.href)}
                 className={cn(
-                  'text-[14px] font-sans font-medium tracking-wide transition-colors relative py-1 hover:text-[#B89A5A] after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-[#B89A5A]',
-                  link.name === 'Hotels' && activePage === 'hotels' ? 'after:scale-x-100 text-[#B89A5A]' : 'after:scale-x-0',
+                  'text-[14px] font-sans font-medium tracking-wide relative py-1 transition-all duration-300 hover:-translate-y-px hover:text-[#B89A5A]',
+                  'after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-[#B89A5A] after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100',
+                  link.href === `#${activePage}`
+                    ? 'after:scale-x-100 text-[#B89A5A]'
+                    : 'after:scale-x-0',
                   isScrolled ? 'text-[#003B24]' : 'text-[#F4F1E8]'
                 )}
               >

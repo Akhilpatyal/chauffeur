@@ -27,6 +27,7 @@ import TrustStats from './components/sections/TrustStats';
 import Newsletter from './components/sections/Newsletter';
 import Footer from './components/footer/Footer';
 import HotelsPage from './components/hotels/HotelsPage';
+import AboutPage from './components/about/AboutPage';
 
 // Modals
 import PlanMyTripModal from './components/modals/PlanMyTripModal';
@@ -40,9 +41,27 @@ import { destinations } from './data/destinations';
 
 gsap.registerPlugin(ScrollTrigger);
 
+/* Hash-based routing: '#hotels' and '#about' swap the page, anything else is home */
+const routedPages = ['hotels', 'about'];
+
+function resolvePage() {
+  const hash = window.location.hash.replace('#', '');
+  return routedPages.includes(hash) ? hash : 'home';
+}
+
 export default function App() {
-  const [page, setPage] = useState(() => window.location.hash === '#hotels' ? 'hotels' : 'home');
-  useEffect(() => { const update = () => setPage(window.location.hash === '#hotels' ? 'hotels' : 'home'); window.addEventListener('hashchange', update); return () => window.removeEventListener('hashchange', update); }, []);
+  const [page, setPage] = useState(() => resolvePage());
+  useEffect(() => {
+    const update = () => setPage(resolvePage());
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
+  }, []);
+
+  /* Start each routed page at the top and re-measure pinned scroll triggers */
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    ScrollTrigger.refresh();
+  }, [page]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [planTripModalOpen, setPlanTripModalOpen] = useState(false);
   const [selectedJourney, setSelectedJourney] = useState(null);
@@ -105,6 +124,19 @@ export default function App() {
     }
   };
 
+  /* Works from any routed page - returns home first when needed */
+  const handleExploreJourneys = () => {
+    const scrollToJourneys = () =>
+      document.getElementById('journeys')?.scrollIntoView({ behavior: 'smooth' });
+
+    if (page === 'home') {
+      scrollToJourneys();
+      return;
+    }
+    window.location.hash = '';
+    window.setTimeout(scrollToJourneys, 180);
+  };
+
   const handleWatchStories = () => setStoryModalOpen(true);
   const handleCloseStoryModal = () => setStoryModalOpen(false);
 
@@ -152,7 +184,17 @@ export default function App() {
       />
 
       {/* Main Expedition Flow with Intentional Visual Rhythm */}
-      {page === 'hotels' ? <HotelsPage /> : <main>
+      {page === 'hotels' && <HotelsPage />}
+
+      {page === 'about' && (
+        <AboutPage
+          onPlanTrip={handleOpenPlanTrip}
+          onExploreJourneys={handleExploreJourneys}
+          onWatchStory={handleWatchStories}
+        />
+      )}
+
+      {page === 'home' && <main>
         {/* 1. CINEMATIC HERO (85-95vh) */}
         <HeroSection
           activePage={page}
