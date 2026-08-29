@@ -26,6 +26,7 @@ import Testimonials from './components/sections/Testimonials';
 import TrustStats from './components/sections/TrustStats';
 import Newsletter from './components/sections/Newsletter';
 import Footer from './components/footer/Footer';
+import HotelsPage from './components/hotels/HotelsPage';
 
 // Modals
 import PlanMyTripModal from './components/modals/PlanMyTripModal';
@@ -40,6 +41,8 @@ import { destinations } from './data/destinations';
 gsap.registerPlugin(ScrollTrigger);
 
 export default function App() {
+  const [page, setPage] = useState(() => window.location.hash === '#hotels' ? 'hotels' : 'home');
+  useEffect(() => { const update = () => setPage(window.location.hash === '#hotels' ? 'hotels' : 'home'); window.addEventListener('hashchange', update); return () => window.removeEventListener('hashchange', update); }, []);
   const [activeCategory, setActiveCategory] = useState('all');
   const [planTripModalOpen, setPlanTripModalOpen] = useState(false);
   const [selectedJourney, setSelectedJourney] = useState(null);
@@ -140,6 +143,7 @@ export default function App() {
 
       {/* Transparent-to-Glass Navbar with Official Logo */}
       <Navbar
+        activePage={page}
         onPlanTripClick={handleOpenPlanTrip}
         onSearchClick={() => {
           const el = document.getElementById('journeys');
@@ -148,10 +152,11 @@ export default function App() {
       />
 
       {/* Main Expedition Flow with Intentional Visual Rhythm */}
-      <main>
+      {page === 'hotels' ? <HotelsPage /> : <main>
         {/* 1. CINEMATIC HERO (85-95vh) */}
         <HeroSection
-          onPlanTripClick={handleOpenPlanTrip}
+          activePage={page}
+        onPlanTripClick={handleOpenPlanTrip}
           onSearchSubmit={handleSearchSubmit}
         />
 
@@ -228,10 +233,9 @@ export default function App() {
 
         {/* 14. IVORY NEWSLETTER: Monthly Trail Notes */}
         <Newsletter />
-      </main>
+      </main>}
 
-      {/* 15. DARK FOOTER: The Mountains Are Waiting */}
-      <Footer />
+      {page === 'home' && <Footer />}
 
       {/* Interactive Modals */}
       <PlanMyTripModal

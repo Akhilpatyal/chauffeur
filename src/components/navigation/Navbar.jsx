@@ -4,7 +4,7 @@ import Logo from '../common/Logo';
 import MobileMenu from './MobileMenu';
 import { cn } from '../../utils/helpers';
 
-export default function Navbar({ onPlanTripClick, onSearchClick }) {
+export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'home' }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -26,6 +26,7 @@ export default function Navbar({ onPlanTripClick, onSearchClick }) {
     { name: 'Journeys', href: '#journeys' },
     { name: 'Group Tours', href: '#group-tours' },
     { name: 'Weekend Escapes', href: '#destinations' },
+    { name: 'Hotels', href: '#hotels' },
     { name: 'Stories', href: '#community' },
     { name: 'About', href: '#why-us' },
   ];
@@ -33,6 +34,7 @@ export default function Navbar({ onPlanTripClick, onSearchClick }) {
   const handleLinkClick = (e, href) => {
     e.preventDefault();
     setMobileMenuOpen(false);
+    if (href === '#hotels') { window.location.hash = 'hotels'; return; }
     const target = document.querySelector(href);
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
@@ -75,7 +77,8 @@ export default function Navbar({ onPlanTripClick, onSearchClick }) {
                 href={link.href}
                 onClick={(e) => handleLinkClick(e, link.href)}
                 className={cn(
-                  'text-[14px] font-sans font-medium tracking-wide transition-colors relative py-1 hover:text-[#B89A5A]',
+                  'text-[14px] font-sans font-medium tracking-wide transition-colors relative py-1 hover:text-[#B89A5A] after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-[#B89A5A]',
+                  link.name === 'Hotels' && activePage === 'hotels' ? 'after:scale-x-100 text-[#B89A5A]' : 'after:scale-x-0',
                   isScrolled ? 'text-[#003B24]' : 'text-[#F4F1E8]'
                 )}
               >

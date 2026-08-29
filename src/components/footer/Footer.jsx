@@ -1,129 +1,37 @@
 import React from 'react';
-import { Phone, Mail, MessageCircle, ArrowUp, ShieldCheck, Camera, Tv2 } from 'lucide-react';
+import { Camera, Circle, Mail, MessageCircle, Phone, Tv2 } from 'lucide-react';
 import Logo from '../common/Logo';
 
+const linkGroups = [
+  { title: 'Explore', links: ['Destinations', 'Journeys', 'Group Tours', 'Weekend Escapes', 'Hotels'] },
+  { title: 'Company', links: ['About Us', 'Our Story', 'Careers', 'Media Kit', 'Partner With Us'] },
+  { title: 'Support', links: ['Contact Us', 'FAQ', 'Cancellation Policy', 'Travel Guide', 'Terms & Conditions'] },
+];
+
 export default function Footer() {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
-    <footer className="bg-[#012C18] text-[#F4F1E8] pt-14 pb-8">
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Top Row: Logo + Statement */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-10 border-b border-white/10">
-          <div className="space-y-2">
-            <Logo variant="light" size="lg" showTagline={false} />
-            <p className="text-xs font-mono text-[#DDD4C1]/60">THE GREAT OUTDOORS ARE WAITING.</p>
-          </div>
-
-          {/* Social Icons */}
-          <div className="flex items-center gap-3">
-            <a href="#" className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#043A25] flex items-center justify-center text-white transition-colors" aria-label="Instagram">
-              <Camera className="w-3.5 h-3.5" />
-            </a>
-            <a href="#" className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#043A25] flex items-center justify-center text-white transition-colors" aria-label="YouTube">
-              <Tv2 className="w-3.5 h-3.5" />
-            </a>
-            <a href="#" className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#043A25] flex items-center justify-center text-white transition-colors" aria-label="WhatsApp">
-              <MessageCircle className="w-3.5 h-3.5" />
-            </a>
-          </div>
-        </div>
-
-        {/* 4-Column Links Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 py-10 border-b border-white/10 text-xs font-sans">
-          
-          {/* Explore */}
-          <div>
-            <h4 className="font-mono font-bold uppercase tracking-[0.15em] text-[#B89A5A] text-[11px] mb-3">Explore</h4>
-            <ul className="space-y-2 text-[#DDD4C1]/75">
-              <li><a href="#destinations" className="hover:text-white transition-colors">Destinations</a></li>
-              <li><a href="#journeys" className="hover:text-white transition-colors">Journeys</a></li>
-              <li><a href="#group-tours" className="hover:text-white transition-colors">Group Tours</a></li>
-              <li><a href="#destinations" className="hover:text-white transition-colors">Weekend Escapes</a></li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h4 className="font-mono font-bold uppercase tracking-[0.15em] text-[#B89A5A] text-[11px] mb-3">Company</h4>
-            <ul className="space-y-2 text-[#DDD4C1]/75">
-              <li><a href="#why-us" className="hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#community" className="hover:text-white transition-colors">Our Story</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Media Kit</a></li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h4 className="font-mono font-bold uppercase tracking-[0.15em] text-[#B89A5A] text-[11px] mb-3">Support</h4>
-            <ul className="space-y-2 text-[#DDD4C1]/75">
-              <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Cancellation Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Travel Guide</a></li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="font-mono font-bold uppercase tracking-[0.15em] text-[#B89A5A] text-[11px] mb-3">Contact</h4>
-            <ul className="space-y-2 text-[#DDD4C1]/75">
-              <li>
-                <a href="tel:+919876543210" className="hover:text-white transition-colors flex items-center gap-1.5">
-                  <Phone className="w-3 h-3 text-[#B89A5A]" />
-                  <span>+91 98765 43210</span>
-                </a>
-              </li>
-              <li>
-                <a href="mailto:hello@taifer.com" className="hover:text-white transition-colors flex items-center gap-1.5">
-                  <Mail className="w-3 h-3 text-[#B89A5A]" />
-                  <span>hello@taifer.com</span>
-                </a>
-              </li>
-              <li>
-                <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5">
-                  <MessageCircle className="w-3 h-3 text-[#25D366]" />
-                  <span>WhatsApp Us</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-
-        {/* Bottom Copyright Row */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[#DDD4C1]/50 font-mono">
-          <div className="flex flex-wrap items-center gap-4">
-            <span>© 2026 TAIFER — THE GREAT OUTDOORS.</span>
-            <span>·</span>
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <span>·</span>
-            <a href="#" className="hover:text-white transition-colors">Terms & Conditions</a>
-            <span>·</span>
-            <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5 text-[#B89A5A]">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Certified Wilderness Operator</span>
+    <footer className="relative overflow-hidden bg-[#032f27] text-[#f4f1e8]">
+      <svg className="pointer-events-none absolute right-0 top-0 hidden h-full w-[42%] opacity-[.17] lg:block" viewBox="0 0 640 210" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+        <path d="M12 175 L112 70 L166 113 L257 12 L351 111 L433 41 L612 186 M77 180 L174 97 L229 178 M300 180 L395 80 L525 180" fill="none" stroke="#d8b56a" strokeWidth="2" />
+        <path d="M0 190 H640" stroke="#d8b56a" strokeWidth="1" />
+      </svg>
+      <div className="relative mx-auto max-w-[1280px] px-5 py-9 sm:px-8 lg:py-11">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.55fr_1fr_1fr_1fr_1.2fr]">
+          <div className="flex flex-col items-start">
+            <Logo variant="light" size="md" showTagline={false} />
+            <p className="mt-1 text-[9px] font-bold tracking-[.12em] text-[#d8b56a]">JOURNEYS THAT STAY WITH YOU FOREVER.</p>
+            <div className="mt-4 flex gap-3">
+              <a href="#" aria-label="Instagram" className="text-white/85 transition hover:text-[#d8b56a]"><Camera className="h-4 w-4" /></a>
+              <a href="#" aria-label="YouTube" className="text-white/85 transition hover:text-[#d8b56a]"><Tv2 className="h-4 w-4" /></a>
+              <a href="#" aria-label="Facebook" className="text-white/85 transition hover:text-[#d8b56a]"><Circle className="h-4 w-4" /></a>
+              <a href="#" aria-label="WhatsApp" className="text-white/85 transition hover:text-[#d8b56a]"><MessageCircle className="h-4 w-4" /></a>
             </div>
-
-            <button
-              onClick={scrollToTop}
-              className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
-              aria-label="Scroll to top"
-            >
-              <ArrowUp className="w-3.5 h-3.5" />
-            </button>
           </div>
+          {linkGroups.map((group) => <div key={group.title}><h3 className="text-[10px] font-bold uppercase tracking-[.15em] text-[#f4f1e8]">{group.title}</h3><ul className="mt-3 space-y-1.5 text-[11px] text-white/70">{group.links.map((link) => <li key={link}><a href="#" className="transition hover:text-[#d8b56a]">{link}</a></li>)}</ul></div>)}
+          <div><h3 className="text-[10px] font-bold uppercase tracking-[.15em] text-[#f4f1e8]">Contact</h3><ul className="mt-3 space-y-3 text-[11px] text-white/75"><li><a href="tel:+919876543210" className="flex items-center gap-2 transition hover:text-[#d8b56a]"><Phone className="h-3.5 w-3.5 text-[#d8b56a]" />+91 98765 43210</a></li><li><a href="mailto:hello@taifer.com" className="flex items-center gap-2 transition hover:text-[#d8b56a]"><Mail className="h-3.5 w-3.5 text-[#d8b56a]" />hello@taifer.com</a></li><li><a href="https://wa.me/919876543210" className="flex items-center gap-2 transition hover:text-[#d8b56a]"><MessageCircle className="h-3.5 w-3.5 text-[#d8b56a]" />WhatsApp Us</a></li></ul></div>
         </div>
-
       </div>
+      <div className="relative border-t border-white/10"><div className="mx-auto flex max-w-[1280px] flex-col gap-3 px-5 py-4 text-[10px] text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-8"><span>Â© 2025 Taifer. All rights reserved.</span><div className="flex flex-wrap gap-x-4 gap-y-1"><a href="#" className="hover:text-white">Privacy Policy</a><span className="hidden sm:inline">|</span><a href="#" className="hover:text-white">Terms & Conditions</a><span className="hidden sm:inline">|</span><a href="#" className="hover:text-white">Cookie Policy</a></div></div></div>
     </footer>
   );
 }
