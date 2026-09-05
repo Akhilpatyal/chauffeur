@@ -4,8 +4,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // Common Components
-import Preloader from './components/common/Preloader';
-import CustomCursor from './components/common/CustomCursor';
 import Navbar from './components/navigation/Navbar';
 
 // Hero Components
@@ -16,10 +14,8 @@ import CategoryRail from './components/hero/CategoryRail';
 import HandpickedJourneys from './components/sections/HandpickedJourneys';
 import CampaignBanner from './components/sections/CampaignBanner';
 import WhereToDisappear from './components/sections/WhereToDisappear';
-import TravelByFeeling from './components/sections/TravelByFeeling';
 import GroupTours from './components/sections/GroupTours';
 import WhyUsStorytelling from './components/sections/WhyUsStorytelling';
-import CommunityStories from './components/sections/CommunityStories';
 import TravelJournal from './components/sections/TravelJournal';
 import PlanYourEscape from './components/sections/PlanYourEscape';
 import Testimonials from './components/sections/Testimonials';
@@ -30,6 +26,12 @@ import HotelsPage from './components/hotels/HotelsPage';
 import AboutPage from './components/about/AboutPage';
 import JourneyPage from './components/journey/JourneyPage';
 import GroupToursPage from './components/groupTours/GroupToursPage';
+import ContactPage from './components/contact/ContactPage';
+import LegalPage from './components/legal/LegalPage';
+import DestinationPage, {
+  DestinationsIndex,
+  NotFoundPage,
+} from './components/destinations/DestinationPage';
 
 // Modals
 import PlanMyTripModal from './components/modals/PlanMyTripModal';
@@ -39,31 +41,22 @@ import JournalReaderModal from './components/modals/JournalReaderModal';
 // Data
 import { journeys } from './data/journeys';
 import { destinations } from './data/destinations';
+import { navigateTo, redirectLegacyHash, resolveRoute, usePathname } from './router';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* Hash-based routing: '#hotels' and '#about' swap the page, anything else is home */
-const routedPages = ['hotels', 'about', 'journey', 'group-tours'];
-
-function resolveRoute() {
-  const [name, id] = window.location.hash.replace('#', '').split('/');
-  return { page: routedPages.includes(name) ? name : 'home', journeyId: id || null };
-}
+redirectLegacyHash();
 
 export default function App() {
-  const [route, setRoute] = useState(() => resolveRoute());
-  const { page, journeyId } = route;
-  useEffect(() => {
-    const update = () => setRoute(resolveRoute());
-    window.addEventListener('hashchange', update);
-    return () => window.removeEventListener('hashchange', update);
-  }, []);
+  const pathname = usePathname();
+  const { page, param } = resolveRoute(pathname);
+  const journeyId = page === 'journey' ? param : null;
 
-  /* Start each routed page at the top and re-measure pinned scroll triggers */
+  /* Start each page at the top and re-measure pinned scroll triggers */
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     ScrollTrigger.refresh();
-  }, [page, journeyId]);
+  }, [pathname]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [planTripModalOpen, setPlanTripModalOpen] = useState(false);
   const [storyModalOpen, setStoryModalOpen] = useState(false);
@@ -105,19 +98,12 @@ export default function App() {
 
   /* Opens the full journey detail page - '#journey/<id>' */
   const handleSelectJourney = (journey) => {
-    window.location.hash = journey?.id ? `journey/${journey.id}` : 'journey';
+    navigateTo(journey?.id ? `/journeys/${journey.id}` : '/journeys');
   };
 
+  /* Destination cards open their own page - real URLs Google can index */
   const handleSelectDestination = (destination) => {
-    const matched = journeys.find((j) =>
-      j.location.toLowerCase().includes(destination.name.toLowerCase()) ||
-      destination.name.toLowerCase().includes(j.location.toLowerCase())
-    );
-    if (matched) {
-      handleSelectJourney(matched);
-    } else {
-      handleOpenPlanTrip();
-    }
+    navigateTo(`/destinations/${destination.id}`);
   };
 
   /* Works from any routed page - returns home first when needed */
@@ -129,7 +115,7 @@ export default function App() {
       scrollToJourneys();
       return;
     }
-    window.location.hash = '';
+    navigateTo('/');
     window.setTimeout(scrollToJourneys, 180);
   };
 
@@ -162,12 +148,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F4F1E8] text-[#003B24] relative selection:bg-[#075333] selection:text-[#F4F1E8] overflow-x-hidden font-sans">
-      
-      {/* 0. TAIFER Opening Sequence Preloader (1.2-1.4s) */}
-      <Preloader />
-
-      {/* Desktop Contextual Custom Cursor */}
-      <CustomCursor />
 
       {/* Transparent-to-Glass Navbar with Official Logo */}
       <Navbar
@@ -183,6 +163,20 @@ export default function App() {
       {page === 'hotels' && <HotelsPage />}
 
       {page === 'group-tours' && <GroupToursPage onPlanTrip={handleOpenPlanTrip} />}
+
+      {page === 'contact' && <ContactPage onPlanTrip={handleOpenPlanTrip} />}
+
+      {page === 'destinations' && <DestinationsIndex />}
+
+      {page === 'destination' && (
+        <DestinationPage slug={param} onPlanTrip={handleOpenPlanTrip} />
+      )}
+
+      {page === 'legal' && (
+        <LegalPage slug={param} onNavigate={(slug) => navigateTo(`/${slug}`)} />
+      )}
+
+      {page === 'notFound' && <NotFoundPage />}
 
       {page === 'journey' && (
         <JourneyPage journeyId={journeyId} onCheckAvailability={handleOpenPlanTrip} />
@@ -232,13 +226,6 @@ export default function App() {
           onSelectDestination={handleSelectDestination}
         />
 
-        {/* 6. DARK STORY: Travel By Feeling (Balanced 40/60 Split) */}
-        <TravelByFeeling
-          onSelectFeeling={(feeling) => {
-            handleOpenPlanTrip();
-          }}
-        />
-
         {/* 7. IVORY TRIBES: Group Expeditions Directory */}
         <GroupTours
           onJoinTour={(tour) => {
@@ -253,11 +240,6 @@ export default function App() {
 
         {/* 8. DARK WHY TAIFER: Pinned 4-Pillar Ethos (50/50 Split) */}
         <WhyUsStorytelling />
-
-        {/* 9. IVORY STORIES: People of the Journey */}
-        <CommunityStories
-          onWatchStories={handleWatchStories}
-        />
 
         {/* 10. IVORY JOURNAL: From the Trail Journal */}
         <TravelJournal

@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { Calendar, Users, Star, ArrowRight } from 'lucide-react';
-import { groupTours } from '../../data/groupTours';
+import { groupTourCards } from '../../data/groupToursPage';
 
 export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
   const [activeIdx, setActiveIdx] = useState(0);
-  const featuredTour = groupTours[activeIdx] || groupTours[0];
+  const featuredTour = groupTourCards[activeIdx] || groupTourCards[0];
 
   const upcomingTours = [
-    { id: 1, title: 'Spiti Backpacking', sub: '4 Days · 12 Seats', price: '₹14,999', hot: true, data: groupTours[0] },
-    { id: 2, title: 'Kashmir Winter Escape', sub: '5 Days · 10 Seats', price: '₹16,999', hot: false, data: groupTours[1] },
-    { id: 3, title: 'Himachal Weekend', sub: '3 Days · 8 Seats', price: '₹7,999', hot: false, data: groupTours[2] },
-    { id: 4, title: 'Meghalaya Group Tour', sub: '4 Days · 6 Seats', price: '₹9,999', hot: false, data: groupTours[3] },
+    /* One catalogue, shared with the Group Tours page - no contradictory pricing */
+    ...groupTourCards.slice(0, 4).map((tour, i) => ({
+      id: i + 1,
+      title: tour.title,
+      sub: `${tour.duration} · ${tour.seatsRemaining} seats left`,
+      price: tour.price,
+      hot: tour.badge === 'Best Seller',
+      data: tour,
+    })),
   ];
 
   return (

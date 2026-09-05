@@ -35,16 +35,16 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-2xl bg-[#FAF8F2] rounded-3xl sm:rounded-[32px] border border-[#E8DFCE] shadow-2xl overflow-hidden text-[#172326] flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-2xl bg-[#FAF9F5] rounded-3xl sm:rounded-[32px] border border-[#E3DDCB] shadow-2xl overflow-hidden text-[#012C18] flex flex-col max-h-[90vh]">
         
         {/* Modal Header */}
-        <div className="p-6 sm:p-8 bg-[#073B3A] text-white flex items-center justify-between border-b border-white/10 shrink-0">
+        <div className="p-6 sm:p-8 bg-[#043A25] text-white flex items-center justify-between border-b border-white/10 shrink-0">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-widest text-[#DFC07D] font-mono mb-1">
+            <div className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-widest text-[#B89A5A] font-mono mb-1">
               <Sparkles className="w-3.5 h-3.5" />
               <span>CUSTOM EXPEDITION CONCIERGE</span>
             </div>
-            <h3 className="font-display text-2xl sm:text-3xl text-[#F6F3EA]">
+            <h3 className="font-display text-2xl sm:text-3xl text-[#F4F1E8]">
               Plan Your Bespoke Escape
             </h3>
           </div>
@@ -62,13 +62,13 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
         <div className="p-6 sm:p-8 overflow-y-auto flex-1">
           {isSubmitted ? (
             <div className="text-center py-8 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-[#0B9FA8]/20 text-[#075E68] flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 rounded-full bg-[#075333]/20 text-[#075E68] flex items-center justify-center mx-auto">
                 <Check className="w-8 h-8" />
               </div>
-              <h4 className="font-display text-2xl text-[#073B3A]">
+              <h4 className="font-display text-2xl text-[#043A25]">
                 Your Journey Blueprint is in Motion!
               </h4>
-              <p className="text-sm text-[#172326]/75 max-w-md mx-auto leading-relaxed">
+              <p className="text-sm text-[#012C18]/75 max-w-md mx-auto leading-relaxed">
                 Our senior expedition curator is crafting a personalized itinerary for <strong>{formData.destination || 'your frontier'}</strong>. We will reach out to <strong>{formData.phone || formData.email}</strong> within 24 hours.
               </p>
               <div className="pt-4">
@@ -81,7 +81,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
             <form onSubmit={handleSubmit} className="space-y-6">
               
               {/* Progress Steps */}
-              <div className="flex items-center justify-between border-b border-[#E8DFCE] pb-4">
+              <div className="flex items-center justify-between border-b border-[#E3DDCB] pb-4">
                 <span className="text-xs font-mono font-bold text-[#075E68] uppercase tracking-wider">
                   Step {step} of 3
                 </span>
@@ -90,7 +90,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                     <div
                       key={s}
                       className={`w-8 h-1.5 rounded-full transition-all ${
-                        s <= step ? 'bg-[#075E68]' : 'bg-[#E8DFCE]'
+                        s <= step ? 'bg-[#075E68]' : 'bg-[#E3DDCB]'
                       }`}
                     />
                   ))}
@@ -101,7 +101,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
               {step === 1 && (
                 <div className="space-y-5 animate-fadeIn">
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#073B3A] block mb-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#043A25] block mb-2">
                       Where would you like to wander?
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -112,8 +112,8 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                           onClick={() => setFormData({ ...formData, destination: dest })}
                           className={`p-2.5 rounded-xl text-xs font-semibold border transition-all text-left ${
                             formData.destination === dest
-                              ? 'bg-[#073B3A] text-white border-[#073B3A] shadow-xs'
-                              : 'bg-white text-[#172326]/80 border-[#E8DFCE] hover:border-[#073B3A]'
+                              ? 'bg-[#043A25] text-white border-[#043A25] shadow-xs'
+                              : 'bg-white text-[#012C18]/80 border-[#E3DDCB] hover:border-[#043A25]'
                           }`}
                         >
                           {dest}
@@ -123,7 +123,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#073B3A] block mb-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#043A25] block mb-2">
                       What energy are you seeking?
                     </label>
                     <div className="space-y-2">
@@ -135,11 +135,11 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                           className={`w-full p-3 rounded-xl text-xs font-semibold border transition-all text-left flex items-center justify-between ${
                             formData.vibe === v
                               ? 'bg-[#075E68] text-white border-[#075E68]'
-                              : 'bg-white text-[#172326]/80 border-[#E8DFCE] hover:border-[#075E68]'
+                              : 'bg-white text-[#012C18]/80 border-[#E3DDCB] hover:border-[#075E68]'
                           }`}
                         >
                           <span>{v}</span>
-                          {formData.vibe === v && <Check className="w-4 h-4 text-[#DFC07D]" />}
+                          {formData.vibe === v && <Check className="w-4 h-4 text-[#B89A5A]" />}
                         </button>
                       ))}
                     </div>
@@ -151,7 +151,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
               {step === 2 && (
                 <div className="space-y-5 animate-fadeIn">
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#073B3A] block mb-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#043A25] block mb-2">
                       Trip Duration
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -162,8 +162,8 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                           onClick={() => setFormData({ ...formData, duration: d })}
                           className={`p-3 rounded-xl text-xs font-semibold border transition-all text-left ${
                             formData.duration === d
-                              ? 'bg-[#073B3A] text-white border-[#073B3A]'
-                              : 'bg-white text-[#172326]/80 border-[#E8DFCE] hover:border-[#073B3A]'
+                              ? 'bg-[#043A25] text-white border-[#043A25]'
+                              : 'bg-white text-[#012C18]/80 border-[#E3DDCB] hover:border-[#043A25]'
                           }`}
                         >
                           {d}
@@ -173,7 +173,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#073B3A] block mb-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#043A25] block mb-2">
                       Estimated Budget Preference
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -185,7 +185,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                           className={`p-3 rounded-xl text-xs font-semibold border transition-all text-left ${
                             formData.budget === b
                               ? 'bg-[#075E68] text-white border-[#075E68]'
-                              : 'bg-white text-[#172326]/80 border-[#E8DFCE] hover:border-[#075E68]'
+                              : 'bg-white text-[#012C18]/80 border-[#E3DDCB] hover:border-[#075E68]'
                           }`}
                         >
                           {b}
@@ -200,7 +200,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
               {step === 3 && (
                 <div className="space-y-4 animate-fadeIn">
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#073B3A] block mb-1">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#043A25] block mb-1">
                       Full Name
                     </label>
                     <input
@@ -209,13 +209,13 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                       placeholder="e.g. Maya Iyer"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-[#E8DFCE] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#073B3A]"
+                      className="w-full px-4 py-2.5 rounded-xl border border-[#E3DDCB] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#043A25]"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-[#073B3A] block mb-1">
+                      <label className="text-xs font-bold uppercase tracking-wider text-[#043A25] block mb-1">
                         Phone / WhatsApp
                       </label>
                       <input
@@ -224,11 +224,11 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                         placeholder="+91 98765 00000"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl border border-[#E8DFCE] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#073B3A]"
+                        className="w-full px-4 py-2.5 rounded-xl border border-[#E3DDCB] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#043A25]"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-[#073B3A] block mb-1">
+                      <label className="text-xs font-bold uppercase tracking-wider text-[#043A25] block mb-1">
                         Email Address
                       </label>
                       <input
@@ -237,13 +237,13 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                         placeholder="maya@example.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl border border-[#E8DFCE] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#073B3A]"
+                        className="w-full px-4 py-2.5 rounded-xl border border-[#E3DDCB] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#043A25]"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#073B3A] block mb-1">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#043A25] block mb-1">
                       Special requests / preferences (Optional)
                     </label>
                     <textarea
@@ -251,19 +251,19 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                       placeholder="e.g. Vegetarian meals, stargazing dome preference, traveling with parents..."
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      className="w-full px-4 py-2 rounded-xl border border-[#E8DFCE] bg-white text-xs focus:outline-none focus:ring-2 focus:ring-[#073B3A]"
+                      className="w-full px-4 py-2 rounded-xl border border-[#E3DDCB] bg-white text-xs focus:outline-none focus:ring-2 focus:ring-[#043A25]"
                     ></textarea>
                   </div>
                 </div>
               )}
 
               {/* Navigation Actions */}
-              <div className="flex items-center justify-between pt-4 border-t border-[#E8DFCE]">
+              <div className="flex items-center justify-between pt-4 border-t border-[#E3DDCB]">
                 {step > 1 ? (
                   <button
                     type="button"
                     onClick={handlePrev}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#073B3A] hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#043A25] hover:underline cursor-pointer"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     <span>Back</span>
@@ -276,7 +276,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="px-6 py-2.5 rounded-full bg-[#073B3A] hover:bg-[#075E68] text-white text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-2.5 rounded-full bg-[#043A25] hover:bg-[#075E68] text-white text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
                   >
                     <span>Next Step</span>
                     <ArrowRight className="w-3.5 h-3.5" />

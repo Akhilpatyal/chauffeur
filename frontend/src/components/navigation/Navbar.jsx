@@ -3,6 +3,7 @@ import { Search, Phone, ArrowRight, Menu, X } from 'lucide-react';
 import Logo from '../common/Logo';
 import MobileMenu from './MobileMenu';
 import { cn } from '../../utils/helpers';
+import { navigateTo } from '../../router';
 
 export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'home' }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -21,39 +22,37 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  /* `path` links are their own page; `anchor` links are homepage sections */
   const navLinks = [
-    { name: 'Destinations', href: '#destinations' },
-    { name: 'Journeys', href: '#journeys' },
-    { name: 'Group Tours', href: '#group-tours' },
-    { name: 'Weekend Escapes', href: '#destinations' },
-    { name: 'Hotels', href: '#hotels' },
-    { name: 'Stories', href: '#community' },
-    { name: 'About', href: '#about' },
+    { name: 'Journeys', anchor: 'journeys' },
+    { name: 'Group Tours', path: '/group-tours' },
+    { name: 'Weekend Escapes', anchor: 'destinations' },
+    { name: 'Hotels', path: '/hotels' },
+    { name: 'Stories', anchor: 'journal' },
+    { name: 'About', path: '/about' },
   ];
 
-  /* Hash values that swap the whole page rather than scroll to a section */
-  const pageRoutes = ['#hotels', '#about', '#group-tours'];
-
-  const handleLinkClick = (e, href) => {
+  const handleLinkClick = (e, link) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
     e.preventDefault();
     setMobileMenuOpen(false);
 
-    if (pageRoutes.includes(href)) {
-      window.location.hash = href.slice(1);
+    if (link.path) {
+      navigateTo(link.path);
       return;
     }
 
-    const target = document.querySelector(href);
+    const target = document.getElementById(link.anchor);
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
       return;
     }
 
     /* Section lives on the home page - go there first, then scroll */
-    window.location.hash = '';
+    navigateTo('/');
     window.setTimeout(() => {
-      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
-    }, 160);
+      document.getElementById(link.anchor)?.scrollIntoView({ behavior: 'smooth' });
+    }, 180);
   };
 
   return (
@@ -75,7 +74,7 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
             onClick={(e) => {
               e.preventDefault();
               if (activePage !== 'home') {
-                window.location.hash = '';
+                navigateTo('/');
                 return;
               }
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -93,12 +92,12 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
             {navLinks.map((link) => (
               <a
                 key={link.name}
-                href={link.href}
-                onClick={(e) => handleLinkClick(e, link.href)}
+                href={link.path || `/#${link.anchor}`}
+                onClick={(e) => handleLinkClick(e, link)}
                 className={cn(
                   'text-[14px] font-sans font-medium tracking-wide relative py-1 transition-all duration-300 hover:-translate-y-px hover:text-[#B89A5A]',
                   'after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-[#B89A5A] after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100',
-                  link.href === `#${activePage}`
+                  link.path === `/${activePage}`
                     ? 'after:scale-x-100 text-[#B89A5A]'
                     : 'after:scale-x-0',
                   isScrolled ? 'text-[#003B24]' : 'text-[#F4F1E8]'
@@ -125,9 +124,11 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
 
             {/* Contact */}
             <a
-              href="tel:+919876543210"
+              href="/contact"
+              onClick={(e) => handleLinkClick(e, { path: '/contact' })}
               className={cn(
                 'flex items-center gap-1.5 text-xs font-sans font-medium transition-colors',
+                activePage === 'contact' ? 'text-[#B89A5A]' : '',
                 isScrolled ? 'text-[#003B24] hover:text-[#075333]' : 'text-white/90 hover:text-white'
               )}
             >

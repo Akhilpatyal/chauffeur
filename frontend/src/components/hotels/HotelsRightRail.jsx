@@ -202,7 +202,7 @@ function PopularList() {
         {popularDestinations.map((d, i) => (
           <li key={d.name}>
             <a
-              href="#hotels"
+              href="/hotels"
               className="group flex items-center gap-2.5 text-left"
             >
               <span className="w-3 shrink-0 text-[11px] font-medium text-[#98A09A]">

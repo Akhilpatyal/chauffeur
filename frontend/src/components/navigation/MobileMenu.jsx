@@ -25,8 +25,8 @@ export default function MobileMenu({ isOpen, onClose, navLinks, onLinkClick, onP
         {navLinks.map((link, idx) => (
           <a
             key={link.name}
-            href={link.href}
-            onClick={(e) => onLinkClick(e, link.href)}
+            href={link.path || `/#${link.anchor}`}
+            onClick={(e) => onLinkClick(e, link)}
             className="font-display text-2xl sm:text-3xl text-[#F4F1E8] hover:text-[#B89A5A] transition-colors flex items-center justify-between"
           >
             <span>{link.name}</span>

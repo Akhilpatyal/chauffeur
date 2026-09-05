@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { navigateTo } from '../../router';
 import { ShieldCheck, Sparkles } from 'lucide-react';
 import SearchBar from '../navigation/SearchBar';
 
@@ -70,7 +71,7 @@ export default function HeroSection({ onSearchSubmit }) {
           <p className="mt-5 max-w-xs text-sm font-medium leading-relaxed text-white/90 sm:max-w-md sm:text-base">Curated journeys to the world's most breathtaking places.</p>
 
           <div className="mt-6 flex rounded-full border border-white/20 bg-[#258198]/75 p-1.5 text-xs font-semibold shadow-xl backdrop-blur-sm sm:mt-7 sm:text-sm">
-            {['Packages', 'Hotels', 'Weekend Trips', 'Group Tours'].map((item, index) => <button key={item} type="button" onClick={() => { if (item === 'Hotels') window.location.hash = 'hotels'; }} className={`rounded-full px-3 py-2.5 transition-colors sm:px-7 ${index === 0 ? 'bg-[#04354e] text-white shadow-md' : 'text-white/85 hover:bg-white/10'}`}>{item}</button>)}
+            {['Packages', 'Hotels', 'Weekend Trips', 'Group Tours'].map((item, index) => <button key={item} type="button" onClick={() => { if (item === 'Hotels') navigateTo('/hotels'); }} className={`rounded-full px-3 py-2.5 transition-colors sm:px-7 ${index === 0 ? 'bg-[#04354e] text-white shadow-md' : 'text-white/85 hover:bg-white/10'}`}>{item}</button>)}
           </div>
         </div>
         <div className="relative z-20 -mb-1 w-full pb-8 sm:pb-10"><SearchBar onSearchSubmit={onSearchSubmit} /></div>

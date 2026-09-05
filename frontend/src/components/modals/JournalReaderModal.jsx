@@ -7,7 +7,7 @@ export default function JournalReaderModal({ article, isOpen, onClose, onExplore
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-3xl bg-[#FAF8F2] rounded-3xl sm:rounded-[36px] border border-[#E8DFCE] shadow-2xl overflow-hidden text-[#172326] flex flex-col max-h-[92vh]">
+      <div className="relative w-full max-w-3xl bg-[#FAF9F5] rounded-3xl sm:rounded-[36px] border border-[#E3DDCB] shadow-2xl overflow-hidden text-[#012C18] flex flex-col max-h-[92vh]">
         
         {/* Header Image */}
         <div className="relative h-64 sm:h-72 shrink-0 overflow-hidden">
@@ -27,18 +27,18 @@ export default function JournalReaderModal({ article, isOpen, onClose, onExplore
           </button>
 
           <div className="absolute bottom-5 left-6 right-6 text-white">
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#073B3A]/90 text-[#DFC07D] border border-white/20 mb-2 inline-block">
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#043A25]/90 text-[#B89A5A] border border-white/20 mb-2 inline-block">
               {article.category}
             </span>
-            <h3 className="font-display text-2xl sm:text-3xl text-[#F6F3EA] leading-tight">
+            <h3 className="font-display text-2xl sm:text-3xl text-[#F4F1E8] leading-tight">
               {article.title}
             </h3>
           </div>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 sm:p-10 overflow-y-auto flex-1 space-y-6 bg-[#FAF8F2]">
-          <div className="flex items-center justify-between border-b border-[#E8DFCE] pb-4 text-xs text-[#075E68] font-mono">
+        <div className="p-6 sm:p-10 overflow-y-auto flex-1 space-y-6 bg-[#FAF9F5]">
+          <div className="flex items-center justify-between border-b border-[#E3DDCB] pb-4 text-xs text-[#075E68] font-mono">
             <div className="flex items-center gap-2">
               <User className="w-3.5 h-3.5" />
               <span>By {article.author}</span>
@@ -49,8 +49,8 @@ export default function JournalReaderModal({ article, isOpen, onClose, onExplore
             </div>
           </div>
 
-          <div className="prose prose-stone text-base sm:text-lg text-[#172326]/85 font-light leading-relaxed space-y-4">
-            <p className="font-serif italic text-lg sm:text-xl text-[#073B3A] border-l-2 border-[#0B9FA8] pl-4 py-1">
+          <div className="prose prose-stone text-base sm:text-lg text-[#012C18]/85 font-light leading-relaxed space-y-4">
+            <p className="font-serif italic text-lg sm:text-xl text-[#043A25] border-l-2 border-[#075333] pl-4 py-1">
               "{article.excerpt}"
             </p>
             <p>
@@ -61,8 +61,8 @@ export default function JournalReaderModal({ article, isOpen, onClose, onExplore
             </p>
           </div>
 
-          <div className="pt-6 border-t border-[#E8DFCE] flex items-center justify-between">
-            <span className="text-xs font-mono text-[#172326]/60">Published in Travel Coffee Journal</span>
+          <div className="pt-6 border-t border-[#E3DDCB] flex items-center justify-between">
+            <span className="text-xs font-mono text-[#012C18]/60">Published in Travel Coffee Journal</span>
             <MagneticButton
               variant="teal"
               size="sm"

@@ -30,14 +30,14 @@ export default function TravelerStoryModal({ isOpen, onClose }) {
           {/* Playing overlay bar */}
           <div className="absolute top-5 left-5 flex items-center gap-2 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15 text-xs">
             <span className="w-2 h-2 rounded-full bg-[#E85D4A] animate-pulse"></span>
-            <span className="font-mono text-[#DFC07D]">03:42 · 4K CINEMATIC REEL</span>
+            <span className="font-mono text-[#B89A5A]">03:42 · 4K CINEMATIC REEL</span>
           </div>
 
           <div className="absolute bottom-6 left-6 right-6">
-            <span className="text-[10px] uppercase tracking-widest text-[#0B9FA8] font-bold block mb-1">
+            <span className="text-[10px] uppercase tracking-widest text-[#075333] font-bold block mb-1">
               EXPEDITION HIGHLIGHT
             </span>
-            <h3 className="font-display text-2xl sm:text-3xl text-[#F6F3EA]">
+            <h3 className="font-display text-2xl sm:text-3xl text-[#F4F1E8]">
               Under the Milky Way: Spiti Autumn Odyssey
             </h3>
           </div>
@@ -45,15 +45,15 @@ export default function TravelerStoryModal({ isOpen, onClose }) {
 
         {/* Story Metadata & Caption */}
         <div className="p-6 sm:p-8 bg-[#042423] border-t border-white/10 space-y-4">
-          <p className="text-sm sm:text-base text-[#E8DFCE]/85 leading-relaxed font-light">
+          <p className="text-sm sm:text-base text-[#E3DDCB]/85 leading-relaxed font-light">
             "When we reached Chandratal Lake at sunset, nobody pulled out their phone for five minutes. We just stood there in the wind, looking at the water reflecting 18,000-foot peaks. That was the moment I realized why we travel."
           </p>
 
-          <div className="flex items-center justify-between pt-2 text-xs text-[#DFC07D] font-mono">
+          <div className="flex items-center justify-between pt-2 text-xs text-[#B89A5A] font-mono">
             <span>Captured by Aryan Sen · Canon EOS R5</span>
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-full bg-[#0B9FA8] hover:bg-[#075E68] text-white font-bold transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-full bg-[#075333] hover:bg-[#075E68] text-white font-bold transition-colors cursor-pointer"
             >
               Explore This Expedition
             </button>

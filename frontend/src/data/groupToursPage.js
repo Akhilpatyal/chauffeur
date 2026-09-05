@@ -54,6 +54,8 @@ export const tourFilters = [
 export const groupTourCards = [
   {
     id: 'manali-explorer',
+    dates: '12 Dec – 17 Dec 2025',
+    seatsRemaining: 6,
     badge: 'Best Seller',
     category: 'Himalayan',
     duration: '6D · 5N',
@@ -73,6 +75,8 @@ export const groupTourCards = [
   },
   {
     id: 'kasol-tosh-escape',
+    dates: '19 Dec – 23 Dec 2025',
+    seatsRemaining: 4,
     badge: 'Popular',
     category: 'Weekend Getaways',
     duration: '5D · 4N',
@@ -92,6 +96,8 @@ export const groupTourCards = [
   },
   {
     id: 'spiti-circuit',
+    dates: '02 Jan – 08 Jan 2026',
+    seatsRemaining: 8,
     badge: 'Adventure',
     category: 'Adventure',
     duration: '7D · 6N',
@@ -106,6 +112,8 @@ export const groupTourCards = [
   },
   {
     id: 'himachal-heritage-trail',
+    dates: '09 Jan – 14 Jan 2026',
+    seatsRemaining: 5,
     badge: 'Cultural',
     category: 'Cultural',
     duration: '6D · 5N',
@@ -125,6 +133,8 @@ export const groupTourCards = [
   },
   {
     id: 'hampta-pass-trek',
+    dates: '23 Jan – 28 Jan 2026',
+    seatsRemaining: 7,
     badge: 'Trekking',
     category: 'Adventure',
     duration: '6D · 5N',

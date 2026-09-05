@@ -2,17 +2,72 @@
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230B9FA8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'/><path d='m4.93 4.93 4.24 4.24'/><path d='m14.83 9.17 4.24-4.24'/><path d='m14.83 14.83 4.24 4.24'/><path d='m9.17 14.83-4.24 4.24'/><circle cx='12' cy='12' r='4'/></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Travel Coffee — Handpicked cinematic journeys, group expeditions, and editorial travel stories across the Himalayas, Kashmir, Spiti, Ladakh, and beyond." />
-    <title>Travel Coffee — Travel Beyond Boundaries</title>
+
+    <title>TAIFER — The Great Outdoors | Himalayan Journeys, Group Tours & Stays</title>
+    <meta
+      name="description"
+      content="TAIFER curates small-group Himalayan journeys, group tours and handpicked stays across Manali, Spiti, Ladakh, Kashmir and Meghalaya. Real routes, local guides, no booking fees."
+    />
+    <meta name="theme-color" content="#012C18" />
+    <meta name="author" content="TAIFER — The Great Outdoors" />
+
+    <!-- TODO: set your production domain, then add:
+         <link rel="canonical" href="https://yourdomain.com/" />
+         <meta property="og:url" content="https://yourdomain.com/" /> -->
+
+    <!-- Link previews (WhatsApp, Instagram DMs, Facebook, LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="TAIFER — The Great Outdoors" />
+    <meta property="og:title" content="TAIFER — Journeys that stay with you forever" />
+    <meta
+      property="og:description"
+      content="Small-group Himalayan journeys, group tours and handpicked stays. Planned by people who have walked the route."
+    />
+    <!-- TODO: replace with a purpose-made 1200x630 image at /og-image.jpg -->
+    <meta property="og:image" content="/banner1.jpg" />
+    <meta property="og:image:alt" content="Himalayan peaks above a valley at sunrise" />
+    <meta property="og:locale" content="en_IN" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="TAIFER — Journeys that stay with you forever" />
+    <meta
+      name="twitter:description"
+      content="Small-group Himalayan journeys, group tours and handpicked stays."
+    />
+    <meta name="twitter:image" content="/banner1.jpg" />
+
+    <link rel="icon" type="image/png" href="/logo-taifer.png" />
+    <link rel="apple-touch-icon" href="/logo-taifer.png" />
 
     <!-- Google Fonts: Display Serif (DM Serif Display & Instrument Serif) + Clean Body (Plus Jakarta Sans & Manrope) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+    <!-- Tells Google the business is a real travel company; expand with your
+         registration number, opening hours and social profiles when available. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "TravelAgency",
+        "name": "TAIFER — The Great Outdoors",
+        "description": "Small-group Himalayan journeys, group tours and handpicked stays.",
+        "telephone": "+91 98765 43210",
+        "email": "hello@taifer.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Mall Road",
+          "addressLocality": "Manali",
+          "addressRegion": "Himachal Pradesh",
+          "postalCode": "175131",
+          "addressCountry": "IN"
+        },
+        "areaServed": "Himalayas, India"
+      }
+    </script>
   </head>
-  <body class="bg-[#F6F3EA] text-[#172326] antialiased selection:bg-[#0B9FA8] selection:text-white overflow-x-hidden font-sans">
+  <body class="bg-[#F4F1E8] text-[#012C18] antialiased selection:bg-[#075333] selection:text-[#F4F1E8] overflow-x-hidden font-sans">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

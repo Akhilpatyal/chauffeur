@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { ArrowRight, Download } from 'lucide-react';
 import Footer from '../footer/Footer';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
+import { navigateTo } from '../../router';
 import GroupToursHero from './GroupToursHero';
 import PopularGroupTours from './PopularGroupTours';
 import WhyTravelGroup from './WhyTravelGroup';
@@ -17,7 +18,7 @@ export default function GroupToursPage({ onPlanTrip }) {
 
   /* Every tour card and departure opens the journey detail page */
   const openTour = useCallback((tourId) => {
-    window.location.hash = `journey/${tourId}`;
+    navigateTo(`/journeys/${tourId}`);
   }, []);
 
   const scrollToTours = useCallback(() => {
