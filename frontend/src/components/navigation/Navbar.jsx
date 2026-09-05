@@ -32,7 +32,7 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
   ];
 
   /* Hash values that swap the whole page rather than scroll to a section */
-  const pageRoutes = ['#hotels', '#about'];
+  const pageRoutes = ['#hotels', '#about', '#group-tours'];
 
   const handleLinkClick = (e, href) => {
     e.preventDefault();

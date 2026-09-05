@@ -28,10 +28,11 @@ import Newsletter from './components/sections/Newsletter';
 import Footer from './components/footer/Footer';
 import HotelsPage from './components/hotels/HotelsPage';
 import AboutPage from './components/about/AboutPage';
+import JourneyPage from './components/journey/JourneyPage';
+import GroupToursPage from './components/groupTours/GroupToursPage';
 
 // Modals
 import PlanMyTripModal from './components/modals/PlanMyTripModal';
-import JourneyDetailModal from './components/modals/JourneyDetailModal';
 import TravelerStoryModal from './components/modals/TravelerStoryModal';
 import JournalReaderModal from './components/modals/JournalReaderModal';
 
@@ -42,17 +43,18 @@ import { destinations } from './data/destinations';
 gsap.registerPlugin(ScrollTrigger);
 
 /* Hash-based routing: '#hotels' and '#about' swap the page, anything else is home */
-const routedPages = ['hotels', 'about'];
+const routedPages = ['hotels', 'about', 'journey', 'group-tours'];
 
-function resolvePage() {
-  const hash = window.location.hash.replace('#', '');
-  return routedPages.includes(hash) ? hash : 'home';
+function resolveRoute() {
+  const [name, id] = window.location.hash.replace('#', '').split('/');
+  return { page: routedPages.includes(name) ? name : 'home', journeyId: id || null };
 }
 
 export default function App() {
-  const [page, setPage] = useState(() => resolvePage());
+  const [route, setRoute] = useState(() => resolveRoute());
+  const { page, journeyId } = route;
   useEffect(() => {
-    const update = () => setPage(resolvePage());
+    const update = () => setRoute(resolveRoute());
     window.addEventListener('hashchange', update);
     return () => window.removeEventListener('hashchange', update);
   }, []);
@@ -61,11 +63,9 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     ScrollTrigger.refresh();
-  }, [page]);
+  }, [page, journeyId]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [planTripModalOpen, setPlanTripModalOpen] = useState(false);
-  const [selectedJourney, setSelectedJourney] = useState(null);
-  const [journeyModalOpen, setJourneyModalOpen] = useState(false);
   const [storyModalOpen, setStoryModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [articleModalOpen, setArticleModalOpen] = useState(false);
@@ -103,13 +103,9 @@ export default function App() {
   const handleOpenPlanTrip = () => setPlanTripModalOpen(true);
   const handleClosePlanTrip = () => setPlanTripModalOpen(false);
 
+  /* Opens the full journey detail page - '#journey/<id>' */
   const handleSelectJourney = (journey) => {
-    setSelectedJourney(journey);
-    setJourneyModalOpen(true);
-  };
-  const handleCloseJourneyModal = () => {
-    setJourneyModalOpen(false);
-    setSelectedJourney(null);
+    window.location.hash = journey?.id ? `journey/${journey.id}` : 'journey';
   };
 
   const handleSelectDestination = (destination) => {
@@ -185,6 +181,12 @@ export default function App() {
 
       {/* Main Expedition Flow with Intentional Visual Rhythm */}
       {page === 'hotels' && <HotelsPage />}
+
+      {page === 'group-tours' && <GroupToursPage onPlanTrip={handleOpenPlanTrip} />}
+
+      {page === 'journey' && (
+        <JourneyPage journeyId={journeyId} onCheckAvailability={handleOpenPlanTrip} />
+      )}
 
       {page === 'about' && (
         <AboutPage
@@ -283,16 +285,6 @@ export default function App() {
       <PlanMyTripModal
         isOpen={planTripModalOpen}
         onClose={handleClosePlanTrip}
-      />
-
-      <JourneyDetailModal
-        journey={selectedJourney}
-        isOpen={journeyModalOpen}
-        onClose={handleCloseJourneyModal}
-        onBookNow={(j) => {
-          setJourneyModalOpen(false);
-          handleOpenPlanTrip();
-        }}
       />
 
       <TravelerStoryModal
