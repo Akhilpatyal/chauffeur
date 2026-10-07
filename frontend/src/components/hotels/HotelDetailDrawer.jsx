@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { ArrowRight, CircleCheckBig, MapPin, Star, X } from 'lucide-react';
 import { AmenityChip, money } from './hotelUi';
 
-export default function HotelDetailDrawer({ stay, onClose }) {
+export default function HotelDetailDrawer({ stay, onClose, onEnquire }) {
   useEffect(() => {
     if (!stay) return undefined;
     const onKey = (e) => e.key === 'Escape' && onClose();
@@ -98,11 +98,26 @@ export default function HotelDetailDrawer({ stay, onClose }) {
             )}
           </div>
 
+          {/*
+            Was a dead button labelled "View Full Stay" with no onClick and no
+            stay page to go to. Stays are enquiry-only today, so it now raises
+            an enquiry tagged with this property.
+          */}
           <button
             type="button"
+            onClick={() => {
+              onClose();
+              onEnquire?.({
+                kind: 'hotel',
+                slug: stay.id,
+                title: stay.name,
+                destination: stay.location,
+                source: 'hotel_enquiry',
+              });
+            }}
             className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#043A25] py-4 text-[11.5px] font-bold uppercase tracking-[0.12em] text-[#FAF9F5] transition hover:bg-[#012C18]"
           >
-            View Full Stay
+            Enquire About This Stay
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>

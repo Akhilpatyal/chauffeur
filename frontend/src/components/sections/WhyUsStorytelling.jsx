@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Award } from 'lucide-react';
 
 export default function WhyUsStorytelling() {
   const [activeStage, setActiveStage] = useState(0);

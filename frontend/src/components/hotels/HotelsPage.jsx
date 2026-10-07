@@ -21,6 +21,7 @@ import HotelsRightRail from './HotelsRightRail';
 import HotelDetailDrawer from './HotelDetailDrawer';
 import StayCard, { RecommendedCard } from './StayCard';
 import { money } from './hotelUi';
+import { useDocumentMeta } from '../../lib/seo';
 
 const PAGE_SIZE = 4;
 
@@ -64,7 +65,13 @@ function FilterChip({ label, onRemove }) {
   );
 }
 
-export default function HotelsPage() {
+export default function HotelsPage({ onEnquire }) {
+  useDocumentMeta({
+    title: 'Handpicked Stays & Mountain Hotels',
+    description:
+      'Boutique stays, riverside camps and heritage cottages we have stayed in ourselves. Filter by location, price, rating and amenities.',
+  });
+
   const [destination, setDestination] = useState('Manali, Himachal Pradesh');
   const [filters, setFilters] = useState(initialFilters);
   const [sort, setSort] = useState('Recommended');
@@ -444,7 +451,11 @@ export default function HotelsPage() {
       <Newsletter />
       <Footer />
 
-      <HotelDetailDrawer stay={selected} onClose={() => setSelected(null)} />
+      <HotelDetailDrawer
+        stay={selected}
+        onClose={() => setSelected(null)}
+        onEnquire={onEnquire}
+      />
 
       {/* Mobile filter sheet */}
       {mobileFilters && (

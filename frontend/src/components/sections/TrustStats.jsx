@@ -1,6 +1,5 @@
 import React from 'react';
-import { Star, ShieldCheck } from 'lucide-react';
-import { trustStats } from '../../data/testimonials';
+import { ShieldCheck } from 'lucide-react';
 
 export default function TrustStats() {
   const stats = [

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Compass, Heart, Snowflake, Wind, Users, Leaf } from 'lucide-react';
+import { ArrowRight, Compass, Heart, Snowflake, Users, Leaf } from 'lucide-react';
 import { feelings } from '../../data/feelings';
 
 export default function TravelByFeeling({ onSelectFeeling }) {

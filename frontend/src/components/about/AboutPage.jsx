@@ -11,10 +11,17 @@ import OurTeam from './OurTeam';
 import TravelerStory from './TravelerStory';
 import CommunitySection from './CommunitySection';
 import FinalCta from './FinalCta';
+import { useDocumentMeta } from '../../lib/seo';
 
 const breadcrumbs = ['Home', 'About Us'];
 
 export default function AboutPage({ onPlanTrip, onExploreJourneys, onWatchStory }) {
+  useDocumentMeta({
+    title: 'About Us — Who Plans Your Journey',
+    description:
+      'We are a small team of mountain guides, route planners and storytellers running small-group journeys across the Indian Himalaya.',
+  });
+
   return (
     <div className="min-h-screen bg-[#F4F1E8] text-[#012C18]">
       {/* 1. Hero - same banner and treatment as the Hotels page */}

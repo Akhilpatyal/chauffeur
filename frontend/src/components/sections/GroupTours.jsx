@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Users, Star, ArrowRight } from 'lucide-react';
+import { Calendar, Users, ArrowRight } from 'lucide-react';
 import { groupTourCards } from '../../data/groupToursPage';
 
 export default function GroupTours({ onJoinTour, onExploreAllGroups }) {

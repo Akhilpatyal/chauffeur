@@ -3,6 +3,7 @@ import { ArrowRight, Mail, Phone } from 'lucide-react';
 import Footer from '../footer/Footer';
 import { legalMeta, legalPages } from '../../data/legal';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
+import { useDocumentMeta } from '../../lib/seo';
 
 /*
  * Renders any of the three legal documents. Text wrapped in [[ ]] in the data
@@ -35,6 +36,11 @@ export default function LegalPage({ slug, onNavigate }) {
 
   const page = legalPages[slug] || legalPages.privacy;
   const others = Object.values(legalPages).filter((p) => p.slug !== page.slug);
+
+  useDocumentMeta({
+    title: page.title,
+    description: typeof page.intro === 'string' ? page.intro.slice(0, 180) : undefined,
+  });
 
   return (
     <div className="min-h-screen bg-[#F4F1E8] text-[#012C18]">

@@ -6,6 +6,7 @@ import { journeys } from '../../data/journeys';
 import { groupTourCards } from '../../data/groupToursPage';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
 import { linkProps, navigateTo } from '../../router';
+import { useDocumentMeta } from '../../lib/seo';
 
 /* Matches a destination to the journeys and tours that actually visit it */
 function tripsFor(destination) {
@@ -26,11 +27,35 @@ export default function DestinationPage({ slug, onPlanTrip }) {
   const scope = useRef(null);
   useScrollReveal(scope, { start: 'top 88%', stagger: 0.07 });
 
-  const destination = useMemo(
-    () => destinations.find((d) => d.id === slug) || destinations[0],
-    [slug]
-  );
-  const trips = useMemo(() => tripsFor(destination), [destination]);
+  /*
+   * Falling back to destinations[0] meant /destinations/<typo> quietly served
+   * the Spiti page under the wrong URL — a wrong answer presented as a right
+   * one, and duplicate content for search engines. A miss is now a 404.
+   */
+  const destination = useMemo(() => destinations.find((d) => d.id === slug) ?? null, [slug]);
+  const trips = useMemo(() => (destination ? tripsFor(destination) : []), [destination]);
+
+  useDocumentMeta({
+    title: destination
+      ? `${destination.name}, ${destination.state} — Travel Guide`
+      : 'Destination not found',
+    description: destination?.description,
+    image: destination?.image,
+    noindex: !destination,
+  });
+
+  if (!destination) return <NotFoundPage />;
+
+  /* Both CTAs on this page previously passed the click event straight into
+   * the enquiry handler; they now name the region being viewed. */
+  const enquire = () =>
+    onPlanTrip?.({
+      kind: 'destination',
+      slug: destination.id,
+      title: destination.name,
+      destination: destination.name,
+      source: 'plan_my_trip',
+    });
 
   const facts = [
     { icon: Mountain, label: 'Elevation', value: destination.elevation },
@@ -136,7 +161,7 @@ export default function DestinationPage({ slug, onPlanTrip }) {
               )}
               <button
                 type="button"
-                onClick={onPlanTrip}
+                onClick={enquire}
                 className="mt-4 w-full rounded-lg bg-[#043A25] py-3 text-[12px] font-semibold text-[#FAF9F5] transition-colors hover:bg-[#012C18]"
               >
                 Plan My Trip
@@ -194,7 +219,7 @@ export default function DestinationPage({ slug, onPlanTrip }) {
                 </p>
                 <button
                   type="button"
-                  onClick={onPlanTrip}
+                  onClick={enquire}
                   className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#043A25] px-6 py-3 text-[12px] font-semibold text-[#FAF9F5] transition-colors hover:bg-[#012C18]"
                 >
                   Ask for a route
@@ -240,6 +265,13 @@ export default function DestinationPage({ slug, onPlanTrip }) {
 export function DestinationsIndex() {
   const scope = useRef(null);
   useScrollReveal(scope, { start: 'top 88%', stagger: 0.06 });
+
+  useDocumentMeta({
+    title: 'Destinations We Know Well',
+    description:
+      'Eight Himalayan and Indian regions we run routes in: Spiti, Kashmir, Ladakh, Meghalaya, Rajasthan, Kerala, Uttarakhand and Himachal.',
+    image: '/banner1.jpg',
+  });
 
   return (
     <div className="min-h-screen bg-[#F4F1E8] text-[#012C18]">
@@ -304,6 +336,14 @@ export function DestinationsIndex() {
 
 /* 404 */
 export function NotFoundPage() {
+  /* `noindex` matters here: without it, every mistyped URL becomes a thin
+   * duplicate page competing with the real ones in search results. */
+  useDocumentMeta({
+    title: 'Page not found',
+    description: 'The page you were looking for has moved or never existed.',
+    noindex: true,
+  });
+
   return (
     <div className="flex min-h-screen flex-col bg-[#F4F1E8] text-[#012C18]">
       <div className="topographic-bg flex flex-1 items-center justify-center px-4 pt-28 pb-16">

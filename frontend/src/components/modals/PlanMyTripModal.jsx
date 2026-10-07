@@ -1,8 +1,29 @@
-import React, { useState } from 'react';
-import { X, Check, ArrowRight, ArrowLeft, Sparkles, MapPin, Calendar, DollarSign, Users, Mail, Phone, User } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { X, Check, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import MagneticButton from '../common/MagneticButton';
+import { submitLead, idempotencyKey } from '../../lib/api';
 
-export default function PlanMyTripModal({ isOpen, onClose }) {
+/*
+ * Multi-step bespoke-trip request, and the enquiry form behind every
+ * "Check availability" / "Plan a journey" button on the site.
+ *
+ * Submits to POST /api/v1/leads. The structured answers go in
+ * `tripPreferences` rather than being flattened into the message, so the
+ * dashboard can report on which destinations and budgets people ask for.
+ *
+ * `interest` is what the visitor was looking at when they clicked — a journey,
+ * a weekend escape, a stay, a group tour. Without it every enquiry arrives as
+ * an identical "Custom expedition" row and the dashboard cannot tell you which
+ * trips people actually ask about. It also pre-fills step 1 and lets the modal
+ * open straight on the contact step, because someone who clicked "Check
+ * availability" on a specific trip has already told us where they want to go.
+ */
+export default function PlanMyTripModal({
+  isOpen,
+  onClose,
+  interest = null,
+  source = 'plan_my_trip',
+}) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     destination: '',
@@ -17,6 +38,44 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
     notes: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+
+  const honeypot = useRef('');
+
+  /*
+   * One idempotency key per attempt: re-submitting after an error must not
+   * create a second lead, but a genuinely new enquiry needs a new key. It is
+   * state rather than a ref because it is reset below during render.
+   */
+  const [attemptKey, setAttemptKey] = useState(idempotencyKey);
+
+  /*
+   * Re-arm whenever the modal is reopened, or opened against a different trip.
+   * Without this, closing a submitted enquiry and opening another one would
+   * show the previous success panel and replay the first lead's key, so the
+   * second enquiry would never be stored.
+   *
+   * This is React's documented "adjust state when a prop changes" pattern:
+   * setting state during render re-runs the component before the browser
+   * paints, so the modal never flashes the previous enquiry's state the way an
+   * effect-based reset would.
+   */
+  const [openedFor, setOpenedFor] = useState(null);
+  const openKey = isOpen ? `${source}:${interest?.slug ?? ''}` : null;
+
+  if (isOpen && openedFor !== openKey) {
+    setOpenedFor(openKey);
+    setAttemptKey(idempotencyKey());
+    setIsSubmitted(false);
+    setSubmitError(null);
+    /* A known trip answers step 1 and 2, so start where we still need input. */
+    setStep(interest?.title ? 3 : 1);
+    setFormData((current) => ({
+      ...current,
+      destination: interest?.destination ?? interest?.title ?? current.destination,
+    }));
+  }
 
   if (!isOpen) return null;
 
@@ -28,9 +87,50 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
   const handleNext = () => setStep((s) => s + 1);
   const handlePrev = () => setStep((s) => Math.max(1, s - 1));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    if (submitting) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      await submitLead(
+        {
+          source,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          /* The dashboard shows `topic` in its list column, so it names the
+             trip when we know it rather than saying "Custom expedition". */
+          topic: interest?.title ?? 'Custom expedition',
+          message: formData.notes.trim() || undefined,
+          interest: interest
+            ? { kind: interest.kind, slug: interest.slug, title: interest.title }
+            : undefined,
+          tripPreferences: {
+            destination: formData.destination || undefined,
+            vibe: formData.vibe || undefined,
+            duration: formData.duration || undefined,
+            budget: formData.budget || undefined,
+            month: formData.month || undefined,
+          },
+          honeypot: honeypot.current,
+        },
+        attemptKey,
+      );
+
+      setIsSubmitted(true);
+    } catch (error) {
+      /*
+       * The contact fields all live on step 3, so sending the visitor back
+       * there is enough to let them fix whatever the server rejected.
+       */
+      if (error.fields) setStep(3);
+      setSubmitError(error.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -45,7 +145,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
               <span>CUSTOM EXPEDITION CONCIERGE</span>
             </div>
             <h3 className="font-display text-2xl sm:text-3xl text-[#F4F1E8]">
-              Plan Your Bespoke Escape
+              {interest?.title ? `Enquire: ${interest.title}` : 'Plan Your Bespoke Escape'}
             </h3>
           </div>
 
@@ -78,7 +178,7 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="relative space-y-6">
               
               {/* Progress Steps */}
               <div className="flex items-center justify-between border-b border-[#E3DDCB] pb-4">
@@ -257,6 +357,33 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                 </div>
               )}
 
+              {/*
+                Honeypot: hidden from sight and from assistive technology, so
+                only an automated form-filler will populate it.
+              */}
+              <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+                <label htmlFor="plan-website">Website</label>
+                <input
+                  id="plan-website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  onChange={(event) => {
+                    honeypot.current = event.target.value;
+                  }}
+                />
+              </div>
+
+              {submitError && (
+                <p
+                  role="alert"
+                  className="rounded-xl border border-[#E7C4B8] bg-[#FDF1EE] px-4 py-3 text-xs text-[#B4472A]"
+                >
+                  {submitError}
+                </p>
+              )}
+
               {/* Navigation Actions */}
               <div className="flex items-center justify-between pt-4 border-t border-[#E3DDCB]">
                 {step > 1 ? (
@@ -286,9 +413,10 @@ export default function PlanMyTripModal({ isOpen, onClose }) {
                     type="submit"
                     variant="coral"
                     size="md"
+                    disabled={submitting}
                     className="text-xs font-bold uppercase tracking-wider"
                   >
-                    Submit Itinerary Request
+                    {submitting ? 'Sending…' : 'Submit Itinerary Request'}
                   </MagneticButton>
                 )}
               </div>

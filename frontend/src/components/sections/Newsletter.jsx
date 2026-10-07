@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { cn } from '../../utils/helpers';
+import { subscribeNewsletter, idempotencyKey } from '../../lib/api';
 
 const subscriberAvatars = [
   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80',
@@ -12,6 +13,11 @@ const subscriberAvatars = [
  * Shared across Home, Hotels and About.
  * Defaults render the ivory homepage treatment; variant="forest" is the deep
  * forest version used on the About page.
+ *
+ * Posts to /api/v1/newsletter, which starts a double opt-in: the address is not
+ * added to any list until the emailed confirmation link is opened. The success
+ * panel says so, because telling someone they are subscribed when a confirmation
+ * is still pending is how a list quietly stops growing.
  */
 export default function Newsletter({
   variant = 'ivory',
@@ -23,12 +29,32 @@ export default function Newsletter({
 }) {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [alreadySubscribed, setAlreadySubscribed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
   const isForest = variant === 'forest';
 
-  const handleSubmit = (e) => {
+  const honeypot = useRef('');
+  const attemptKey = useRef(idempotencyKey());
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email.trim()) {
+    if (submitting || !email.trim()) return;
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await subscribeNewsletter(
+        { email: email.trim(), honeypot: honeypot.current },
+        attemptKey.current,
+      );
+      setAlreadySubscribed(response?.data?.status === 'already_subscribed');
       setSubmitted(true);
+    } catch (caught) {
+      setError(caught.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -83,12 +109,33 @@ export default function Newsletter({
               >
                 <CheckCircle2 className="w-5 h-5 text-[#B89A5A] shrink-0" />
                 <div>
-                  <p className="font-display text-base">You&rsquo;re on the manifest.</p>
-                  <p className="text-xs text-[#DDD4C1]/80 font-mono">Welcome to TAIFER Trail Notes.</p>
+                  <p className="font-display text-base">
+                    {alreadySubscribed ? 'You’re already on the manifest.' : 'Check your inbox.'}
+                  </p>
+                  <p className="text-xs text-[#DDD4C1]/80 font-mono">
+                    {alreadySubscribed
+                      ? 'Nothing further needed.'
+                      : 'Confirm the link we just sent to finish signing up.'}
+                  </p>
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex gap-2">
+              <form onSubmit={handleSubmit} className="relative flex gap-2">
+                {/* Honeypot: hidden from sight and from assistive technology. */}
+                <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+                  <label htmlFor={`newsletter-website-${variant}`}>Website</label>
+                  <input
+                    id={`newsletter-website-${variant}`}
+                    name="website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    onChange={(event) => {
+                      honeypot.current = event.target.value;
+                    }}
+                  />
+                </div>
+
                 <input
                   type="email"
                   required
@@ -104,9 +151,10 @@ export default function Newsletter({
                 />
                 <button
                   type="submit"
+                  disabled={submitting}
                   aria-label="Join the journey"
                   className={cn(
-                    'px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap',
+                    'px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-60',
                     isForest
                       ? 'bg-[#B89A5A] hover:bg-[#A88849] text-[#012C18]'
                       : 'bg-[#003B24] hover:bg-[#075333] text-[#F4F1E8]'
@@ -115,6 +163,18 @@ export default function Newsletter({
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </form>
+            )}
+
+            {error && (
+              <p
+                role="alert"
+                className={cn(
+                  'mt-2 text-[11px] font-mono',
+                  isForest ? 'text-[#E7A98F]' : 'text-[#B4472A]'
+                )}
+              >
+                {error}
+              </p>
             )}
 
             <div className="mt-2.5 flex items-center gap-2.5">

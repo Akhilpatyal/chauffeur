@@ -9,10 +9,17 @@ import ContactForm from './ContactForm';
 import ContactInfo from './ContactInfo';
 import ContactFaq from './ContactFaq';
 import { RidgeMark } from './contactUi';
+import { useDocumentMeta } from '../../lib/seo';
 
 const breadcrumbs = ['Home', 'Contact Us'];
 
 export default function ContactPage({ onPlanTrip }) {
+  useDocumentMeta({
+    title: 'Contact the Expedition Desk',
+    description:
+      'Call, WhatsApp or email a trip planner. We reply within two working hours, in Hindi or English, with no booking fees.',
+  });
+
   const ctaScope = useRef(null);
   useScrollReveal(ctaScope, { start: 'top 88%' });
 

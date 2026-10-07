@@ -42,7 +42,7 @@ function FeaturedJourneyCard({ onClick }) {
         <span className="font-display text-4xl leading-none sm:text-5xl">Spiti Valley</span>
         <span className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-sm text-white/90"><span className="inline-flex items-center gap-1"><Clock3 className="h-3.5 w-3.5 text-[#d8b56a]" />6 Days</span><span className="inline-flex items-center gap-1"><Mountain className="h-3.5 w-3.5 text-[#d8b56a]" />High Altitude</span><span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5 text-[#d8b56a]" />Small Group</span></span>
         <span className="my-4 block h-px bg-white/25" />
-        <span className="flex items-center justify-between gap-3"><span className="flex flex-wrap items-center gap-x-4 gap-y-1"><span className="inline-flex items-center gap-1 text-sm text-[#f0d28d]"><Star className="h-4 w-4 fill-current" />4.9 (120 Reviews)</span><span className="text-lg font-bold">From ?14,999</span></span><span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-[#073f32] transition duration-300 group-hover:translate-x-1"><ArrowRight className="h-5 w-5" /></span></span>
+        <span className="flex items-center justify-between gap-3"><span className="flex flex-wrap items-center gap-x-4 gap-y-1"><span className="inline-flex items-center gap-1 text-sm text-[#f0d28d]"><Star className="h-4 w-4 fill-current" />4.9 (120 Reviews)</span><span className="text-lg font-bold">From ₹14,999</span></span><span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-[#073f32] transition duration-300 group-hover:translate-x-1"><ArrowRight className="h-5 w-5" /></span></span>
       </span>
     </button>
   );
@@ -71,11 +71,11 @@ function FeaturedExpedition({ onClick }) {
 
 export default function HandpickedJourneys({ onSelectJourney, onExploreAll }) {
   const items = [
-    { id: 'kashmir-lakes', title: 'Kashmir Great Lakes', duration: '6 Days · Moderate', price: 'From ?18,499', rating: '4.8', image: journeys[1].image, journey: journeys[1] },
-    { id: 'ladakh-expedition', title: 'Ladakh Road Expedition', duration: '8 Days · Road Trip', price: 'From ?24,999', rating: '4.9', image: journeys[2].image, journey: journeys[2] },
-    { id: 'himachal-escape', title: 'Himachal Escape', duration: '5 Days · Easy', price: 'From ?9,999', rating: '4.7', image: journeys[4].image, journey: journeys[4] },
-    { id: 'meghalaya-explorer', title: 'Meghalaya Explorer', duration: '4 Days · Easy', price: 'From ?8,499', rating: '4.6', image: journeys[3].image, journey: journeys[3] },
-    { id: 'uttarakhand-trails', title: 'Uttarakhand Trails', duration: '6 Days · Moderate', price: 'From ?12,499', rating: '4.8', image: journeys[0].image, journey: journeys[0] },
+    { id: 'kashmir-lakes', title: 'Kashmir Great Lakes', duration: '6 Days · Moderate', price: 'From ₹18,499', rating: '4.8', image: journeys[1].image, journey: journeys[1] },
+    { id: 'ladakh-expedition', title: 'Ladakh Road Expedition', duration: '8 Days · Road Trip', price: 'From ₹24,999', rating: '4.9', image: journeys[2].image, journey: journeys[2] },
+    { id: 'himachal-escape', title: 'Himachal Escape', duration: '5 Days · Easy', price: 'From ₹9,999', rating: '4.7', image: journeys[4].image, journey: journeys[4] },
+    { id: 'meghalaya-explorer', title: 'Meghalaya Explorer', duration: '4 Days · Easy', price: 'From ₹8,499', rating: '4.6', image: journeys[3].image, journey: journeys[3] },
+    { id: 'uttarakhand-trails', title: 'Uttarakhand Trails', duration: '6 Days · Moderate', price: 'From ₹12,499', rating: '4.8', image: journeys[0].image, journey: journeys[0] },
   ];
 
   return (

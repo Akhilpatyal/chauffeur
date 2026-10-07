@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Phone, Compass } from 'lucide-react';
+import { X } from 'lucide-react';
 import Logo from '../common/Logo';
 import MagneticButton from '../common/MagneticButton';
 

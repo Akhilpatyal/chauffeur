@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Quote, ArrowRight } from 'lucide-react';
+import { Star, Quote } from 'lucide-react';
 import { testimonials } from '../../data/testimonials';
 
 export default function CommunityStories({ onWatchStories }) {

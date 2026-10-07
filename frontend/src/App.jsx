@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -32,16 +32,18 @@ import DestinationPage, {
   DestinationsIndex,
   NotFoundPage,
 } from './components/destinations/DestinationPage';
+import JourneysPage from './components/journeys/JourneysPage';
+import WeekendEscapesPage from './components/weekendEscapes/WeekendEscapesPage';
+import WeekendEscapeDetail from './components/weekendEscapes/WeekendEscapeDetail';
+import StoriesPage from './components/stories/StoriesPage';
+import StoryDetail from './components/stories/StoryDetail';
 
 // Modals
 import PlanMyTripModal from './components/modals/PlanMyTripModal';
 import TravelerStoryModal from './components/modals/TravelerStoryModal';
-import JournalReaderModal from './components/modals/JournalReaderModal';
 
-// Data
-import { journeys } from './data/journeys';
-import { destinations } from './data/destinations';
 import { navigateTo, redirectLegacyHash, resolveRoute, usePathname } from './router';
+import { useDocumentMeta } from './lib/seo';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -52,16 +54,30 @@ export default function App() {
   const { page, param } = resolveRoute(pathname);
   const journeyId = page === 'journey' ? param : null;
 
+  /*
+   * Only the homepage sets its own metadata here; every other page owns its
+   * title and description through useDocumentMeta in its own component.
+   */
+  useDocumentMeta({
+    skip: page !== 'home',
+    title: null,
+    description:
+      'TAIFER curates small-group Himalayan journeys, weekend escapes, group tours and handpicked stays across Manali, Spiti, Ladakh, Kashmir and Meghalaya.',
+    canonicalPath: '/',
+  });
+
   /* Start each page at the top and re-measure pinned scroll triggers */
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     ScrollTrigger.refresh();
   }, [pathname]);
   const [activeCategory, setActiveCategory] = useState('all');
-  const [planTripModalOpen, setPlanTripModalOpen] = useState(false);
+  /*
+   * One enquiry modal for the whole site, carrying what the visitor was
+   * looking at when they opened it. `null` means a generic "plan a trip".
+   */
+  const [enquiry, setEnquiry] = useState(null);
   const [storyModalOpen, setStoryModalOpen] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState(null);
-  const [articleModalOpen, setArticleModalOpen] = useState(false);
 
   // Initialize Lenis Smooth Scroll integrated with GSAP ScrollTrigger
   useEffect(() => {
@@ -93,8 +109,30 @@ export default function App() {
   }, []);
 
   // Modal handlers
-  const handleOpenPlanTrip = () => setPlanTripModalOpen(true);
-  const handleClosePlanTrip = () => setPlanTripModalOpen(false);
+  /*
+   * `context` is { kind, slug, title, source } describing the trip the button
+   * belonged to. Passing it through is what makes the dashboard's "Interested
+   * in" column and the most-enquired report useful instead of a wall of
+   * identical rows.
+   */
+  const openEnquiry = useCallback((context = null) => {
+    /*
+     * Several older CTAs are wired as `onClick={onPlanTrip}`, which hands this
+     * a MouseEvent. Rather than depend on every call site being updated
+     * forever, anything that is not a plain context object is treated as a
+     * generic enquiry — a stray event can never become a malformed lead.
+     */
+    const isContext =
+      context !== null &&
+      typeof context === 'object' &&
+      !(typeof Event !== 'undefined' && context instanceof Event) &&
+      (typeof context.kind === 'string' || typeof context.source === 'string');
+
+    setEnquiry(isContext ? context : { source: 'plan_my_trip' });
+  }, []);
+
+  const handleOpenPlanTrip = useCallback(() => openEnquiry(null), [openEnquiry]);
+  const handleClosePlanTrip = useCallback(() => setEnquiry(null), []);
 
   /* Opens the full journey detail page - '#journey/<id>' */
   const handleSelectJourney = (journey) => {
@@ -106,44 +144,34 @@ export default function App() {
     navigateTo(`/destinations/${destination.id}`);
   };
 
-  /* Works from any routed page - returns home first when needed */
-  const handleExploreJourneys = () => {
-    const scrollToJourneys = () =>
-      document.getElementById('journeys')?.scrollIntoView({ behavior: 'smooth' });
-
-    if (page === 'home') {
-      scrollToJourneys();
-      return;
-    }
-    navigateTo('/');
-    window.setTimeout(scrollToJourneys, 180);
-  };
+  /* "View all journeys" now has a listing page to go to */
+  const handleExploreJourneys = () => navigateTo('/journeys');
 
   const handleWatchStories = () => setStoryModalOpen(true);
   const handleCloseStoryModal = () => setStoryModalOpen(false);
 
-  const handleReadArticle = (article) => {
-    setSelectedArticle(article);
-    setArticleModalOpen(true);
-  };
-  const handleCloseArticleModal = () => {
-    setArticleModalOpen(false);
-    setSelectedArticle(null);
-  };
+  const handleSearchSubmit = () => navigateTo('/journeys');
 
-  const handleSearchSubmit = (searchParams) => {
-    const el = document.getElementById('journeys');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
+  /*
+   * The hero category rail routes to the page that actually holds that
+   * category instead of setting filter state nothing consumed and scrolling to
+   * an unfiltered section.
+   */
   const handleCategorySelect = (categoryId) => {
     setActiveCategory(categoryId);
-    const el = document.getElementById('journeys');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+
+    const destinations = {
+      weekend: '/weekend-escapes',
+      group: '/group-tours',
+      treks: '/journeys',
+      mountains: '/journeys',
+      roadtrips: '/journeys',
+      family: '/journeys',
+      couples: '/journeys',
+      adventure: '/journeys',
+    };
+
+    navigateTo(destinations[categoryId] ?? '/journeys');
   };
 
   return (
@@ -160,17 +188,25 @@ export default function App() {
       />
 
       {/* Main Expedition Flow with Intentional Visual Rhythm */}
-      {page === 'hotels' && <HotelsPage />}
+      {page === 'hotels' && <HotelsPage onEnquire={openEnquiry} />}
 
-      {page === 'group-tours' && <GroupToursPage onPlanTrip={handleOpenPlanTrip} />}
+      {page === 'group-tours' && <GroupToursPage onPlanTrip={openEnquiry} />}
 
       {page === 'contact' && <ContactPage onPlanTrip={handleOpenPlanTrip} />}
 
+      {page === 'journeys' && <JourneysPage onPlanTrip={handleOpenPlanTrip} />}
+
+      {page === 'weekendEscapes' && <WeekendEscapesPage onPlanTrip={handleOpenPlanTrip} />}
+
+      {page === 'weekendEscape' && <WeekendEscapeDetail slug={param} onPlanTrip={openEnquiry} />}
+
+      {page === 'stories' && <StoriesPage />}
+
+      {page === 'story' && <StoryDetail slug={param} onPlanTrip={handleOpenPlanTrip} />}
+
       {page === 'destinations' && <DestinationsIndex />}
 
-      {page === 'destination' && (
-        <DestinationPage slug={param} onPlanTrip={handleOpenPlanTrip} />
-      )}
+      {page === 'destination' && <DestinationPage slug={param} onPlanTrip={openEnquiry} />}
 
       {page === 'legal' && (
         <LegalPage slug={param} onNavigate={(slug) => navigateTo(`/${slug}`)} />
@@ -179,7 +215,7 @@ export default function App() {
       {page === 'notFound' && <NotFoundPage />}
 
       {page === 'journey' && (
-        <JourneyPage journeyId={journeyId} onCheckAvailability={handleOpenPlanTrip} />
+        <JourneyPage journeyId={journeyId} onCheckAvailability={openEnquiry} />
       )}
 
       {page === 'about' && (
@@ -235,16 +271,16 @@ export default function App() {
               elevation: '14,500 ft'
             });
           }}
-          onExploreAllGroups={handleOpenPlanTrip}
+          /* Was handleOpenPlanTrip: a "see all tours" button that opened an
+             enquiry form instead of the group tours page. */
+          onExploreAllGroups={() => navigateTo('/group-tours')}
         />
 
         {/* 8. DARK WHY TAIFER: Pinned 4-Pillar Ethos (50/50 Split) */}
         <WhyUsStorytelling />
 
         {/* 10. IVORY JOURNAL: From the Trail Journal */}
-        <TravelJournal
-          onReadArticle={handleReadArticle}
-        />
+        <TravelJournal />
 
         {/* 11. DARK CTA: Plan Your Journey Concierge */}
         <PlanYourEscape
@@ -265,23 +301,15 @@ export default function App() {
 
       {/* Interactive Modals */}
       <PlanMyTripModal
-        isOpen={planTripModalOpen}
+        isOpen={enquiry !== null}
         onClose={handleClosePlanTrip}
+        interest={enquiry?.kind ? enquiry : null}
+        source={enquiry?.source ?? 'plan_my_trip'}
       />
 
       <TravelerStoryModal
         isOpen={storyModalOpen}
         onClose={handleCloseStoryModal}
-      />
-
-      <JournalReaderModal
-        article={selectedArticle}
-        isOpen={articleModalOpen}
-        onClose={handleCloseArticleModal}
-        onExploreTrips={() => {
-          const el = document.getElementById('journeys');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}
       />
     </div>
   );

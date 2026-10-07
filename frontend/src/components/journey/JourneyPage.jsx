@@ -15,13 +15,22 @@ import Experiences from './Experiences';
 import Testimonial from './Testimonial';
 import JourneyVideo from './JourneyVideo';
 import BookingCTA from './BookingCTA';
+import Breadcrumb from '../common/Breadcrumb';
+import { useDocumentMeta } from '../../lib/seo';
 
 
 
 export default function JourneyPage({ journeyId, onCheckAvailability }) {
   /* Everything on the page is derived from the journey that was clicked */
   const content = useMemo(() => buildJourneyContent(journeyId), [journeyId]);
-  const breadcrumbs = ['Home', 'Journeys', `${content.title} ${content.titleAccent}`.trim()];
+  const fullTitle = `${content.title} ${content.titleAccent ?? ''}`.trim();
+
+  useDocumentMeta({
+    title: content.eyebrow ? `${fullTitle} — ${content.eyebrow}` : fullTitle,
+    description: content.intro,
+    image: content.heroImage,
+    type: 'article',
+  });
   /*
    * `activeDay` is the single piece of shared state between the itinerary and
    * the route map. The timeline's ScrollTriggers push into it; the map reads it
@@ -56,31 +65,36 @@ export default function JourneyPage({ journeyId, onCheckAvailability }) {
     window.print();
   }, []);
 
+  /* Enquiries from this page carry the journey, so the dashboard shows which
+   * route was being read rather than another "Custom expedition". */
+  const handleEnquire = useCallback(
+    () =>
+      onCheckAvailability?.({
+        kind: 'journey',
+        slug: journeyId ?? content.id,
+        title: fullTitle,
+        destination: content.subtitle,
+        source: 'journey_enquiry',
+      }),
+    [onCheckAvailability, journeyId, content.id, content.subtitle, fullTitle]
+  );
+
   return (
     <div className="min-h-screen bg-[#F4F1E8] text-[#012C18]">
-      <JourneyHero journey={content} onCheckAvailability={onCheckAvailability} />
+      <JourneyHero journey={content} onCheckAvailability={handleEnquire} />
       <JourneyStats stats={content.stats} />
 
       <main className="topographic-bg">
         <div className="mx-auto max-w-[1400px] px-4 pt-8 sm:px-6 lg:px-8 lg:pt-12">
-          <nav aria-label="Breadcrumb">
-            <ol className="flex flex-wrap items-center gap-1.5 text-[11px] text-[#8A9189]">
-              {breadcrumbs.map((crumb, i) => (
-                <li key={crumb} className="flex items-center gap-1.5">
-                  {i > 0 && <span className="text-[#C3C8C1]">›</span>}
-                  <span
-                    className={
-                      i === breadcrumbs.length - 1
-                        ? 'font-medium text-[#012C18]'
-                        : 'transition-colors hover:text-[#075333]'
-                    }
-                  >
-                    {crumb}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </nav>
+          {/* Was three plain spans that looked like navigation and went
+              nowhere; Journeys now has a listing page to link to. */}
+          <Breadcrumb
+            items={[
+              { label: 'Home', path: '/' },
+              { label: 'Journeys', path: '/journeys' },
+              { label: fullTitle },
+            ]}
+          />
 
           {/* 65 / 35 editorial split */}
           <div className="mt-8 grid items-start gap-8 pb-16 lg:grid-cols-[minmax(0,1fr)_330px] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-12">
@@ -92,7 +106,7 @@ export default function JourneyPage({ journeyId, onCheckAvailability }) {
                 onActiveDay={handleActiveDay}
               />
             ) : (
-              <JourneyOverview content={content} onPlanTrip={onCheckAvailability} />
+              <JourneyOverview content={content} onPlanTrip={handleEnquire} />
             )}
 
             {/*
@@ -130,7 +144,7 @@ export default function JourneyPage({ journeyId, onCheckAvailability }) {
         </div>
       </section>
       <BookingCTA
-        onCheckAvailability={onCheckAvailability}
+        onCheckAvailability={handleEnquire}
         onDownloadItinerary={handleDownloadItinerary}
       />
 

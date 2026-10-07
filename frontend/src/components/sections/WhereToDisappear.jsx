@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Compass } from 'lucide-react';
 import { destinations } from '../../data/destinations';
+import { navigateTo } from '../../router';
 
 export default function WhereToDisappear({ onSelectDestination }) {
   const topDestinations = [
@@ -37,8 +38,10 @@ export default function WhereToDisappear({ onSelectDestination }) {
                 Where do you want to disappear?
               </h2>
 
+              {/* Was onSelectDestination(destinations[0]), which opened the
+                  first destination's detail page instead of the index. */}
               <button
-                onClick={() => onSelectDestination(destinations[0])}
+                onClick={() => navigateTo('/destinations')}
                 className="inline-flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-wider text-[#003B24] hover:text-[#075333] transition-colors cursor-pointer pt-2"
               >
                 <span>View all destinations</span>

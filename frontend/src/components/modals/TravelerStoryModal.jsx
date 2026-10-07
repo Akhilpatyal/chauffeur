@@ -1,6 +1,5 @@
 import React from 'react';
-import { X, Sparkles, Volume2, Heart, Share2 } from 'lucide-react';
-import MagneticButton from '../common/MagneticButton';
+import { X } from 'lucide-react';
 
 export default function TravelerStoryModal({ isOpen, onClose }) {
   if (!isOpen) return null;

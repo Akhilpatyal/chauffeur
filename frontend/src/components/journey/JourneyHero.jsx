@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { ArrowRight, BadgeCheck, Star } from 'lucide-react';
+import { BadgeCheck, Star } from 'lucide-react';
 import { useHeroAnimation } from '../../animations/journey/heroAnimations';
 
 

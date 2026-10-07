@@ -22,15 +22,42 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  /* `path` links are their own page; `anchor` links are homepage sections */
+  /*
+   * `path` links are their own page; `anchor` links are homepage sections.
+   *
+   * Journeys, Weekend Escapes and Stories were anchors pointing at homepage
+   * sections — Weekend Escapes went to the destinations grid, which was not
+   * even the right content. All three now have real pages.
+   */
   const navLinks = [
-    { name: 'Journeys', anchor: 'journeys' },
+    { name: 'Journeys', path: '/journeys' },
+    { name: 'Weekend Escapes', path: '/weekend-escapes' },
     { name: 'Group Tours', path: '/group-tours' },
-    { name: 'Weekend Escapes', anchor: 'destinations' },
     { name: 'Hotels', path: '/hotels' },
-    { name: 'Stories', anchor: 'journal' },
+    { name: 'Stories', path: '/stories' },
     { name: 'About', path: '/about' },
   ];
+
+  /*
+   * Which nav item to highlight for a given route key.
+   *
+   * The old check compared `link.path` to `/${activePage}`, which silently
+   * failed for hyphenated routes (`weekendEscapes` is served at
+   * `/weekend-escapes`) and never highlighted a detail page. Detail routes map
+   * to their parent so the trail stays visible while reading one journey.
+   */
+  const ACTIVE_PATH_FOR_PAGE = {
+    journeys: '/journeys',
+    journey: '/journeys',
+    weekendEscapes: '/weekend-escapes',
+    weekendEscape: '/weekend-escapes',
+    stories: '/stories',
+    story: '/stories',
+    'group-tours': '/group-tours',
+    hotels: '/hotels',
+    about: '/about',
+  };
+  const activePath = ACTIVE_PATH_FOR_PAGE[activePage] ?? null;
 
   const handleLinkClick = (e, link) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey) return;
@@ -97,11 +124,12 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
                 className={cn(
                   'text-[14px] font-sans font-medium tracking-wide relative py-1 transition-all duration-300 hover:-translate-y-px hover:text-[#B89A5A]',
                   'after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-[#B89A5A] after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100',
-                  link.path === `/${activePage}`
+                  link.path === activePath
                     ? 'after:scale-x-100 text-[#B89A5A]'
                     : 'after:scale-x-0',
                   isScrolled ? 'text-[#003B24]' : 'text-[#F4F1E8]'
                 )}
+                aria-current={link.path === activePath ? 'page' : undefined}
               >
                 {link.name}
               </a>

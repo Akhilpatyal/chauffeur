@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { CircleCheckBig, Send } from 'lucide-react';
 import { enquiryTopics } from '../../data/contact';
+import { submitLead, idempotencyKey } from '../../lib/api';
 import { RidgeMark } from './contactUi';
 
 const EMPTY = {
@@ -34,14 +35,22 @@ function validate(values) {
 /*
  * Enquiry form.
  *
- * There is no backend yet: a valid submit shows the confirmation panel. To wire
- * it up, replace the body of `handleSubmit` with a POST to your endpoint and
- * keep the same success/error handling.
+ * Submits to POST /api/v1/leads. The same idempotency key is reused across
+ * retries of one attempt, so a second click or a retry after a dropped
+ * connection cannot create a second lead; it is regenerated only once a
+ * submission succeeds.
  */
 export default function ContactForm() {
   const [values, setValues] = useState(EMPTY);
   const [errors, setErrors] = useState({});
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+
+  /* Filled only by bots. Hidden from sight and from screen readers. */
+  const honeypot = useRef('');
+  /* Stable for the lifetime of one attempt, so retries are deduplicated. */
+  const attemptKey = useRef(idempotencyKey());
 
   const setField = (field) => (event) => {
     const { value } = event.target;
@@ -49,15 +58,50 @@ export default function ContactForm() {
     setErrors((current) => (current[field] ? { ...current, [field]: undefined } : current));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    if (submitting) return;
+
     const found = validate(values);
     setErrors(found);
     if (Object.keys(found).length > 0) {
       document.getElementById(`contact-${Object.keys(found)[0]}`)?.focus();
       return;
     }
-    setSent(true);
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      await submitLead(
+        {
+          source: 'contact_form',
+          name: values.name.trim(),
+          email: values.email.trim(),
+          phone: values.phone.trim() || undefined,
+          topic: values.topic,
+          travelDates: values.dates.trim() || undefined,
+          groupSize: values.travellers.trim() || undefined,
+          message: values.message.trim(),
+          honeypot: honeypot.current,
+        },
+        attemptKey.current,
+      );
+
+      setSent(true);
+    } catch (error) {
+      /* Server-side validation is authoritative; surface it on the fields. */
+      if (error.fields) {
+        const mapped = { ...error.fields };
+        if (mapped.travelDates) mapped.dates = mapped.travelDates;
+        if (mapped.groupSize) mapped.travellers = mapped.groupSize;
+        setErrors(mapped);
+        document.getElementById(`contact-${Object.keys(mapped)[0]}`)?.focus();
+      }
+      setSubmitError(error.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (sent) {
@@ -83,6 +127,10 @@ export default function ContactForm() {
           onClick={() => {
             setValues(EMPTY);
             setSent(false);
+            setSubmitError(null);
+            // A genuinely new enquiry needs a new key, or the backend would
+            // replay the previous result.
+            attemptKey.current = idempotencyKey();
           }}
           className="mt-6 rounded-lg border border-[#C9C2B0] px-6 py-3 text-[12px] font-semibold text-[#012C18] transition-colors hover:border-[#043A25] hover:bg-[#043A25]/5"
         >
@@ -102,7 +150,7 @@ export default function ContactForm() {
         route, not a brochure.
       </p>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit} noValidate className="relative mt-6 space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="contact-name" className={labelClass}>
@@ -230,12 +278,41 @@ export default function ContactForm() {
           )}
         </div>
 
+        {/*
+          Honeypot. Hidden from sight and from assistive technology, so only an
+          automated form-filler will put anything in it. tabIndex keeps it out
+          of the keyboard order.
+        */}
+        <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+          <label htmlFor="contact-website">Website</label>
+          <input
+            id="contact-website"
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            onChange={(event) => {
+              honeypot.current = event.target.value;
+            }}
+          />
+        </div>
+
+        {submitError && (
+          <p
+            role="alert"
+            className="rounded-lg border border-[#E7C4B8] bg-[#FDF1EE] px-3.5 py-3 text-[12.5px] text-[#B4472A]"
+          >
+            {submitError}
+          </p>
+        )}
+
         <div className="flex flex-wrap items-center gap-4 pt-1">
           <button
             type="submit"
-            className="group inline-flex items-center justify-center gap-2 rounded-lg bg-[#043A25] px-7 py-3.5 text-[12.5px] font-semibold text-[#FAF9F5] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#012C18] hover:shadow-lg"
+            disabled={submitting}
+            className="group inline-flex items-center justify-center gap-2 rounded-lg bg-[#043A25] px-7 py-3.5 text-[12.5px] font-semibold text-[#FAF9F5] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#012C18] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
           >
-            Send Message
+            {submitting ? 'Sending…' : 'Send Message'}
             <Send className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
 

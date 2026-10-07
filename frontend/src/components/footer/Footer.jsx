@@ -1,32 +1,56 @@
 import React from 'react';
 import { Camera, Circle, Mail, MessageCircle, Phone, Tv2 } from 'lucide-react';
 import Logo from '../common/Logo';
+import { socials } from '../../data/contact';
 import { navigateTo } from '../../router';
 
+const ICON_FOR_SOCIAL = { instagram: Camera, facebook: Circle, linkedin: Tv2 };
+
+/* WhatsApp is always available because the number is a real one. */
+const SOCIAL_ICONS = [
+  ...socials.map((social) => ({
+    label: social.label,
+    href: social.href,
+    icon: ICON_FOR_SOCIAL[social.id] ?? Circle,
+  })),
+  { label: 'WhatsApp', href: 'https://wa.me/919876543210', icon: MessageCircle },
+];
+
+/*
+ * Footer navigation.
+ *
+ * "Journeys" and "Stories" used to be `/#journeys` and `/#journal`, which only
+ * worked from the homepage — from any other page they navigated to `/` and left
+ * the visitor at the top with nothing scrolled. Both are real pages now, and
+ * Weekend Escapes and Destinations have been added because they were reachable
+ * from the navbar but not from here.
+ */
 const linkGroups = [
   {
     title: 'Explore',
     links: [
-      { label: 'Journeys', href: '/#journeys' },
+      { label: 'Journeys', href: '/journeys' },
+      { label: 'Weekend Escapes', href: '/weekend-escapes' },
       { label: 'Group Tours', href: '/group-tours' },
+      { label: 'Destinations', href: '/destinations' },
       { label: 'Hotels', href: '/hotels' },
-      { label: 'Stories', href: '/#journal' },
     ],
   },
   {
     title: 'Company',
     links: [
       { label: 'About Us', href: '/about' },
-      { label: 'Our Story', href: '/about' },
+      { label: 'Stories', href: '/stories' },
       { label: 'Contact Us', href: '/contact' },
     ],
   },
   {
     title: 'Support',
     links: [
-      { label: 'Contact Us', href: '/contact' },
       { label: 'FAQs', href: '/contact' },
       { label: 'WhatsApp Us', href: 'https://wa.me/919876543210' },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Cancellation Policy', href: '/cancellation' },
     ],
   },
 ];
@@ -47,11 +71,24 @@ export default function Footer() {
           <div className="flex flex-col items-start">
             <Logo variant="light" size="lg" showTagline={false} />
             <p className="mt-1 text-[9px] font-bold tracking-[.12em] text-[#d8b56a]">JOURNEYS THAT STAY WITH YOU FOREVER.</p>
+            {/*
+              Social icons render only where a real URL is configured in
+              data/contact.js. A link with href="#" looks live and does
+              nothing, which is worse than not showing the icon.
+            */}
             <div className="mt-4 flex gap-3">
-              <a href="#" aria-label="Instagram" className="text-white/85 transition hover:text-[#d8b56a]"><Camera className="h-4 w-4" /></a>
-              <a href="#" aria-label="YouTube" className="text-white/85 transition hover:text-[#d8b56a]"><Tv2 className="h-4 w-4" /></a>
-              <a href="#" aria-label="Facebook" className="text-white/85 transition hover:text-[#d8b56a]"><Circle className="h-4 w-4" /></a>
-              <a href="https://wa.me/919876543210" aria-label="WhatsApp" className="text-white/85 transition hover:text-[#d8b56a]"><MessageCircle className="h-4 w-4" /></a>
+              {SOCIAL_ICONS.filter((item) => item.href && item.href !== '#').map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  aria-label={item.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/85 transition hover:text-[#d8b56a]"
+                >
+                  <item.icon className="h-4 w-4" />
+                </a>
+              ))}
             </div>
           </div>
           {linkGroups.map((group) => <div key={group.title}><h3 className="text-[10px] font-bold uppercase tracking-[.15em] text-[#f4f1e8]">{group.title}</h3><ul className="mt-3 space-y-1.5 text-[11px] text-white/70">{group.links.map((link) => <li key={link.label}><a href={link.href} onClick={(e) => { if (link.href.startsWith('/') && !link.href.startsWith('/#')) { e.preventDefault(); navigateTo(link.href); } }} className="transition hover:text-[#d8b56a]">{link.label}</a></li>)}</ul></div>)}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mountain, Footprints, Car, CalendarDays, Users, Heart, Flame, Compass } from 'lucide-react';
+import { Mountain, Footprints, Car, CalendarDays, Users, Heart, Flame } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 
 export default function CategoryRail({ activeCategory, onSelectCategory }) {

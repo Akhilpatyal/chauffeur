@@ -11,20 +11,30 @@ import { useEffect, useState } from 'react';
  * Vite's dev server does the same, so deep links work in both.
  */
 
-/* Old hash links people may already have shared */
+/*
+ * Old hash links people may already have shared.
+ *
+ * `journeys` and `journal` used to be homepage sections and are now real pages,
+ * so a shared /#journeys link lands on the listing instead of scrolling an
+ * anchor that no longer carries the full set.
+ */
 const LEGACY_HASHES = {
   hotels: '/hotels',
   about: '/about',
   contact: '/contact',
   'group-tours': '/group-tours',
   journey: '/journeys',
+  journeys: '/journeys',
+  journal: '/stories',
+  stories: '/stories',
+  'weekend-escapes': '/weekend-escapes',
   privacy: '/privacy',
   terms: '/terms',
   cancellation: '/cancellation',
 };
 
-/* Section anchors that live on the homepage rather than being their own page */
-export const HOME_ANCHORS = ['journeys', 'destinations', 'journal', 'why-us', 'group-tours-section'];
+/* Section anchors that genuinely live on the homepage rather than being pages */
+export const HOME_ANCHORS = ['destinations', 'why-us', 'group-tours-section'];
 
 export function navigateTo(path) {
   if (typeof window === 'undefined') return;
@@ -67,8 +77,11 @@ export function usePathname() {
 
 /*
  * Maps a pathname to { page, param }.
- * Unknown paths resolve to `notFound` so visitors get a real 404 rather than
- * being silently dropped on the homepage.
+ *
+ * Collections follow one convention: no second segment is the listing page, a
+ * second segment is the detail page for that slug. Unknown paths resolve to
+ * `notFound` so visitors get a real 404 rather than being silently dropped on
+ * the homepage.
  */
 export function resolveRoute(pathname) {
   const [first, second] = pathname.replace(/^\/+|\/+$/g, '').split('/');
@@ -81,16 +94,30 @@ export function resolveRoute(pathname) {
     case 'contact':
     case 'group-tours':
       return { page: first, param: null };
+
     case 'journeys':
-      return { page: 'journey', param: second || null };
+      /* No slug is the listing; a slug is one journey. Previously both landed
+       * on the detail template, so /journeys rendered a single journey. */
+      return second ? { page: 'journey', param: second } : { page: 'journeys', param: null };
+
+    case 'weekend-escapes':
+      return second
+        ? { page: 'weekendEscape', param: second }
+        : { page: 'weekendEscapes', param: null };
+
+    case 'stories':
+      return second ? { page: 'story', param: second } : { page: 'stories', param: null };
+
     case 'destinations':
       return second
         ? { page: 'destination', param: second }
         : { page: 'destinations', param: null };
+
     case 'privacy':
     case 'terms':
     case 'cancellation':
       return { page: 'legal', param: first };
+
     default:
       return { page: 'notFound', param: first };
   }

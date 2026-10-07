@@ -1,0 +1,1490 @@
+{
+  "journeys": [
+    {
+      "id": "spiti-circuit",
+      "isFeatured": true,
+      "title": "Spiti Valley High Road Expedition",
+      "location": "Spiti Valley, Himachal Pradesh",
+      "duration": "6 Days · 5 Nights",
+      "rating": 4.95,
+      "reviews": 248,
+      "price": "₹14,999",
+      "originalPrice": "₹21,999",
+      "discount": "32% OFF",
+      "elevation": "14,500 ft max",
+      "groupSize": "12–14 Travelers",
+      "difficulty": "Moderate",
+      "highlights": [
+        "Key Monastery cliffside sunrise chanting",
+        "World's highest post office at Hikkim",
+        "Stargazing at Langza under pristine Milky Way",
+        "High altitude drive via Kunzum Pass (14,931 ft)",
+        "Camp beside the crescent blue Chandratal Lake"
+      ],
+      "description": "An unforgettable overland expedition through rugged lunar landscapes, 1000-year-old Tibetan gompas, and untouched Himalayan villages.",
+      "image": "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=1600&q=85",
+      "secondaryImage": "https://images.unsplash.com/photo-1571401835393-8c5f35328320?auto=format&fit=crop&w=1200&q=80",
+      "tags": [
+        "High Passes",
+        "Monasteries",
+        "Campfire",
+        "Stargazing"
+      ],
+      "upcomingDates": [
+        "05 Jun",
+        "18 Jun",
+        "02 Jul",
+        "16 Jul"
+      ],
+      "itinerary": [
+        {
+          "day": "Day 01",
+          "title": "Shimla to Kalpa — Kinnaur Gateway",
+          "desc": "Drive along the Sutlej River, apple orchards of Sangla Valley and witness the sacred Kinner Kailash peak at sunset."
+        },
+        {
+          "day": "Day 02",
+          "title": "Kalpa to Nako & Tabo Monastery",
+          "desc": "Cross the fierce Khab Sangam where Spiti meets Sutlej. Explore the 1024-year-old Tabo Monastery murals known as the Ajanta of the Himalayas."
+        },
+        {
+          "day": "Day 03",
+          "title": "Kaza, Key Gompa & Kibber Village",
+          "desc": "Ascend to Key Monastery for a private morning meditation with the Lamas. Visit Kibber, once the highest motorable village."
+        },
+        {
+          "day": "Day 04",
+          "title": "Hikkim, Komic & Langza Fossil Hunt",
+          "desc": "Send a postcard from the world's highest post office (14,567 ft) in Hikkim and search for prehistoric marine fossils in Langza."
+        },
+        {
+          "day": "Day 05",
+          "title": "Kunzum Pass to Chandratal Moon Lake",
+          "desc": "Cross the legendary Kunzum Pass (14,931 ft) and hike to the mystical turquoise waters of Chandratal. Night in luxury alpine dome tents."
+        },
+        {
+          "day": "Day 06",
+          "title": "Chandratal to Manali & Departure",
+          "desc": "Cross the dramatic Rohtang Pass / Atal Tunnel and descend into lush green pine forests of Manali with a bag full of memories."
+        }
+      ],
+      "inclusions": [
+        "All high-clearance 4x4 / Tempo Traveler overland transport",
+        "5 Nights accommodation (Authentic homestays + Chandratal dome camp)",
+        "Daily breakfast and traditional hot mountain dinners",
+        "Experienced wilderness expedition leader + local mountain driver",
+        "Oxygen cylinders, high-altitude first aid & inner-line permits"
+      ]
+    },
+    {
+      "id": "kashmir-meadows",
+      "isFeatured": false,
+      "title": "Kashmir Alpine Lakes & Hidden Valleys",
+      "location": "Srinagar & Gulmarg, Kashmir",
+      "duration": "5 Days · 4 Nights",
+      "rating": 4.92,
+      "reviews": 180,
+      "price": "₹15,999",
+      "originalPrice": "₹22,500",
+      "discount": "29% OFF",
+      "elevation": "8,800 ft",
+      "groupSize": "10–12 Travelers",
+      "difficulty": "Easy to Moderate",
+      "highlights": [
+        "Dal Lake Shikara at sunrise",
+        "Gondola ride to Apharwat Peak",
+        "Pahalgam Betaab Valley pine walks"
+      ],
+      "description": "Experience the romance of cedar-fringed lakes, historic pine houseboats, and snow-draped peaks of Pir Panjal.",
+      "image": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1200&q=80",
+      "tags": [
+        "Alpine Lakes",
+        "Houseboat",
+        "Gondola",
+        "Pine Forests"
+      ],
+      "upcomingDates": [
+        "12 Jun",
+        "26 Jun",
+        "10 Jul"
+      ],
+      "inclusions": [
+        "Luxury Cedar Houseboat + Boutique Resorts",
+        "Daily Breakfast & Dinner",
+        "Shikara Ride & Transfers"
+      ]
+    },
+    {
+      "id": "ladakh-traverse",
+      "isFeatured": false,
+      "title": "Leh Ladakh High Pass & Pangong Traverse",
+      "location": "Leh, Nubra & Pangong, Ladakh",
+      "duration": "6 Days · 5 Nights",
+      "rating": 4.96,
+      "reviews": 310,
+      "price": "₹18,999",
+      "originalPrice": "₹26,000",
+      "discount": "27% OFF",
+      "elevation": "17,582 ft (Khardung La)",
+      "groupSize": "12 Travelers",
+      "difficulty": "Moderate",
+      "highlights": [
+        "Pangong Tso lakefront glamping",
+        "Bactrian camel ride at Hunder Dunes",
+        "Thiksey Monastery morning aarti"
+      ],
+      "description": "A transformative journey through the rooftop of the world, turquoise waters, and ancient Tibetan monasteries.",
+      "image": "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=1200&q=80",
+      "tags": [
+        "Pangong Lake",
+        "Nubra Desert",
+        "Khardung La",
+        "Glamping"
+      ],
+      "upcomingDates": [
+        "08 Jun",
+        "22 Jun",
+        "06 Jul"
+      ],
+      "inclusions": [
+        "Boutique Leh Hotel + Pangong Lake Cottages",
+        "4x4 Vehicle",
+        "Inner Line Permits & Oxygen Kit"
+      ]
+    },
+    {
+      "id": "meghalaya-living-roots",
+      "isFeatured": false,
+      "title": "Scenic Meghalaya & Living Root Bridges",
+      "location": "Shillong & Cherrapunji, Meghalaya",
+      "duration": "5 Days · 4 Nights",
+      "rating": 4.94,
+      "reviews": 142,
+      "price": "₹13,999",
+      "originalPrice": "₹19,000",
+      "discount": "26% OFF",
+      "elevation": "4,800 ft",
+      "groupSize": "8–10 Travelers",
+      "difficulty": "Moderate",
+      "highlights": [
+        "Double Decker Living Root Bridge hike",
+        "Crystal clear Dawki river cliff jump",
+        "Nohkalikai Falls mist view"
+      ],
+      "description": "Trek through the wettest realm on earth, misty jungle gorges, living bamboo root bridges, and secret cave pools.",
+      "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
+      "tags": [
+        "Living Roots",
+        "Crystal Waterfalls",
+        "Rainforest",
+        "Caving"
+      ],
+      "upcomingDates": [
+        "15 Jun",
+        "29 Jun",
+        "13 Jul"
+      ],
+      "inclusions": [
+        "Forest Cottages & Homestays",
+        "Local Khasi Guide",
+        "All Entry & Boating Passes"
+      ]
+    },
+    {
+      "id": "himachal-manali-parvati",
+      "isFeatured": false,
+      "title": "Himachal Valley Retreat & Riverside Haven",
+      "location": "Manali, Jibhi & Parvati Valley",
+      "duration": "4 Days · 3 Nights",
+      "rating": 4.89,
+      "reviews": 215,
+      "price": "₹11,999",
+      "originalPrice": "₹16,500",
+      "discount": "27% OFF",
+      "elevation": "6,500 ft",
+      "groupSize": "10–14 Travelers",
+      "difficulty": "Easy",
+      "highlights": [
+        "Wooden chalet stay beside Tirthan River",
+        "Hidden waterfalls of Jibhi",
+        "Campfire acoustic evening"
+      ],
+      "description": "The classic Himalayan escape with misty apple orchards, cozy wooden chalets, river trails, and cafe culture.",
+      "image": "https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=1200&q=80",
+      "tags": [
+        "Riverside Stay",
+        "Apple Orchards",
+        "Campfire",
+        "Cafe Trail"
+      ],
+      "upcomingDates": [
+        "Every Friday",
+        "09 Jun",
+        "16 Jun"
+      ],
+      "inclusions": [
+        "Boutique Pine Chalet",
+        "Bonfire & BBQ Night",
+        "Local Trek Guide & Transfers"
+      ]
+    }
+  ],
+  "destinations": [
+    {
+      "id": "spiti",
+      "name": "Spiti Valley",
+      "state": "Himachal Pradesh",
+      "tagline": "The Middle Land Between Earth and Sky",
+      "description": "A cold desert mountain valley carved by ancient glaciers, Tibetan Buddhist monasteries clinging to cliff faces, and high-altitude mountain passes.",
+      "coordinates": "32.2461° N, 78.0349° E",
+      "elevation": "12,500 ft",
+      "bestSeason": "May – Oct",
+      "temperature": "8°C / -4°C",
+      "rating": 4.95,
+      "reviewsCount": 384,
+      "image": "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=1600&q=85",
+      "aspectRatio": "tall",
+      "badge": "Most Iconic",
+      "tags": [
+        "High Altitude",
+        "Monasteries",
+        "Stargazing",
+        "Off-Grid"
+      ]
+    },
+    {
+      "id": "kashmir",
+      "name": "Kashmir Valley",
+      "state": "Jammu & Kashmir",
+      "tagline": "Paradise of Silent Waters and Pine Slopes",
+      "description": "Waking up to mist on Dal Lake, golden saffron fields of Pampore, and towering alpine meadows encircled by the Pir Panjal range.",
+      "coordinates": "34.0837° N, 74.7973° E",
+      "elevation": "7,200 ft",
+      "bestSeason": "Apr – Nov",
+      "temperature": "14°C / 2°C",
+      "rating": 4.92,
+      "reviewsCount": 520,
+      "image": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1600&q=85",
+      "aspectRatio": "standard",
+      "badge": "Editorial Pick",
+      "tags": [
+        "Alpine Lakes",
+        "Houseboats",
+        "Valleys",
+        "Snow Ridges"
+      ]
+    },
+    {
+      "id": "ladakh",
+      "name": "Ladakh",
+      "state": "UT Ladakh",
+      "tagline": "Where Turquoise Lakes Meet Barren Peaks",
+      "description": "Cross Khardung La into the Nubra Valley dunes, camp under the Milky Way at Pangong Tso, and witness century-old monastery chanting.",
+      "coordinates": "34.1526° N, 77.5771° E",
+      "elevation": "11,500 ft",
+      "bestSeason": "Jun – Sep",
+      "temperature": "12°C / -2°C",
+      "rating": 4.96,
+      "reviewsCount": 460,
+      "image": "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=1600&q=85",
+      "aspectRatio": "wide",
+      "badge": "High Adventure",
+      "tags": [
+        "Pangong Tso",
+        "Nubra Dunes",
+        "Passes",
+        "Gompas"
+      ]
+    },
+    {
+      "id": "rajasthan",
+      "name": "Rajasthan",
+      "state": "Western India",
+      "tagline": "Stories Etched in Ochre Sandstone & Starlight",
+      "description": "Golden desert dunes in Jaisalmer, sapphire alleyways in Jodhpur, and majestic lakeside palaces steeped in royal history.",
+      "coordinates": "26.9124° N, 75.7873° E",
+      "elevation": "1,400 ft",
+      "bestSeason": "Oct – Mar",
+      "temperature": "24°C / 10°C",
+      "rating": 4.88,
+      "reviewsCount": 310,
+      "image": "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1600&q=85",
+      "aspectRatio": "standard",
+      "badge": "Cultural Heritage",
+      "tags": [
+        "Forts & Palaces",
+        "Thar Desert",
+        "Royal Stays",
+        "Folk Lore"
+      ]
+    },
+    {
+      "id": "kerala",
+      "name": "Kerala Backwaters",
+      "state": "Kerala",
+      "tagline": "Slow River Drifts & Verdant Spice Mist",
+      "description": "Glide on private wooden kettuvallams through emerald palm canals, breathe in the cool cardamom mist of Munnar, and rejuvenate with Ayurveda.",
+      "coordinates": "9.4981° N, 76.3388° E",
+      "elevation": "Sea Level",
+      "bestSeason": "Sep – Mar",
+      "temperature": "27°C / 21°C",
+      "rating": 4.9,
+      "reviewsCount": 280,
+      "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=85",
+      "aspectRatio": "wide",
+      "badge": "Slow Travel",
+      "tags": [
+        "Backwaters",
+        "Houseboat",
+        "Tea Gardens",
+        "Ayurveda"
+      ]
+    },
+    {
+      "id": "meghalaya",
+      "name": "Meghalaya",
+      "state": "Northeast India",
+      "tagline": "The Abode of Clouds & Living Root Bridges",
+      "description": "Trek through lush rainforests to ancient double-decker living root bridges, cliff-jump into crystal clear Umngot river, and explore limestone caves.",
+      "coordinates": "25.5788° N, 91.8933° E",
+      "elevation": "4,900 ft",
+      "bestSeason": "Oct – Apr",
+      "temperature": "18°C / 9°C",
+      "rating": 4.94,
+      "reviewsCount": 195,
+      "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1600&q=85",
+      "aspectRatio": "tall",
+      "badge": "Hidden Wonder",
+      "tags": [
+        "Root Bridges",
+        "Waterfalls",
+        "Cave Treks",
+        "Living Forests"
+      ]
+    },
+    {
+      "id": "uttarakhand",
+      "name": "Uttarakhand",
+      "state": "Northern Himalayas",
+      "tagline": "Sacred Peaks, Alpine Glades & Starlit Ridges",
+      "description": "From the snow-dusted amphitheater of Kedarkantha to the mystical river gorges of Rishikesh and the hidden hamlet of Chopta.",
+      "coordinates": "30.0668° N, 79.0193° E",
+      "elevation": "8,500 ft",
+      "bestSeason": "All Year",
+      "temperature": "15°C / 1°C",
+      "rating": 4.91,
+      "reviewsCount": 340,
+      "image": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=85",
+      "aspectRatio": "standard",
+      "badge": "Summit & Soul",
+      "tags": [
+        "Snow Treks",
+        "Ganga Gorges",
+        "Alpine Meadows",
+        "Campfire Nights"
+      ]
+    },
+    {
+      "id": "himachal",
+      "name": "Himachal Pradesh",
+      "state": "Himachal Pradesh",
+      "tagline": "Pine Whispers, Cedar Forests & Glacier Valleys",
+      "description": "Quiet apple orchard stays in Jibhi, the bohemian spirit of Old Manali, and serene monastery trails tucked away in Parvati Valley.",
+      "coordinates": "31.1048° N, 77.1734° E",
+      "elevation": "6,800 ft",
+      "bestSeason": "All Year",
+      "temperature": "16°C / 4°C",
+      "rating": 4.93,
+      "reviewsCount": 610,
+      "image": "https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=1600&q=85",
+      "aspectRatio": "wide",
+      "badge": "Classic Haven",
+      "tags": [
+        "Cedar Trails",
+        "Cottages",
+        "Riverside",
+        "Valley Walks"
+      ]
+    }
+  ],
+  "groupTours": [
+    {
+      "id": "group-spiti-expedition",
+      "isFeatured": true,
+      "title": "Spiti Valley High Altitude Group Expedition",
+      "destination": "Spiti Valley, Himachal",
+      "dates": "14 Jun – 20 Jun 2026",
+      "duration": "7 Days / 6 Nights",
+      "seatsTotal": 16,
+      "seatsRemaining": 4,
+      "price": "₹15,499",
+      "originalPrice": "₹22,999",
+      "rating": 4.95,
+      "reviews": 184,
+      "badge": "Almost Full — 4 Seats Left",
+      "leader": {
+        "name": "Tenzin Dorje & Aryan Sen",
+        "role": "Lead Mountain Mountaineer & Storyteller",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
+      },
+      "image": "https://images.unsplash.com/photo-1571401835393-8c5f35328320?auto=format&fit=crop&w=1600&q=85",
+      "tags": [
+        "Solo-Friendly",
+        "Group Bonfire",
+        "Stargazing",
+        "High Passes"
+      ],
+      "description": "Join 15 like-minded wanderers on an epic high-altitude road odyssey. Unfiltered conversations, starry campfires, and unforgettable mountain kinship."
+    },
+    {
+      "id": "group-rajasthan-caravan",
+      "isFeatured": false,
+      "title": "Rajasthan Thar Desert & Royal Fort Caravan",
+      "destination": "Jaisalmer, Jodhpur & Pushkar",
+      "dates": "20 Jun – 25 Jun 2026",
+      "duration": "6 Days / 5 Nights",
+      "seatsTotal": 14,
+      "seatsRemaining": 6,
+      "price": "₹12,499",
+      "originalPrice": "₹18,000",
+      "rating": 4.88,
+      "reviews": 112,
+      "badge": "6 Seats Left",
+      "image": "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1000&q=80",
+      "tags": [
+        "Dune Camping",
+        "Folk Music",
+        "Heritage",
+        "Fort Walk"
+      ],
+      "description": "Camel rides on golden dunes, midnight acoustic jams under open desert skies, and royal haveli feasts."
+    },
+    {
+      "id": "group-kerala-kayak",
+      "isFeatured": false,
+      "title": "Kerala Backwaters & Monsoon Kayak Tribe",
+      "destination": "Alleppey, Munnar & Varkala",
+      "dates": "28 Jun – 03 Jul 2026",
+      "duration": "6 Days / 5 Nights",
+      "seatsTotal": 12,
+      "seatsRemaining": 3,
+      "price": "₹13,499",
+      "originalPrice": "₹19,500",
+      "rating": 4.93,
+      "reviews": 95,
+      "badge": "Filling Fast",
+      "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1000&q=80",
+      "tags": [
+        "Canoeing",
+        "Houseboat Party",
+        "Tea Trails",
+        "Cliff Sunset"
+      ],
+      "description": "Paddle through quiet palm tunnels, celebrate on a private houseboat, and watch sunset from Varkala cliffs."
+    },
+    {
+      "id": "group-kedarkantha-summit",
+      "isFeatured": false,
+      "title": "Kedarkantha Alpine Snow Summit Trek",
+      "destination": "Sankri & Kedarkantha, Uttarakhand",
+      "dates": "04 Jul – 09 Jul 2026",
+      "duration": "5 Days / 4 Nights",
+      "seatsTotal": 18,
+      "seatsRemaining": 8,
+      "price": "₹9,999",
+      "originalPrice": "₹14,000",
+      "rating": 4.91,
+      "reviews": 210,
+      "badge": "8 Seats Left",
+      "image": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1000&q=80",
+      "tags": [
+        "Summit Push",
+        "Snow Camps",
+        "Juda Ka Talab",
+        "Starlit Night"
+      ],
+      "description": "Summit at 12,500 ft to watch sunrise light up 13 Himalayan giants in 360-degree glory."
+    },
+    {
+      "id": "group-goa-gokarna",
+      "isFeatured": false,
+      "title": "Gokarna Beach Trek & Secret Coastline",
+      "destination": "Gokarna, Murudeshwar & South Goa",
+      "dates": "11 Jul – 15 Jul 2026",
+      "duration": "5 Days / 4 Nights",
+      "seatsTotal": 16,
+      "seatsRemaining": 7,
+      "price": "₹8,999",
+      "originalPrice": "₹13,000",
+      "rating": 4.86,
+      "reviews": 130,
+      "badge": "7 Seats Left",
+      "image": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1000&q=80",
+      "tags": [
+        "Cliff Hikes",
+        "Beach Bonfire",
+        "Secret Bays",
+        "Dolphin Trail"
+      ],
+      "description": "Hike between 5 secluded beaches, dive into pristine waters, and enjoy beach shack jam sessions."
+    }
+  ],
+  "groupTourCards": [
+    {
+      "id": "manali-explorer",
+      "dates": "12 Dec – 17 Dec 2025",
+      "seatsRemaining": 6,
+      "badge": "Best Seller",
+      "category": "Himalayan",
+      "duration": "6D · 5N",
+      "title": "Manali Explorer",
+      "description": "Mountains, valleys & memorable moments.",
+      "includes": [
+        "Meals",
+        "Stay",
+        "Sightseeing"
+      ],
+      "groupSize": "8 - 14 People",
+      "price": "₹24,999",
+      "image": "https://images.unsplash.com/photo-1601918774946-25832a4be0d6?auto=format&fit=crop&w=1000&q=85",
+      "rating": 4.8,
+      "reviews": 230,
+      "highlights": [
+        "Solang Valley adventure day",
+        "Rohtang Pass snow excursion",
+        "Kullu, Manikaran & Kasol villages"
+      ]
+    },
+    {
+      "id": "kasol-tosh-escape",
+      "dates": "19 Dec – 23 Dec 2025",
+      "seatsRemaining": 4,
+      "badge": "Popular",
+      "category": "Weekend Getaways",
+      "duration": "5D · 4N",
+      "title": "Kasol & Tosh Escape",
+      "description": "Rivers, cafes & mountain magic.",
+      "includes": [
+        "Meals",
+        "Stay",
+        "Sightseeing"
+      ],
+      "groupSize": "6 - 12 People",
+      "price": "₹19,999",
+      "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1000&q=85",
+      "rating": 4.7,
+      "reviews": 168,
+      "highlights": [
+        "Parvati river walks in Kasol",
+        "Slow mornings in Tosh village",
+        "Bonfire evenings with the group"
+      ]
+    },
+    {
+      "id": "spiti-circuit",
+      "dates": "02 Jan – 08 Jan 2026",
+      "seatsRemaining": 8,
+      "badge": "Adventure",
+      "category": "Adventure",
+      "duration": "7D · 6N",
+      "title": "Spiti Valley Expedition",
+      "description": "High passes, monasteries & raw beauty.",
+      "includes": [
+        "Meals",
+        "Stay",
+        "Sightseeing"
+      ],
+      "groupSize": "8 - 12 People",
+      "price": "₹28,999",
+      "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=85",
+      "rating": 4.95,
+      "reviews": 248
+    },
+    {
+      "id": "himachal-heritage-trail",
+      "dates": "09 Jan – 14 Jan 2026",
+      "seatsRemaining": 5,
+      "badge": "Cultural",
+      "category": "Cultural",
+      "duration": "6D · 5N",
+      "title": "Himachal Heritage Trail",
+      "description": "Temples, traditions & timeless stories.",
+      "includes": [
+        "Meals",
+        "Stay",
+        "Sightseeing"
+      ],
+      "groupSize": "8 - 14 People",
+      "price": "₹22,999",
+      "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1000&q=85",
+      "rating": 4.7,
+      "reviews": 142,
+      "highlights": [
+        "Old temples of the Kullu valley",
+        "Craft villages and local markets",
+        "Slate-roof heritage homestays"
+      ]
+    },
+    {
+      "id": "hampta-pass-trek",
+      "dates": "23 Jan – 28 Jan 2026",
+      "seatsRemaining": 7,
+      "badge": "Trekking",
+      "category": "Adventure",
+      "duration": "6D · 5N",
+      "title": "Hampta Pass Trek",
+      "description": "Thrilling trek through scenic landscapes.",
+      "includes": [
+        "Meals",
+        "Stay",
+        "Sightseeing"
+      ],
+      "groupSize": "6 - 10 People",
+      "price": "₹23,999",
+      "image": "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1000&q=85",
+      "rating": 4.85,
+      "reviews": 196,
+      "highlights": [
+        "Crossing the 14,100 ft Hampta Pass",
+        "Camping at Balu ka Ghera",
+        "Chandratal lake detour"
+      ]
+    }
+  ],
+  "departures": [
+    {
+      "id": "dep-manali-12dec",
+      "tourId": "manali-explorer",
+      "day": "12",
+      "month": "Dec",
+      "title": "Manali Explorer",
+      "duration": "6 Days · 5 Nights",
+      "seatsLeft": 6,
+      "price": "₹24,999"
+    },
+    {
+      "id": "dep-kasol-19dec",
+      "tourId": "kasol-tosh-escape",
+      "day": "19",
+      "month": "Dec",
+      "title": "Kasol & Tosh Escape",
+      "duration": "5 Days · 4 Nights",
+      "seatsLeft": 4,
+      "price": "₹19,999"
+    },
+    {
+      "id": "dep-spiti-02jan",
+      "tourId": "spiti-circuit",
+      "day": "02",
+      "month": "Jan",
+      "title": "Spiti Valley Expedition",
+      "duration": "7 Days · 6 Nights",
+      "seatsLeft": 8,
+      "price": "₹28,999"
+    },
+    {
+      "id": "dep-heritage-09jan",
+      "tourId": "himachal-heritage-trail",
+      "day": "09",
+      "month": "Jan",
+      "title": "Himachal Heritage Trail",
+      "duration": "6 Days · 5 Nights",
+      "seatsLeft": 5,
+      "price": "₹22,999"
+    }
+  ],
+  "groupTestimonials": [
+    {
+      "id": "priya",
+      "quote": "The Manali group tour was amazing! Our coordinator was very helpful and the group was full of positive energy.",
+      "name": "Priya Sharma",
+      "rating": 5,
+      "avatars": [
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=85",
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=85"
+      ]
+    },
+    {
+      "id": "arjun",
+      "quote": "Spiti trip with Taifer was a dream come true. Great arrangements, good stays and an incredible group of people.",
+      "name": "Arjun Mehta",
+      "rating": 5,
+      "avatars": [
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=85",
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=85"
+      ]
+    },
+    {
+      "id": "neha",
+      "quote": "Well-organized, safe and budget-friendly. Highly recommend their group tours for anyone who loves to travel!",
+      "name": "Neha Verma",
+      "rating": 5,
+      "avatars": [
+        "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=80&q=85",
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=80&q=85"
+      ]
+    }
+  ],
+  "hotels": [
+    {
+      "id": "woodlands",
+      "name": "The Woodlands Retreat",
+      "location": "Old Manali",
+      "distance": "900 m from center",
+      "price": 9499,
+      "strikePrice": 11999,
+      "discount": 21,
+      "rating": 4.8,
+      "ratingLabel": "Exceptional",
+      "reviews": 412,
+      "type": "Villa",
+      "star": 5,
+      "experience": [
+        "Mountain View",
+        "Family"
+      ],
+      "amenities": [
+        "Mountain View",
+        "Breakfast",
+        "Wi-Fi",
+        "Parking"
+      ],
+      "booking": [
+        "Free Cancellation",
+        "Breakfast Included"
+      ],
+      "badge": "POPULAR",
+      "freeCancellation": true,
+      "image": "https://images.unsplash.com/photo-1601918774946-25832a4be0d6?auto=format&fit=crop&w=1200&q=85",
+      "description": "A serene mountain retreat with stunning valley views, wooden architecture and cozy vibes."
+    },
+    {
+      "id": "echor",
+      "name": "Echor Valley Stays",
+      "location": "Solang Valley",
+      "distance": "14.5 km",
+      "price": 7899,
+      "strikePrice": 9499,
+      "discount": 17,
+      "rating": 4.7,
+      "ratingLabel": "Excellent",
+      "reviews": 238,
+      "type": "Hotel",
+      "star": 4,
+      "experience": [
+        "Mountain View",
+        "Adventure"
+      ],
+      "amenities": [
+        "Mountain View",
+        "Restaurant",
+        "Bonfire"
+      ],
+      "booking": [
+        "Free Cancellation"
+      ],
+      "badge": "MOUNTAIN VIEW",
+      "freeCancellation": true,
+      "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=85",
+      "description": "Modern boutique stay with panoramic snow peak views and warm local hospitality."
+    },
+    {
+      "id": "rivendell",
+      "name": "Rivendell Cottages",
+      "location": "Vashisht",
+      "distance": "3.1 km",
+      "price": 8999,
+      "rating": 4.9,
+      "ratingLabel": "Exceptional",
+      "reviews": 186,
+      "type": "Homestay",
+      "star": 4,
+      "experience": [
+        "Romantic"
+      ],
+      "amenities": [
+        "Riverside",
+        "Bonfire",
+        "Private Balcony",
+        "Breakfast"
+      ],
+      "booking": [
+        "Pay at Property",
+        "Breakfast Included"
+      ],
+      "badge": "COUPLE FRIENDLY",
+      "freeCancellation": false,
+      "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=85",
+      "description": "Charming cottages by the river, perfect for a romantic and peaceful escape."
+    },
+    {
+      "id": "zenith",
+      "name": "Highland Zenith Hotel",
+      "location": "Mall Road",
+      "distance": "1.8 km",
+      "price": 6499,
+      "strikePrice": 7999,
+      "discount": 19,
+      "rating": 4.6,
+      "ratingLabel": "Excellent",
+      "reviews": 512,
+      "type": "Hotel",
+      "star": 4,
+      "experience": [
+        "Family"
+      ],
+      "amenities": [
+        "Family Friendly",
+        "Gym",
+        "Breakfast"
+      ],
+      "booking": [
+        "Free Cancellation",
+        "Breakfast Included"
+      ],
+      "badge": "FAMILY PICK",
+      "freeCancellation": true,
+      "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=85",
+      "description": "Comfortable premium stay close to market with complete amenities."
+    },
+    {
+      "id": "pinegrove",
+      "name": "Pinegrove Alpine Lodge",
+      "location": "Old Manali",
+      "distance": "2.4 km",
+      "price": 10499,
+      "strikePrice": 12999,
+      "discount": 19,
+      "rating": 4.8,
+      "ratingLabel": "Exceptional",
+      "reviews": 289,
+      "type": "Resort",
+      "star": 5,
+      "experience": [
+        "Mountain View",
+        "Romantic"
+      ],
+      "amenities": [
+        "Mountain View",
+        "Spa",
+        "Restaurant",
+        "Wi-Fi"
+      ],
+      "booking": [
+        "Free Cancellation",
+        "Breakfast Included"
+      ],
+      "badge": "LUXE STAY",
+      "freeCancellation": true,
+      "image": "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=1200&q=85",
+      "description": "Pine-scented luxury lodge with heated floors and a wide deck over the deodar line."
+    },
+    {
+      "id": "beas",
+      "name": "Beas Riverbank Homestay",
+      "location": "Naggar",
+      "distance": "16.8 km",
+      "price": 5299,
+      "strikePrice": 6499,
+      "discount": 18,
+      "rating": 4.7,
+      "ratingLabel": "Excellent",
+      "reviews": 164,
+      "type": "Homestay",
+      "star": 3,
+      "experience": [
+        "Romantic",
+        "Family"
+      ],
+      "amenities": [
+        "Riverside",
+        "Breakfast",
+        "Bonfire"
+      ],
+      "booking": [
+        "Pay at Property",
+        "Breakfast Included"
+      ],
+      "badge": "LOCAL HOST",
+      "freeCancellation": false,
+      "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1200&q=85",
+      "description": "A family-run home on the riverbank where breakfast arrives with the sound of water."
+    },
+    {
+      "id": "cloudline",
+      "name": "Cloudline Boutique Stay",
+      "location": "Mall Road",
+      "distance": "600 m",
+      "price": 7499,
+      "rating": 4.6,
+      "ratingLabel": "Excellent",
+      "reviews": 341,
+      "type": "Boutique Stay",
+      "star": 4,
+      "experience": [
+        "Mountain View"
+      ],
+      "amenities": [
+        "Mountain View",
+        "Wi-Fi",
+        "Restaurant"
+      ],
+      "booking": [
+        "Free Cancellation"
+      ],
+      "badge": "CITY CENTRE",
+      "freeCancellation": true,
+      "image": "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=85",
+      "description": "Design-led rooms a short walk from the market, with valley-facing bay windows."
+    },
+    {
+      "id": "solang",
+      "name": "Solang Snowfield Camp",
+      "location": "Solang Valley",
+      "distance": "13.2 km",
+      "price": 4299,
+      "strikePrice": 5499,
+      "discount": 22,
+      "rating": 4.5,
+      "ratingLabel": "Very Good",
+      "reviews": 208,
+      "type": "Camp",
+      "star": 3,
+      "experience": [
+        "Adventure"
+      ],
+      "amenities": [
+        "Mountain View",
+        "Bonfire",
+        "Breakfast"
+      ],
+      "booking": [
+        "Pay at Property"
+      ],
+      "badge": "ADVENTURE",
+      "freeCancellation": false,
+      "image": "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1200&q=85",
+      "description": "Insulated dome tents at the edge of the snowfield, with bonfires after sundown."
+    },
+    {
+      "id": "deodar",
+      "name": "Deodar Heights Villa",
+      "location": "Vashisht",
+      "distance": "4.2 km",
+      "price": 11999,
+      "strikePrice": 14499,
+      "discount": 17,
+      "rating": 4.9,
+      "ratingLabel": "Exceptional",
+      "reviews": 97,
+      "type": "Villa",
+      "star": 5,
+      "experience": [
+        "Family",
+        "Mountain View"
+      ],
+      "amenities": [
+        "Mountain View",
+        "Parking",
+        "Wi-Fi",
+        "Gym"
+      ],
+      "booking": [
+        "Free Cancellation",
+        "Breakfast Included"
+      ],
+      "badge": "ENTIRE VILLA",
+      "freeCancellation": true,
+      "image": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1200&q=85",
+      "description": "A four-bedroom villa on the ridge, booked whole, with a cook and a fireplace."
+    },
+    {
+      "id": "orchard",
+      "name": "Old Orchard Cottages",
+      "location": "Old Manali",
+      "distance": "1.6 km",
+      "price": 6199,
+      "rating": 4.7,
+      "ratingLabel": "Excellent",
+      "reviews": 275,
+      "type": "Homestay",
+      "star": 3,
+      "experience": [
+        "Romantic",
+        "Family"
+      ],
+      "amenities": [
+        "Breakfast",
+        "Wi-Fi",
+        "Parking"
+      ],
+      "booking": [
+        "Free Cancellation"
+      ],
+      "badge": "APPLE ORCHARD",
+      "freeCancellation": true,
+      "image": "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1200&q=85",
+      "description": "Slate-roof cottages set inside a working apple orchard above the old town."
+    },
+    {
+      "id": "summit",
+      "name": "Summit Ridge Resort",
+      "location": "Naggar",
+      "distance": "19.4 km",
+      "price": 9899,
+      "strikePrice": 11499,
+      "discount": 14,
+      "rating": 4.8,
+      "ratingLabel": "Exceptional",
+      "reviews": 188,
+      "type": "Resort",
+      "star": 5,
+      "experience": [
+        "Mountain View",
+        "Romantic"
+      ],
+      "amenities": [
+        "Infinity Pool",
+        "Spa",
+        "Restaurant",
+        "Mountain View"
+      ],
+      "booking": [
+        "Free Cancellation",
+        "Breakfast Included"
+      ],
+      "badge": "INFINITY POOL",
+      "freeCancellation": true,
+      "image": "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=85",
+      "description": "A ridge-top resort where the heated pool ends where the valley begins."
+    },
+    {
+      "id": "lantern",
+      "name": "The Lantern Boutique",
+      "location": "Mall Road",
+      "distance": "1.1 km",
+      "price": 5899,
+      "strikePrice": 6999,
+      "discount": 16,
+      "rating": 4.5,
+      "ratingLabel": "Very Good",
+      "reviews": 402,
+      "type": "Boutique Stay",
+      "star": 3,
+      "experience": [
+        "Adventure",
+        "Family"
+      ],
+      "amenities": [
+        "Wi-Fi",
+        "Breakfast",
+        "Restaurant"
+      ],
+      "booking": [
+        "Free Cancellation",
+        "Pay at Property"
+      ],
+      "badge": "BUDGET FRIENDLY",
+      "freeCancellation": true,
+      "image": "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=85",
+      "description": "Warm, lantern-lit rooms above a cafe that stays open long after the market closes."
+    }
+  ],
+  "featuredStays": [
+    {
+      "id": "himalayan",
+      "name": "The Himalayan House",
+      "location": "Old Manali",
+      "distance": "1.2 km",
+      "price": 8499,
+      "rating": 4.9,
+      "ratingLabel": "Exceptional",
+      "reviews": 324,
+      "type": "Boutique Stay",
+      "star": 5,
+      "amenities": [
+        "Mountain View",
+        "Breakfast"
+      ],
+      "highlight": "TAIFER PICK",
+      "highlightTone": "gold",
+      "freeCancellation": false,
+      "image": "https://images.unsplash.com/photo-1544984243-ec57ea16fe25?auto=format&fit=crop&w=1200&q=85",
+      "description": "A cedar hideaway with slow mornings and valley-facing decks."
+    },
+    {
+      "id": "snowcrest",
+      "name": "Snowcrest Resort",
+      "location": "Vashisht",
+      "distance": "3.5 km",
+      "price": 7299,
+      "rating": 4.8,
+      "ratingLabel": "Excellent",
+      "reviews": 219,
+      "type": "Resort",
+      "star": 5,
+      "amenities": [
+        "Infinity Pool",
+        "Spa"
+      ],
+      "highlight": "BEST VALUE",
+      "highlightTone": "forest",
+      "freeCancellation": true,
+      "image": "https://images.unsplash.com/photo-1518022525094-218670c9b745?auto=format&fit=crop&w=1200&q=85",
+      "description": "A mountain-edge retreat built for unhurried alpine days."
+    },
+    {
+      "id": "riverstone",
+      "name": "Riverstone Riverside",
+      "location": "Naggar",
+      "distance": "18.2 km",
+      "price": 6999,
+      "rating": 4.8,
+      "ratingLabel": "Excellent",
+      "reviews": 142,
+      "type": "Hotel",
+      "star": 4,
+      "amenities": [
+        "Riverside",
+        "Bonfire"
+      ],
+      "highlight": "LOCAL FAVORITE",
+      "highlightTone": "forest",
+      "freeCancellation": false,
+      "image": "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1200&q=85",
+      "description": "A quiet lodge where the river sets the rhythm of the day."
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "testimonial-1",
+      "quote": "The itinerary was crafted with such deep respect for the land. But what truly stays with you are the campfire conversations at 14,000 feet—meeting strangers who became family.",
+      "author": "Priya Sharma",
+      "location": "Mumbai, Maharashtra",
+      "tripName": "Spiti Valley High Road Odyssey",
+      "rating": 5,
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+      "coverImage": "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=1200&q=80",
+      "travelDate": "September 2025"
+    },
+    {
+      "id": "testimonial-2",
+      "quote": "As a solo female traveler, I was cautious about high-altitude expeditions. Travel Coffee's team, local homestay hosts, and safety protocols made it the most empowering week of my life.",
+      "author": "Rhea Iyer",
+      "location": "Bengaluru, Karnataka",
+      "tripName": "Kashmir Alpine Lakes & Hidden Valleys",
+      "rating": 5,
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80",
+      "coverImage": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1200&q=80",
+      "travelDate": "October 2025"
+    },
+    {
+      "id": "testimonial-3",
+      "quote": "Not a single generic tourist trap. Every meal was cooked in authentic wood-fired kitchens, every campsite had panoramic peak vistas, and the guides knew every hidden ridge.",
+      "author": "Aditya Verma",
+      "location": "New Delhi",
+      "tripName": "Leh Ladakh High Pass Traverse",
+      "rating": 5,
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80",
+      "coverImage": "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=1200&q=80",
+      "travelDate": "July 2025"
+    }
+  ],
+  "team": [
+    {
+      "id": "arjun",
+      "name": "Arjun Rawat",
+      "role": "Co-Founder",
+      "bio": "The dreamer and the strategist.",
+      "image": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=85",
+      "social": {
+        "facebook": "#",
+        "instagram": "#",
+        "linkedin": "#"
+      }
+    },
+    {
+      "id": "meera",
+      "name": "Meera Thakur",
+      "role": "Head of Experiences",
+      "bio": "The planner with an eye for details.",
+      "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=700&q=85",
+      "social": {
+        "facebook": "#",
+        "instagram": "#",
+        "linkedin": "#"
+      }
+    },
+    {
+      "id": "dev",
+      "name": "Dev Negi",
+      "role": "Operations Lead",
+      "bio": "The backbone who keeps everything running.",
+      "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=700&q=85",
+      "social": {
+        "facebook": "#",
+        "instagram": "#",
+        "linkedin": "#"
+      }
+    },
+    {
+      "id": "zoya",
+      "name": "Zoya Sheikh",
+      "role": "Story & Content Lead",
+      "bio": "The storyteller who brings our journeys to life.",
+      "image": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=700&q=85",
+      "social": {
+        "facebook": "#",
+        "instagram": "#",
+        "linkedin": "#"
+      }
+    }
+  ],
+  "journalArticles": [
+    {
+      "id": "7-himalayan-places",
+      "title": "7 Himalayan places you should see before you turn 30",
+      "category": "Expeditions & High Passes",
+      "readingTime": "6 min read",
+      "author": "Rohan Varma",
+      "date": "May 2026",
+      "image": "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=1200&q=80",
+      "excerpt": "From the wind-carved pinnacles of Spiti's Pin Valley to the azure heights of Gurudongmar, these are the sacred sanctuaries where the Himalayas test your endurance and reward your spirit.",
+      "featured": true,
+      "content": "There is an ancient Pahadi proverb: The mountains do not belong to those who measure them, but to those who let the silence enter their chest. In this definitive guide, our senior expedition leaders chart the seven most transcendent Himalayan frontiers..."
+    },
+    {
+      "id": "beginners-trek-guide",
+      "title": "A beginner's guide to your first high-altitude mountain trek",
+      "category": "Mountain Wisdom",
+      "readingTime": "4 min read",
+      "author": "Ananya Mukherjee",
+      "date": "May 2026",
+      "image": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1000&q=80",
+      "excerpt": "How to acclimatize properly, what shoes actually matter, and why pacing your breathing transforms an exhausting ascent into effortless rhythm.",
+      "featured": false
+    },
+    {
+      "id": "best-time-kashmir",
+      "title": "When is the truly best time to visit Kashmir? A seasonal compass",
+      "category": "Seasonal Guide",
+      "readingTime": "5 min read",
+      "author": "Farooq Ahmed",
+      "date": "Apr 2026",
+      "image": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1000&q=80",
+      "excerpt": "Spring almond blossoms, golden autumn chinar leaves, or deep winter powder? We break down the real weather and crowd patterns month by month.",
+      "featured": false
+    },
+    {
+      "id": "hidden-long-weekend-escapes",
+      "title": "10 hidden escapes within 8 hours of Delhi and Mumbai",
+      "category": "Weekend Escapes",
+      "readingTime": "5 min read",
+      "author": "Siddharth Rao",
+      "date": "May 2026",
+      "image": "https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=1000&q=80",
+      "excerpt": "Ditch the crowded tourist malls. Here are tranquil pine hamlets, private heritage Havelis, and secluded coastal coves for quick recharge.",
+      "featured": false
+    },
+    {
+      "id": "spiti-stargazing-guide",
+      "title": "The art of high-altitude stargazing: Bortle Class 1 skies in Spiti",
+      "category": "Astronomy & Nature",
+      "readingTime": "7 min read",
+      "author": "Kavya Nambiar",
+      "date": "Mar 2026",
+      "image": "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=1000&q=80",
+      "excerpt": "Standing at 14,000 ft where the atmosphere is razor-thin, the Milky Way casts actual shadows on the Himalayan scree slopes.",
+      "featured": false
+    }
+  ],
+  "journey": {
+    "id": "manali-explorer",
+    "eyebrow": "6 Days • 5 Nights",
+    "title": "Manali",
+    "titleAccent": "Explorer",
+    "subtitle": "Mountains, valleys & memorable moments.",
+    "intro": "A perfect blend of adventure, relaxation and local experiences in the lap of Himalayas.",
+    "rating": 4.8,
+    "reviews": 230,
+    "badge": "Best Seller",
+    "price": 24999,
+    "priceNote": "Inclusive of stay, meals, transfers & sightseeing",
+    "bookingFootnote": "Flexible Date • Free Cancellation",
+    "totalDistance": "~320 km",
+    "heroImage": "/banner1.jpg"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrive in Manali",
+      "description": "Arrive in Manali, check-in at the hotel and relax. Evening at leisure by the riverside.",
+      "meta": [
+        "Hotel Stay",
+        "Dinner",
+        "Altitude: 2,050m"
+      ],
+      "icon": "bed",
+      "image": "https://images.unsplash.com/photo-1601918774946-25832a4be0d6?auto=format&fit=crop&w=1200&q=85",
+      "imageAlt": "Timber lodge lit at dusk on the edge of Old Manali"
+    },
+    {
+      "day": 2,
+      "title": "Solang Valley Adventure",
+      "description": "Enjoy thrilling activities in Solang Valley like paragliding, zorbing & more.",
+      "meta": [
+        "Breakfast",
+        "Sightseeing",
+        "Adventure"
+      ],
+      "icon": "adventure",
+      "image": "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=85",
+      "imageAlt": "Paragliders above the meadows of Solang Valley"
+    },
+    {
+      "day": 3,
+      "title": "Rohtang Pass Excursion",
+      "description": "Scenic drive to Rohtang Pass. Snow activities and breathtaking Himalayan views.",
+      "meta": [
+        "Breakfast",
+        "Sightseeing",
+        "Photography"
+      ],
+      "icon": "snow",
+      "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=85",
+      "imageAlt": "Snow-covered high pass under a clear Himalayan sky"
+    },
+    {
+      "day": 4,
+      "title": "Kullu & Manikaran",
+      "description": "Visit Kullu Valley, local markets and spiritual Manikaran Sahib Gurudwara.",
+      "meta": [
+        "Breakfast",
+        "Sightseeing",
+        "Local Experience"
+      ],
+      "icon": "culture",
+      "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=85",
+      "imageAlt": "Kullu valley village beneath terraced slopes"
+    },
+    {
+      "day": 5,
+      "title": "Kasol & Tosh Village",
+      "description": "Explore the beauty of Kasol & Tosh villages. Relax by the Parvati river.",
+      "meta": [
+        "Breakfast",
+        "Sightseeing",
+        "Nature Walk"
+      ],
+      "icon": "trail",
+      "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=85",
+      "imageAlt": "River running past pine forest near Kasol"
+    },
+    {
+      "day": 6,
+      "title": "Departure",
+      "description": "Check-out and proceed for your onward journey with beautiful memories.",
+      "meta": [
+        "Breakfast",
+        "Transfer"
+      ],
+      "icon": "departure",
+      "image": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=85",
+      "imageAlt": "Mountain road winding out of the valley at sunrise"
+    }
+  ],
+  "quickStats": [
+    {
+      "icon": "calendar",
+      "value": "6 Days",
+      "label": "Duration"
+    },
+    {
+      "icon": "moon",
+      "value": "5 Nights",
+      "label": "Stay"
+    },
+    {
+      "icon": "pin",
+      "value": "12+ Spots",
+      "label": "Covered"
+    },
+    {
+      "icon": "meals",
+      "value": "Meals",
+      "label": "Included"
+    },
+    {
+      "icon": "support",
+      "value": "24/7",
+      "label": "Support"
+    }
+  ],
+  "highlights": [
+    {
+      "icon": "road",
+      "text": "Scenic drives & breathtaking views"
+    },
+    {
+      "icon": "adventure",
+      "text": "Adventure activities in Solang Valley"
+    },
+    {
+      "icon": "snow",
+      "text": "Visit to Rohtang Pass"
+    },
+    {
+      "icon": "culture",
+      "text": "Explore local culture & markets"
+    },
+    {
+      "icon": "bed",
+      "text": "Comfortable stays & local cuisine"
+    }
+  ],
+  "included": [
+    "Accommodation (5 Nights)",
+    "Daily Breakfast & Dinner",
+    "All Sightseeing & Transfers",
+    "Toll, Parking & Driver Allowances",
+    "24/7 Travel Assistance"
+  ],
+  "routeStops": [
+    {
+      "day": 1,
+      "label": "Manali",
+      "x": 74,
+      "y": 62
+    },
+    {
+      "day": 2,
+      "label": "Solang Valley",
+      "x": 208,
+      "y": 132
+    },
+    {
+      "day": 3,
+      "label": "Rohtang Pass",
+      "x": 104,
+      "y": 232
+    },
+    {
+      "day": 4,
+      "label": "Kullu & Manikaran",
+      "x": 216,
+      "y": 330
+    },
+    {
+      "day": 5,
+      "label": "Kasol & Tosh",
+      "x": 92,
+      "y": 430
+    },
+    {
+      "day": 6,
+      "label": "Departure",
+      "x": 208,
+      "y": 512
+    }
+  ]
+}

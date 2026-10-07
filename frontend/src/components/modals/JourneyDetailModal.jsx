@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Star, Clock, MapPin, Check, ShieldCheck, Calendar, Users, ArrowRight, MessageCircle } from 'lucide-react';
+import { X, Star, MapPin, Check, ArrowRight, MessageCircle } from 'lucide-react';
 import MagneticButton from '../common/MagneticButton';
 import Badge from '../common/Badge';
 

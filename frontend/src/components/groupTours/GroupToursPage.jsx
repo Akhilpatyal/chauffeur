@@ -10,8 +10,15 @@ import GroupInclusions from './GroupInclusions';
 import UpcomingDepartures from './UpcomingDepartures';
 import GroupTestimonials from './GroupTestimonials';
 import { RidgeMark } from './groupUi';
+import { useDocumentMeta } from '../../lib/seo';
 
 export default function GroupToursPage({ onPlanTrip }) {
+  useDocumentMeta({
+    title: 'Group Tours & Fixed Departures',
+    description:
+      'Join a small group on a fixed departure: solo-friendly, capped at 16 travellers, with a trip captain and local guides on every route.',
+  });
+
   const [destination, setDestination] = useState('Manali, Himachal Pradesh');
   const ctaScope = useRef(null);
   useScrollReveal(ctaScope, { start: 'top 88%' });
@@ -20,6 +27,13 @@ export default function GroupToursPage({ onPlanTrip }) {
   const openTour = useCallback((tourId) => {
     navigateTo(`/journeys/${tourId}`);
   }, []);
+
+  /* Group-tour enquiries are tagged by form so the dashboard can tell a
+   * "custom group quote" apart from a general trip request. */
+  const enquireAboutGroups = useCallback(
+    () => onPlanTrip?.({ source: 'group_tour_enquiry' }),
+    [onPlanTrip]
+  );
 
   const scrollToTours = useCallback(() => {
     document
@@ -33,7 +47,7 @@ export default function GroupToursPage({ onPlanTrip }) {
         destination={destination}
         onDestinationChange={setDestination}
         onSearch={scrollToTours}
-        onQuote={onPlanTrip}
+        onQuote={enquireAboutGroups}
       />
 
       <main className="topographic-bg">
@@ -46,8 +60,8 @@ export default function GroupToursPage({ onPlanTrip }) {
 
         <UpcomingDepartures
           onBook={(departure) => openTour(departure.tourId)}
-          onViewCalendar={onPlanTrip}
-          onCustomQuote={onPlanTrip}
+          onViewCalendar={enquireAboutGroups}
+          onCustomQuote={enquireAboutGroups}
         />
 
         <GroupTestimonials />

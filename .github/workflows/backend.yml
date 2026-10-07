@@ -1,0 +1,149 @@
+name: backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+
+# A second push to the same branch cancels the first: no point paying for a
+# build of code nobody will deploy.
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test:coverage
+        env:
+          # The suite starts its own in-memory MongoDB and runs with Redis
+          # disabled, so no services block is needed here.
+          CI: true
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: backend/coverage/
+          retention-days: 7
+
+      - name: Generate the OpenAPI document
+        run: npm run openapi:export
+
+      # A public endpoint changing shape should be a visible diff in review, not
+      # a surprise for the frontend after deploy.
+      - name: Upload OpenAPI document
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi
+          path: backend/openapi.json
+          retention-days: 30
+
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      # High and critical advisories fail the build; moderate ones are reported
+      # and triaged by Dependabot rather than blocking every PR.
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
+  docker:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build the image
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          push: false
+          load: true
+          tags: taifer-backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Proves the image boots and the probes answer before anything is deployed.
+      - name: Smoke test the image
+        run: |
+          docker network create taifer-ci
+          docker run -d --name mongo --network taifer-ci mongo:7
+          docker run -d --name redis --network taifer-ci redis:7-alpine
+          docker run -d --name api --network taifer-ci -p 4000:4000 \
+            -e NODE_ENV=production \
+            -e MONGODB_URI=mongodb://mongo:27017/taifer_ci \
+            -e REDIS_URL=redis://redis:6379 \
+            -e JWT_ACCESS_SECRET=ci-access-secret-that-is-long-enough-000000 \
+            -e JWT_REFRESH_SECRET=ci-refresh-secret-that-is-long-enough-00000 \
+            -e COOKIE_SECRET=ci-cookie-secret-that-is-long-enough-0000000 \
+            -e CORS_ORIGINS=https://taifer.com \
+            taifer-backend:${{ github.sha }}
+
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://localhost:4000/ready; then
+              echo "ready"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "API never became ready:"
+          docker logs api
+          exit 1
+
+  deploy:
+    needs: [verify, docker, audit]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      # Replace this step with your host's action or CLI. The gate above is the
+      # part that matters: nothing reaches production without lint, tests, an
+      # audit and a booting image.
+      - name: Deploy
+        run: |
+          echo "Wire up your host here (Railway / Render / Fly.io / ECS)."
+          echo "Deploy the API and the worker from the same image tag:"
+          echo "  api    -> node src/server.js"
+          echo "  worker -> node src/workers/index.js"
+          echo "Then run the seed/migration step once per release if content changed."
