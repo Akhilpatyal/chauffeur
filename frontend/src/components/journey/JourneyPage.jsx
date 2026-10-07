@@ -16,6 +16,10 @@ import Testimonial from './Testimonial';
 import JourneyVideo from './JourneyVideo';
 import BookingCTA from './BookingCTA';
 import Breadcrumb from '../common/Breadcrumb';
+import TripReadiness from '../common/TripReadiness';
+import { readinessFor } from '../../data/tripReadiness';
+import { routeFromStages } from '../../data/places';
+import RouteMap from '../common/RouteMap';
 import { useDocumentMeta } from '../../lib/seo';
 
 
@@ -24,6 +28,23 @@ export default function JourneyPage({ journeyId, onCheckAvailability }) {
   /* Everything on the page is derived from the journey that was clicked */
   const content = useMemo(() => buildJourneyContent(journeyId), [journeyId]);
   const fullTitle = `${content.title} ${content.titleAccent ?? ''}`.trim();
+
+  /* Season, permits, altitude and ground realities for wherever this route
+   * goes. Resolved from the trip's own text so new journeys inherit it. */
+  const readiness = useMemo(
+    () => readinessFor(fullTitle, content.subtitle, content.intro),
+    [fullTitle, content.subtitle, content.intro]
+  );
+
+  /*
+   * Real coordinates for the stages, where we recognise the place names. A
+   * route we cannot locate falls back to the illustrated map rather than
+   * showing an empty frame or pins in the wrong country.
+   */
+  const mappedRoute = useMemo(
+    () => routeFromStages(content.days ?? []),
+    [content.days]
+  );
 
   useDocumentMeta({
     title: content.eyebrow ? `${fullTitle} — ${content.eyebrow}` : fullTitle,
@@ -115,15 +136,23 @@ export default function JourneyPage({ journeyId, onCheckAvailability }) {
               others slide behind it.
             */}
             <aside className="no-scrollbar space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pb-2">
-              {hasStages && (
-                <JourneyRouteMap
-                  labels={content.routeLabels}
-                  activeDay={activeDay}
-                  onSelectDay={handleSelectDay}
-                  totalDistance={content.totalDistance}
-                  scheduled={content.daysAreScheduled}
-                />
-              )}
+              {hasStages &&
+                (mappedRoute.length >= 2 ? (
+                  <RouteMap
+                    stops={mappedRoute}
+                    activeDay={activeDay}
+                    onSelectDay={handleSelectDay}
+                    scheduled={content.daysAreScheduled}
+                  />
+                ) : (
+                  <JourneyRouteMap
+                    labels={content.routeLabels}
+                    activeDay={activeDay}
+                    onSelectDay={handleSelectDay}
+                    totalDistance={content.totalDistance}
+                    scheduled={content.daysAreScheduled}
+                  />
+                ))}
               <JourneyHighlights highlights={content.highlights} />
               <IncludedCard />
               <BestTimeCard />
@@ -131,6 +160,18 @@ export default function JourneyPage({ journeyId, onCheckAvailability }) {
           </div>
         </div>
       </main>
+
+      {/*
+        Sits directly after the itinerary, where someone has just decided they
+        want the trip and is about to ask whether they can actually do it.
+      */}
+      {readiness && (
+        <section className="bg-[#F4F1E8] pb-14 sm:pb-16">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
+            <TripReadiness readiness={readiness} />
+          </div>
+        </section>
+      )}
 
       <Experiences />
 

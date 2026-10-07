@@ -6,9 +6,15 @@ import PageHero from '../common/PageHero';
 import Breadcrumb from '../common/Breadcrumb';
 import CTABand from '../common/CTABand';
 import ImageGallery from '../common/ImageGallery';
+import TripReadiness from '../common/TripReadiness';
+import NextDepartures from '../common/NextDepartures';
+import RouteMap from '../common/RouteMap';
+import { routeFromStages } from '../../data/places';
 import TripCard from '../cards/TripCard';
 import { NotFoundPage } from '../destinations/DestinationPage';
 import { getEscape, relatedEscapes } from '../../data/weekendEscapes';
+import { readinessFor } from '../../data/tripReadiness';
+import { SHOW_TRIP_RATINGS } from '../../data/companyFacts';
 import { journeys } from '../../data/journeys';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
 import { useDocumentMeta } from '../../lib/seo';
@@ -54,7 +60,29 @@ export default function WeekendEscapeDetail({ slug, onPlanTrip }) {
   useScrollReveal(scope, { start: 'top 90%', stagger: 0.07 });
 
   const escape = useMemo(() => getEscape(slug), [slug]);
+  /* Resolved from the trip's own location text, so a new escape in a region we
+   * already cover gets the readiness panel without any extra wiring. */
+  const readiness = useMemo(
+    () => (escape ? readinessFor(escape.title, escape.location, escape.state) : null),
+    [escape]
+  );
   const related = useMemo(() => (escape ? relatedEscapes(slug) : []), [escape, slug]);
+
+  /*
+   * Where this escape actually goes.
+   *
+   * The departure city is dropped: it is a gateway, already stated in the
+   * hero ("From Delhi · 12 hr overnight drive"), and keeping it would zoom the
+   * map out to cover a thousand kilometres of plains and shrink the place the
+   * traveller came to look at into a dot.
+   */
+  const mappedRoute = useMemo(() => {
+    if (!escape) return [];
+    const stages = escape.itinerary.map((day, index) => ({ day: index + 1, title: day.title }));
+    const all = routeFromStages(stages);
+    const withoutGateways = all.filter((stop) => stop.place.kind !== 'city');
+    return withoutGateways.length > 0 ? withoutGateways : all;
+  }, [escape]);
 
   const linkedJourneys = useMemo(
     () =>
@@ -100,7 +128,10 @@ export default function WeekendEscapeDetail({ slug, onPlanTrip }) {
         facts={[
           { icon: Clock, label: 'Duration', value: escape.duration },
           { icon: MapPin, label: 'From', value: escape.departFrom },
-          { icon: Star, label: 'Rated', value: `${escape.rating} (${escape.reviews})` },
+          /* Only shown once ratings are real. */
+          ...(SHOW_TRIP_RATINGS
+            ? [{ icon: Star, label: 'Rated', value: `${escape.rating} (${escape.reviews})` }]
+            : [{ icon: Star, label: 'Difficulty', value: escape.difficulty }]),
         ]}
       />
 
@@ -229,13 +260,16 @@ export default function WeekendEscapeDetail({ slug, onPlanTrip }) {
                 />
               </div>
 
+              {/* Trip-specific notes stay separate from the regional
+                  readiness panel below: one is about this escape, the other
+                  about travelling in this region at all. */}
               <section
                 data-reveal
                 className="rounded-2xl border border-[#E3DDCB] bg-[#FAF9F5] p-6 sm:p-8"
               >
                 <h2 className="flex items-center gap-2 font-display text-[22px] leading-tight text-[#012C18] sm:text-[26px]">
                   <Info className="h-4 w-4 text-[#B89A5A]" strokeWidth={2} />
-                  Before you book
+                  Notes on this escape
                 </h2>
                 <ul className="mt-4 space-y-2.5">
                   {escape.importantInfo.map((item) => (
@@ -248,6 +282,8 @@ export default function WeekendEscapeDetail({ slug, onPlanTrip }) {
                   ))}
                 </ul>
               </section>
+
+              <TripReadiness readiness={readiness} />
             </div>
 
             {/* Sticky booking rail */}
@@ -293,6 +329,18 @@ export default function WeekendEscapeDetail({ slug, onPlanTrip }) {
                   We reply within 2 hours. No booking fees.
                 </p>
               </div>
+
+              {mappedRoute.length > 0 && (
+                <RouteMap stops={mappedRoute} activeDay={mappedRoute[0].day} followActive={false} scheduled />
+              )}
+
+              <NextDepartures
+                slug={escape.slug}
+                nights={escape.nights}
+                onEnquire={(date) =>
+                  onPlanTrip?.({ ...enquiryContext, title: `${escape.title} — ${date.label}` })
+                }
+              />
 
               {escape.tags?.length > 0 && (
                 <div className="rounded-2xl border border-[#E3DDCB] bg-[#FAF9F5] p-5">

@@ -1,11 +1,31 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { ArrowRight, Check, Flame } from 'lucide-react';
 import { departures, privateGroup } from '../../data/groupToursPage';
+import { upcomingDepartures } from '../../data/departures';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
+import { SHOW_SEAT_SCARCITY } from '../../data/companyFacts';
 
 export default function UpcomingDepartures({ onBook, onViewCalendar, onCustomQuote }) {
   const scope = useRef(null);
   useScrollReveal(scope, { start: 'top 86%', stagger: 0.07 });
+
+  /*
+   * The dates in data/groupToursPage.js were fixed strings and every one of
+   * them had already passed. Each departure now keeps its tour, title, price
+   * and duration but takes its date from the schedule generator, so this list
+   * is always genuinely upcoming.
+   */
+  const rows = useMemo(
+    () =>
+      departures
+        .map((departure) => {
+          const [next] = upcomingDepartures(departure.tourId, { count: 1, nights: 5 });
+          return next ? { ...departure, day: next.day, month: next.month, start: next.start } : null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.start - b.start),
+    []
+  );
 
   return (
     <section
@@ -38,7 +58,7 @@ export default function UpcomingDepartures({ onBook, onViewCalendar, onCustomQuo
             </div>
 
             <ul className="mt-5 space-y-3">
-              {departures.map((departure) => (
+              {rows.map((departure) => (
                 <li
                   key={departure.id}
                   data-reveal
@@ -62,7 +82,7 @@ export default function UpcomingDepartures({ onBook, onViewCalendar, onCustomQuo
 
                   <span className="inline-flex items-center gap-1.5 text-[11.5px] font-medium text-[#B0803A]">
                     <Flame className="h-3.5 w-3.5" strokeWidth={1.8} />
-                    {departure.seatsLeft} Seats Left
+                    {SHOW_SEAT_SCARCITY ? `${departure.seatsLeft} Seats Left` : 'Seats available'}
                   </span>
 
                   <span className="text-[13px] font-bold text-[#012C18]">

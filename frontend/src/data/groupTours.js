@@ -12,7 +12,7 @@ export const groupTours = [
     originalPrice: "₹22,999",
     rating: 4.95,
     reviews: 184,
-    badge: "Almost Full — 4 Seats Left",
+    badge: "",
     leader: {
       name: "Tenzin Dorje & Aryan Sen",
       role: "Lead Mountain Mountaineer & Storyteller",
@@ -35,7 +35,7 @@ export const groupTours = [
     originalPrice: "₹18,000",
     rating: 4.88,
     reviews: 112,
-    badge: "6 Seats Left",
+    badge: "",
     image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1000&q=80",
     tags: ["Dune Camping", "Folk Music", "Heritage", "Fort Walk"],
     description: "Camel rides on golden dunes, midnight acoustic jams under open desert skies, and royal haveli feasts."
@@ -71,7 +71,7 @@ export const groupTours = [
     originalPrice: "₹14,000",
     rating: 4.91,
     reviews: 210,
-    badge: "8 Seats Left",
+    badge: "",
     image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1000&q=80",
     tags: ["Summit Push", "Snow Camps", "Juda Ka Talab", "Starlit Night"],
     description: "Summit at 12,500 ft to watch sunrise light up 13 Himalayan giants in 360-degree glory."
@@ -89,7 +89,7 @@ export const groupTours = [
     originalPrice: "₹13,000",
     rating: 4.86,
     reviews: 130,
-    badge: "7 Seats Left",
+    badge: "",
     image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1000&q=80",
     tags: ["Cliff Hikes", "Beach Bonfire", "Secret Bays", "Dolphin Trail"],
     description: "Hike between 5 secluded beaches, dive into pristine waters, and enjoy beach shack jam sessions."

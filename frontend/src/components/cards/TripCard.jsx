@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Clock, MapPin, Star } from 'lucide-react';
 import { linkProps } from '../../router';
+import { SHOW_TRIP_RATINGS } from '../../data/companyFacts';
 
 /*
  * One card for journeys and weekend escapes.
@@ -108,7 +109,9 @@ export default function TripCard({ trip, href, ctaLabel = 'View details' }) {
                 )}
               </p>
             )}
-            {rating ? (
+            {/* Ratings stay hidden until they come from real reviews —
+                see data/companyFacts.js. */}
+            {SHOW_TRIP_RATINGS && rating ? (
               <p className="mt-0.5 flex items-center gap-1 text-[11px] text-[#5E6B63]">
                 <Star className="h-3 w-3 fill-[#B89A5A] text-[#B89A5A]" />
                 {rating}

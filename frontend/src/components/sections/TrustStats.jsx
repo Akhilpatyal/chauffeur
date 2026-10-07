@@ -1,14 +1,20 @@
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
+import { publishedFacts } from '../../data/companyFacts';
 
+/*
+ * Every figure here is counted from the live catalogue. The five hardcoded
+ * numbers that used to sit in this file — including a 4.9 rating attributed to
+ * Google and Tripoto, and "250+ Journeys" against a catalogue of five — are
+ * gone. See data/companyFacts.js for how to publish a real one.
+ */
 export default function TrustStats() {
-  const stats = [
-    { value: '10K+', label: 'Happy Travelers', sub: 'Minds at peace, bags unpacked' },
-    { value: '250+', label: 'Journeys', sub: 'Routes explored and chronicled' },
-    { value: '50+', label: 'Destinations', sub: 'Frontiers discovered & mapped' },
-    { value: '4.9★', label: 'Average Rating', sub: 'Across Google, Tripoto & more' },
-    { value: '10+', label: 'Years Exploring', sub: 'A decade of mountain stories' },
-  ];
+  const stats = publishedFacts;
+
+  /* With nothing verified yet this section could be a row of three. Rather
+   * than show a thin strip pretending to be a milestone wall, it reframes
+   * honestly as what we run. */
+  if (stats.length === 0) return null;
 
   return (
     <section className="py-14 sm:py-16 bg-[#012C18] text-[#F4F1E8]">
@@ -18,14 +24,14 @@ export default function TrustStats() {
         <div className="flex items-center gap-3 mb-8">
           <ShieldCheck className="w-4 h-4 text-[#B89A5A]" />
           <span className="text-[11px] font-mono font-bold tracking-[0.2em] uppercase text-[#B89A5A]">
-            EXPEDITION MILESTONES — CERTIFIED RECORD 2026
+            WHAT WE RUN
           </span>
         </div>
 
         {/* Stats Grid: 5 columns */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 sm:gap-6">
-          {stats.map((stat, idx) => (
-            <div key={idx} className="text-left">
+        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 sm:gap-6">
+          {stats.map((stat) => (
+            <div key={stat.id} className="text-left">
               <div className="font-display text-4xl sm:text-5xl text-[#F4F1E8] font-normal mb-1">
                 {stat.value}
               </div>

@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import { ArrowRight, CalendarDays, Users } from 'lucide-react';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
 import { JourneyIcon, RidgeMark } from './journeyUi';
+import { SHOW_SEAT_SCARCITY } from '../../data/companyFacts';
+import { upcomingDepartures } from '../../data/departures';
 
 /*
  * Shown instead of the day-by-day timeline for journeys whose records carry no
@@ -10,6 +12,9 @@ import { JourneyIcon, RidgeMark } from './journeyUi';
  * inventing a schedule to fill the space.
  */
 export default function JourneyOverview({ content, onPlanTrip }) {
+  /* Next real departure for this trip, if it runs on a schedule. */
+  const nextDeparture = upcomingDepartures(content.id, { count: 1, nights: 5 })[0] ?? null;
+
   const scope = useRef(null);
   useScrollReveal(scope, { start: 'top 85%' });
 
@@ -46,19 +51,21 @@ export default function JourneyOverview({ content, onPlanTrip }) {
       )}
 
       <dl data-reveal className="mt-7 grid gap-4 sm:grid-cols-2">
-        {content.dates && (
+        {/* `content.dates` comes from the legacy fixed strings. Prefer a
+            computed departure and fall back only if the trip has no schedule. */}
+        {(nextDeparture || content.dates) && (
           <div className="rounded-xl border border-[#E3DDCB] bg-[#FAF9F5] p-4">
             <dt className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#7C857E]">
               <CalendarDays className="h-3.5 w-3.5 text-[#B89A5A]" />
               Departure
             </dt>
             <dd className="mt-2 text-[14px] font-semibold text-[#012C18]">
-              {content.dates}
+              {nextDeparture?.label ?? content.dates}
             </dd>
           </div>
         )}
 
-        {content.seatsRemaining != null && (
+        {SHOW_SEAT_SCARCITY && content.seatsRemaining != null && (
           <div className="rounded-xl border border-[#E3DDCB] bg-[#FAF9F5] p-4">
             <dt className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#7C857E]">
               <Users className="h-3.5 w-3.5 text-[#B89A5A]" />

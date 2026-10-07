@@ -7,10 +7,11 @@ import Breadcrumb from '../common/Breadcrumb';
 import FilterTabs from '../common/FilterTabs';
 import CTABand from '../common/CTABand';
 import TripCard from '../cards/TripCard';
-import { journeys } from '../../data/journeys';
+import { journeys as bundledJourneys } from '../../data/journeys';
 import { weekendEscapes } from '../../data/weekendEscapes';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
 import { useDocumentMeta } from '../../lib/seo';
+import { useContent, normaliseJourney } from '../../lib/content';
 import { linkProps } from '../../router';
 
 /*
@@ -51,6 +52,13 @@ export default function JourneysPage({ onPlanTrip }) {
   const [difficulty, setDifficulty] = useState('all');
   const [sort, setSort] = useState('recommended');
 
+  /*
+   * Bundled data paints immediately, then the API replaces it if it answers.
+   * An editor's price change reaches visitors without a redeploy; an API
+   * outage leaves the page working on the bundled copy.
+   */
+  const { items: journeys } = useContent('journeys', bundledJourneys, normaliseJourney);
+
   useDocumentMeta({
     title: 'Himalayan Journeys & Expeditions',
     description:
@@ -71,7 +79,7 @@ export default function JourneysPage({ onPlanTrip }) {
         count: journeys.filter((journey) => journey.difficulty === level).length,
       })),
     ];
-  }, []);
+  }, [journeys]);
 
   const visible = useMemo(() => {
     const filtered =
@@ -95,7 +103,7 @@ export default function JourneysPage({ onPlanTrip }) {
             Number(b.isFeatured) - Number(a.isFeatured) || (b.rating ?? 0) - (a.rating ?? 0)
         );
     }
-  }, [difficulty, sort]);
+  }, [difficulty, sort, journeys]);
 
   return (
     <div className="min-h-screen bg-[#F4F1E8] text-[#012C18]">

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { groupBenefits, groupHero, searchTrust } from '../../data/groupToursPage';
 import { GroupIcon } from './groupUi';
+import { nextWeekend } from '../../utils/defaultDates';
 
 /* One segment of the search bar: tiny uppercase label over a value */
 function Field({ icon: Icon, label, children, className = '' }) {
@@ -31,6 +32,9 @@ export default function GroupToursHero({
   onSearch,
   onQuote,
 }) {
+  /* Defaults to the coming weekend rather than a date in 2025. */
+  const { checkInLabel, checkOutLabel } = nextWeekend();
+
   return (
     <section className="relative overflow-hidden bg-[#012C18]">
       {/* Backdrop */}
@@ -124,7 +128,7 @@ export default function GroupToursHero({
             className="flex-1 border-b border-[#E7E1D2] lg:border-b-0 lg:border-r"
           >
             <span className="flex items-center justify-between gap-2 text-[13px] font-semibold text-[#012C18]">
-              12 Dec 2025
+              {checkInLabel}
               <ChevronDown className="h-3.5 w-3.5 text-[#8A9189]" />
             </span>
           </Field>
@@ -135,7 +139,7 @@ export default function GroupToursHero({
             className="flex-1 border-b border-[#E7E1D2] lg:border-b-0 lg:border-r"
           >
             <span className="flex items-center justify-between gap-2 text-[13px] font-semibold text-[#012C18]">
-              15 Dec 2025
+              {checkOutLabel}
               <ChevronDown className="h-3.5 w-3.5 text-[#8A9189]" />
             </span>
           </Field>

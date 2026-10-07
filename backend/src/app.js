@@ -7,6 +7,7 @@ import { zodValidatorCompiler, zodSerializerCompiler } from './lib/validate.js';
 import securityPlugin from './plugins/security.js';
 import requestContextPlugin from './plugins/requestContext.js';
 import errorHandlerPlugin from './plugins/errorHandler.js';
+import performancePlugin from './plugins/performance.js';
 import authPlugin from './plugins/auth.js';
 import swaggerPlugin from './plugins/swagger.js';
 
@@ -62,6 +63,7 @@ export async function buildApp({ logger: loggerOption = logger } = {}) {
 
   await app.register(errorHandlerPlugin);
   await app.register(requestContextPlugin);
+  await app.register(performancePlugin);
   await app.register(securityPlugin);
   await app.register(authPlugin);
   await app.register(multipart, {

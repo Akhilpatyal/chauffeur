@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Calendar, Users, ArrowRight } from 'lucide-react';
 import { groupTourCards } from '../../data/groupToursPage';
+import { SHOW_SEAT_SCARCITY } from '../../data/companyFacts';
+import { upcomingDepartures } from '../../data/departures';
 
 export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
   const [activeIdx, setActiveIdx] = useState(0);
@@ -11,7 +13,9 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
     ...groupTourCards.slice(0, 4).map((tour, i) => ({
       id: i + 1,
       title: tour.title,
-      sub: `${tour.duration} · ${tour.seatsRemaining} seats left`,
+      sub: SHOW_SEAT_SCARCITY
+        ? `${tour.duration} · ${tour.seatsRemaining} seats left`
+        : tour.duration,
       price: tour.price,
       hot: tour.badge === 'Best Seller',
       data: tour,
@@ -59,7 +63,7 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
 
                 <div className="absolute top-3 left-3">
                   <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-[#D65A3A] text-white">
-                    {featuredTour.seatsRemaining} SEATS LEFT
+                    {SHOW_SEAT_SCARCITY ? `${featuredTour.seatsRemaining} SEATS LEFT` : 'SEATS AVAILABLE'}
                   </span>
                 </div>
 
@@ -72,12 +76,15 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
                 <div className="flex items-center gap-4 text-xs font-sans text-[#003B24]/70">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5 text-[#B89A5A]" />
-                    {featuredTour.dates}
+                    {/* The stored `dates` string had already expired; show
+                        the next computed departure instead. */}
+                    {upcomingDepartures(featuredTour.id, { count: 1, nights: 5 })[0]?.label ??
+                      featuredTour.duration}
                   </span>
                   <span>{featuredTour.duration}</span>
                   <span className="flex items-center gap-1">
                     <Users className="w-3.5 h-3.5 text-[#B89A5A]" />
-                    {featuredTour.seatsRemaining} Available
+                    {SHOW_SEAT_SCARCITY ? `${featuredTour.seatsRemaining} Available` : 'Open'}
                   </span>
                 </div>
 

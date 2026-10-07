@@ -11,6 +11,7 @@ import {
   User,
 } from 'lucide-react';
 import { featuredStays, popularDestinations } from '../../data/hotels';
+import { nextWeekend } from '../../utils/defaultDates';
 
 const trustPoints = [
   { icon: Sparkles, label: 'Curated Stays' },
@@ -44,6 +45,9 @@ function Field({ icon: Icon, label, children, className = '' }) {
 }
 
 export default function HotelsHero({ destination, onDestinationChange, onSearch }) {
+  /* Defaults to the coming weekend rather than a date in 2025. */
+  const { checkInLabel, checkOutLabel } = nextWeekend();
+
   return (
     <section className="relative overflow-hidden bg-[#012C18]">
       {/* Backdrop */}
@@ -130,7 +134,7 @@ export default function HotelsHero({ destination, onDestinationChange, onSearch 
             className="flex-1 border-b border-[#E7E1D2] lg:border-b-0 lg:border-r"
           >
             <span className="flex items-center justify-between gap-2 text-[13px] font-semibold text-[#012C18]">
-              12 Dec 2025
+              {checkInLabel}
               <ChevronDown className="h-3.5 w-3.5 text-[#8A9189]" />
             </span>
           </Field>
@@ -141,7 +145,7 @@ export default function HotelsHero({ destination, onDestinationChange, onSearch 
             className="flex-1 border-b border-[#E7E1D2] lg:border-b-0 lg:border-r"
           >
             <span className="flex items-center justify-between gap-2 text-[13px] font-semibold text-[#012C18]">
-              15 Dec 2025
+              {checkOutLabel}
               <ChevronDown className="h-3.5 w-3.5 text-[#8A9189]" />
             </span>
           </Field>

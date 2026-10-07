@@ -52,7 +52,7 @@ export const weekendEscapes = [
     discount: '28% OFF',
     rating: 4.8,
     reviews: 164,
-    badge: 'Most Booked',
+    badge: 'Easiest to Reach',
     image: '/banner1.jpg',
     gallery: [
       '/banner1.jpg',

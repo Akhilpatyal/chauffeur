@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // Common Components
 import Navbar from './components/navigation/Navbar';
+import RouteFallback from './components/common/RouteFallback';
 
 // Hero Components
 import HeroSection from './components/hero/HeroSection';
@@ -22,25 +23,41 @@ import Testimonials from './components/sections/Testimonials';
 import TrustStats from './components/sections/TrustStats';
 import Newsletter from './components/sections/Newsletter';
 import Footer from './components/footer/Footer';
-import HotelsPage from './components/hotels/HotelsPage';
-import AboutPage from './components/about/AboutPage';
-import JourneyPage from './components/journey/JourneyPage';
-import GroupToursPage from './components/groupTours/GroupToursPage';
-import ContactPage from './components/contact/ContactPage';
-import LegalPage from './components/legal/LegalPage';
-import DestinationPage, {
-  DestinationsIndex,
-  NotFoundPage,
-} from './components/destinations/DestinationPage';
-import JourneysPage from './components/journeys/JourneysPage';
-import WeekendEscapesPage from './components/weekendEscapes/WeekendEscapesPage';
-import WeekendEscapeDetail from './components/weekendEscapes/WeekendEscapeDetail';
-import StoriesPage from './components/stories/StoriesPage';
-import StoryDetail from './components/stories/StoryDetail';
+/*
+ * Every route below its own chunk.
+ *
+ * The site shipped as one 762 KB bundle, so a visitor landing on the homepage
+ * downloaded the hotel filter engine, the journey timeline, all seven data
+ * files and every legal page before anything rendered. Each inner page now
+ * loads on navigation, and the data file it imports travels with it.
+ *
+ * The homepage sections stay eager: they are the first paint for most
+ * visitors, and deferring them would trade a smaller bundle for a slower
+ * landing experience, which is the wrong way round.
+ */
+const HotelsPage = lazy(() => import('./components/hotels/HotelsPage'));
+const AboutPage = lazy(() => import('./components/about/AboutPage'));
+const JourneyPage = lazy(() => import('./components/journey/JourneyPage'));
+const GroupToursPage = lazy(() => import('./components/groupTours/GroupToursPage'));
+const ContactPage = lazy(() => import('./components/contact/ContactPage'));
+const LegalPage = lazy(() => import('./components/legal/LegalPage'));
+const JourneysPage = lazy(() => import('./components/journeys/JourneysPage'));
+const WeekendEscapesPage = lazy(() => import('./components/weekendEscapes/WeekendEscapesPage'));
+const WeekendEscapeDetail = lazy(() => import('./components/weekendEscapes/WeekendEscapeDetail'));
+const StoriesPage = lazy(() => import('./components/stories/StoriesPage'));
+const StoryDetail = lazy(() => import('./components/stories/StoryDetail'));
 
-// Modals
-import PlanMyTripModal from './components/modals/PlanMyTripModal';
-import TravelerStoryModal from './components/modals/TravelerStoryModal';
+const DestinationPage = lazy(() => import('./components/destinations/DestinationPage'));
+const DestinationsIndex = lazy(() =>
+  import('./components/destinations/DestinationPage').then((m) => ({ default: m.DestinationsIndex }))
+);
+const NotFoundPage = lazy(() =>
+  import('./components/destinations/DestinationPage').then((m) => ({ default: m.NotFoundPage }))
+);
+
+/* Modals are opened by a click, never on load, so they are always deferred. */
+const PlanMyTripModal = lazy(() => import('./components/modals/PlanMyTripModal'));
+const TravelerStoryModal = lazy(() => import('./components/modals/TravelerStoryModal'));
 
 import { navigateTo, redirectLegacyHash, resolveRoute, usePathname } from './router';
 import { useDocumentMeta } from './lib/seo';
@@ -188,6 +205,7 @@ export default function App() {
       />
 
       {/* Main Expedition Flow with Intentional Visual Rhythm */}
+      <Suspense fallback={<RouteFallback />}>
       {page === 'hotels' && <HotelsPage onEnquire={openEnquiry} />}
 
       {page === 'group-tours' && <GroupToursPage onPlanTrip={openEnquiry} />}
@@ -298,19 +316,19 @@ export default function App() {
       </main>}
 
       {page === 'home' && <Footer />}
+      </Suspense>
 
       {/* Interactive Modals */}
-      <PlanMyTripModal
+      <Suspense fallback={null}>
+        <PlanMyTripModal
         isOpen={enquiry !== null}
         onClose={handleClosePlanTrip}
         interest={enquiry?.kind ? enquiry : null}
         source={enquiry?.source ?? 'plan_my_trip'}
       />
 
-      <TravelerStoryModal
-        isOpen={storyModalOpen}
-        onClose={handleCloseStoryModal}
-      />
+        <TravelerStoryModal isOpen={storyModalOpen} onClose={handleCloseStoryModal} />
+      </Suspense>
     </div>
   );
 }
