@@ -88,15 +88,22 @@ export default function OurTeam({ onMeetTeam }) {
                     {member.bio}
                   </p>
 
-                  <div className="mt-3 flex items-center gap-2">
+                  {/* 40px links with 24px circles inside, and a negative
+                      margin so the row still starts on the text's left edge.
+                      These were 24px square — the smallest targets on the
+                      site — and the pseudo-element approach was clipped by
+                      the card to 31px, so the link itself has to be bigger. */}
+                  <div className="mt-1 -ml-2 flex items-center">
                     {networks.map((network) => (
                       <a
                         key={network}
                         href={member.social[network] || '#'}
                         aria-label={`${member.name} on ${network}`}
-                        className="flex h-6 w-6 items-center justify-center rounded-full bg-white/12 text-[#F4F1E8] transition-colors hover:bg-[#B89A5A] hover:text-[#012C18]"
+                        className="group/social grid h-10 w-10 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B89A5A]"
                       >
-                        <SocialIcon network={network} className="h-3 w-3" />
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/12 text-[#F4F1E8] transition-colors group-hover/social:bg-[#B89A5A] group-hover/social:text-[#012C18]">
+                          <SocialIcon network={network} className="h-3 w-3" />
+                        </span>
                       </a>
                     ))}
                   </div>

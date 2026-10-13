@@ -42,7 +42,7 @@ export default function WhereToDisappear({ onSelectDestination }) {
                   first destination's detail page instead of the index. */}
               <button
                 onClick={() => navigateTo('/destinations')}
-                className="inline-flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-wider text-[#003B24] hover:text-[#075333] transition-colors cursor-pointer pt-2"
+                className="-ml-1 inline-flex min-h-[40px] cursor-pointer items-center gap-1.5 px-1 text-[12.5px] font-sans font-bold uppercase tracking-wider text-[#003B24] transition-colors hover:text-[#075333] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
               >
                 <span>View all destinations</span>
                 <ArrowRight className="w-3.5 h-3.5" />

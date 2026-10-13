@@ -52,7 +52,13 @@ function OfficeMap() {
           strokeWidth="2"
           strokeDasharray="6 8"
         />
-        <text x="176" y="70" fontSize="8" fill="#8A9189">
+        {/* 11 user units in a 300-unit viewBox, so about 12px rendered at
+            phone width. At 8 it came out near 9px — the two labels on this
+            map were the smallest text anywhere on the site. */}
+        {/* Moved left, away from the pin. At the original x it sat directly
+            above "Taifer Desk" and the two collided once both were raised to
+            a readable size. */}
+        <text x="34" y="80" fontSize="11" fill="#7A827B">
           Mall Road
         </text>
 
@@ -64,7 +70,7 @@ function OfficeMap() {
             fill="#D65A3A"
           />
           <circle cy="-15.2" r="3.1" fill="#FAF9F5" />
-          <text x="14" y="-12" fontSize="9.5" fontWeight="700" fill="#012C18">
+          <text x="14" y="-11" fontSize="12" fontWeight="700" fill="#012C18">
             Taifer Desk
           </text>
         </g>
@@ -131,7 +137,7 @@ export default function ContactInfo() {
             <li key={label}>
               <a
                 href={href}
-                className="flex items-center gap-2.5 text-[12.5px] text-[#4A5B50] transition-colors hover:text-[#012C18]"
+                className="flex min-h-[40px] items-center gap-2.5 text-[13px] text-[#4A5B50] transition-colors hover:text-[#012C18] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
               >
                 <Icon className="h-4 w-4 shrink-0 text-[#B89A5A]" strokeWidth={1.7} />
                 {label}
@@ -166,15 +172,20 @@ export default function ContactInfo() {
           ))}
         </ul>
 
-        <div className="mt-4 flex items-center gap-2 border-t border-[#DFD4B8] pt-4">
+        <div className="-ml-1 mt-3 flex items-center border-t border-[#DFD4B8] pt-3">
           {socials.map((social) => (
             <a
               key={social.id}
               href={social.href}
               aria-label={social.label}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FAF9F5] text-[#012C18] transition-colors hover:bg-[#043A25] hover:text-[#B89A5A]"
+              /* 40px link, 32px circle drawn inside, negative margin so the
+                 row still starts where the heading does. Matches the footer
+                 and the team cards. */
+              className="group/social grid h-10 w-10 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#043A25]"
             >
-              <SocialIcon network={social.id} />
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FAF9F5] text-[#012C18] transition-colors group-hover/social:bg-[#043A25] group-hover/social:text-[#B89A5A]">
+                <SocialIcon network={social.id} />
+              </span>
             </a>
           ))}
         </div>

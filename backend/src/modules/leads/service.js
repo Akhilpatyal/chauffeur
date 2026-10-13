@@ -5,6 +5,7 @@ import { logger } from '../../config/logger.js';
 import { conflict } from '../../lib/errors.js';
 import { enqueue, QUEUE_NAMES, JOB_NAMES } from '../../lib/queue.js';
 import { contactKeyFor } from '../../utils/identity.js';
+import { attributeConversion } from '../../services/visitors.js';
 import { verifyRecaptcha } from '../../services/recaptcha.js';
 import { assertWritesAllowed } from '../../services/flags.js';
 
@@ -188,8 +189,13 @@ export async function createLead(input, requestMeta) {
   const thread = await findRecentLead(contactKey, THREAD_WINDOW_MS);
   const threadRoot = thread ? thread.duplicateOf ?? thread._id : null;
 
+  /* Pulled out of the payload: it belongs to the visit, not to the enquiry,
+   * and storing it on the lead would attach a tracking identifier to a
+   * customer record for no benefit. */
+  const { sessionId, ...leadFields } = payload;
+
   const lead = await Lead.create({
-    ...payload,
+    ...leadFields,
     contactKey,
     tripPreferences: payload.tripPreferences ?? {},
     interest: payload.interest
@@ -229,6 +235,20 @@ export async function createLead(input, requestMeta) {
     },
     'lead captured',
   );
+
+  /*
+   * Close the funnel: mark the visit that produced this enquiry as converted.
+   *
+   * Not awaited, and failures swallowed. The enquiry is already saved and the
+   * customer is waiting for a response — an analytics join must never be able
+   * to fail a lead submission, which is the one thing in this file that
+   * genuinely matters.
+   */
+  if (sessionId) {
+    attributeConversion(sessionId, lead._id).catch((error) =>
+      logger.debug({ err: error }, 'could not attribute conversion to a visit'),
+    );
+  }
 
   // Fire-and-forget would lose the outbox bookkeeping, so this is awaited; it
   // is two Redis writes and does not involve the email provider.

@@ -31,11 +31,11 @@ const thumbs = [
 function Field({ icon: Icon, label, children, className = '' }) {
   return (
     <div
-      className={`flex items-center gap-2.5 px-4 py-2.5 sm:px-5 ${className}`}
+      className={`flex min-h-[52px] items-center gap-2.5 px-4 py-2 sm:px-5 ${className}`}
     >
       <Icon className="h-4 w-4 shrink-0 text-[#075333]" strokeWidth={1.75} />
       <div className="min-w-0 flex-1 text-left">
-        <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-[#8A9189]">
+        <span className="block text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#8A9189]">
           {label}
         </span>
         {children}
@@ -71,7 +71,7 @@ export default function HotelsHero({ destination, onDestinationChange, onSearch 
               <span className="block text-[12px] font-semibold leading-tight text-white">
                 Manali
               </span>
-              <span className="block text-[9.5px] text-white/65">
+              <span className="block text-[10.5px] text-white/65">
                 36+ handpicked stays
               </span>
             </span>
@@ -87,7 +87,7 @@ export default function HotelsHero({ destination, onDestinationChange, onSearch 
                 className="h-9 w-9 rounded-lg object-cover ring-1 ring-white/20"
               />
             ))}
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/12 text-[9px] font-bold text-white ring-1 ring-white/20">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/12 text-[10.5px] font-bold text-white ring-1 ring-white/20">
               +210
             </span>
           </div>
@@ -124,7 +124,10 @@ export default function HotelsHero({ destination, onDestinationChange, onSearch 
               onChange={(e) => onDestinationChange?.(e.target.value)}
               placeholder="Where to?"
               aria-label="Destination"
-              className="w-full bg-transparent text-[13px] font-semibold text-[#012C18] outline-none placeholder:font-normal placeholder:text-[#9AA29B]"
+              /* 16px on touch, because iOS Safari zooms the whole page when a
+                 focused input is under 16px — the search bar then fills the
+                 screen and the visitor has to pinch back out. */
+              className="w-full bg-transparent text-[16px] font-semibold text-[#012C18] outline-none placeholder:font-normal placeholder:text-[#9AA29B] sm:text-[13px]"
             />
           </Field>
 

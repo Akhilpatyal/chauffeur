@@ -4,8 +4,34 @@ import { notFound, badRequest } from '../../lib/errors.js';
 import { paginate, pageResult, parseSort } from '../../utils/pagination.js';
 import { enqueue, QUEUE_NAMES, JOB_NAMES } from '../../lib/queue.js';
 import { escapeRegex } from '../content/registry.js';
+import { AdminUser } from '../../models/AdminUser.js';
+import { Team } from '../../models/Team.js';
+import {
+  assertCanAccessLead,
+  assertWritableFields,
+  hideFields,
+  leadScopeFilter,
+} from '../../services/access.js';
 
 const SORTABLE = ['createdAt', 'updatedAt', 'lastEnquiryAt', 'status', 'name'];
+
+/*
+ * Everyone whose leads this user is allowed to see.
+ *
+ * A team manager's reach is their teams' members, so the list is resolved
+ * once per request rather than per lead. Cached nowhere on purpose: team
+ * membership changes must take effect immediately, and this is one indexed
+ * query against a table of staff, not customers.
+ */
+export async function teammateIdsFor(user) {
+  if (!user || user.scope !== 'team' || (user.teams ?? []).length === 0) return [];
+
+  const members = await AdminUser.find({ teams: { $in: user.teams } })
+    .select('_id')
+    .lean();
+
+  return members.map((member) => String(member._id));
+}
 
 export function buildLeadFilter(query) {
   const filter = {};
@@ -38,8 +64,13 @@ export function buildLeadFilter(query) {
   return filter;
 }
 
-export async function listLeads(query) {
-  const filter = buildLeadFilter(query);
+export async function listLeads(query, user) {
+  /* Scope first, then the user's own filters. Combining with $and means a
+   * crafted query string can narrow the result but never widen it past what
+   * this person is allowed to see. */
+  const scope = leadScopeFilter(user, await teammateIdsFor(user));
+  const requested = buildLeadFilter(query);
+  const filter = Object.keys(scope).length > 0 ? { $and: [scope, requested] } : requested;
   const sort = parseSort(query.sort, SORTABLE, { createdAt: -1 });
   const { skip, limit } = paginate(query);
 
@@ -54,15 +85,18 @@ export async function listLeads(query) {
     Lead.countDocuments(filter),
   ]);
 
-  return pageResult(items, total, query);
+  return pageResult(hideFields('lead', user.role, items), total, query);
 }
 
-export async function getLead(id) {
+export async function getLead(id, user) {
   const lead = await Lead.findById(id)
     .populate('assignedTo', 'name email role')
     .populate('notes.author', 'name email')
     .lean();
   if (!lead) throw notFound('Lead');
+
+  /* Guessing an id must not reach someone else's customer. */
+  assertCanAccessLead(user, lead, await teammateIdsFor(user));
 
   // The rest of the contact thread, so an agent sees the full history of this
   // person on one screen rather than searching for their other enquiries.
@@ -76,12 +110,13 @@ export async function getLead(id) {
     .limit(20)
     .lean();
 
-  return { ...lead, thread };
+  return hideFields('lead', user.role, { ...lead, thread });
 }
 
 export async function updateStatus(id, { status, reason }, actor) {
   const lead = await Lead.findById(id);
   if (!lead) throw notFound('Lead');
+  assertCanAccessLead(actor, lead, await teammateIdsFor(actor));
   if (lead.status === status) return lead.toJSON();
 
   const previous = lead.status;
@@ -103,6 +138,11 @@ export async function updateStatus(id, { status, reason }, actor) {
 export async function assignLead(id, assignedTo, actor) {
   const lead = await Lead.findById(id);
   if (!lead) throw notFound('Lead');
+  assertCanAccessLead(actor, lead, await teammateIdsFor(actor));
+
+  /* Field policy: a caller may move a lead through the pipeline but may not
+   * decide who owns it. Checked here rather than only in the UI. */
+  assertWritableFields('lead', actor.role, { assignedTo });
 
   if (assignedTo && !mongoose.isValidObjectId(assignedTo)) {
     throw badRequest('assignedTo must be a user id or null.');
@@ -111,12 +151,27 @@ export async function assignLead(id, assignedTo, actor) {
   const previous = lead.assignedTo ? String(lead.assignedTo) : null;
   lead.assignedTo = assignedTo || null;
   lead.assignedAt = assignedTo ? new Date() : null;
+
+  /*
+   * Stamp the assignee's team onto the lead. Without this an unassigned lead
+   * belongs to nobody, and a team manager redistributing work would lose
+   * sight of it the moment they unassigned it.
+   */
+  if (assignedTo) {
+    const assignee = await AdminUser.findById(assignedTo).select('teams').lean();
+    lead.team = assignee?.teams?.[0] ?? lead.team ?? null;
+  }
+
   await lead.save();
 
   return { lead: lead.toJSON(), previous, actorId: actor.id };
 }
 
 export async function addNote(id, body, actor) {
+  const existing = await Lead.findById(id).select('assignedTo team').lean();
+  if (!existing) throw notFound('Lead');
+  assertCanAccessLead(actor, existing, await teammateIdsFor(actor));
+
   const lead = await Lead.findByIdAndUpdate(
     id,
     { $push: { notes: { body, author: actor.id, authorName: actor.name, createdAt: new Date() } } },
@@ -127,9 +182,10 @@ export async function addNote(id, body, actor) {
 }
 
 /* Manual retry for an alert that exhausted its automatic attempts. */
-export async function resendNotifications(id) {
+export async function resendNotifications(id, actor) {
   const lead = await Lead.findById(id).lean();
   if (!lead) throw notFound('Lead');
+  assertCanAccessLead(actor, lead, await teammateIdsFor(actor));
 
   const results = await Promise.all([
     enqueue(QUEUE_NAMES.notifications, JOB_NAMES.leadAdminAlert, { leadId: String(lead._id) }),
@@ -152,10 +208,18 @@ export async function resendNotifications(id) {
 
 /* Rows for the CSV export. Streams would be better above ~50k rows; the cap
  * keeps a careless export from pulling the whole collection into memory. */
-export async function leadsForExport(query, cap = 10_000) {
-  return Lead.find(buildLeadFilter(query))
+export async function leadsForExport(query, user, cap = 10_000) {
+  /* An export that ignored scope would be the simplest way to walk out with
+   * every customer record in the business. */
+  const scope = leadScopeFilter(user, await teammateIdsFor(user));
+  const requested = buildLeadFilter(query);
+  const filter = Object.keys(scope).length > 0 ? { $and: [scope, requested] } : requested;
+
+  const rows = await Lead.find(filter)
     .populate('assignedTo', 'name')
     .sort({ createdAt: -1 })
     .limit(cap)
     .lean();
+
+  return hideFields('lead', user.role, rows);
 }

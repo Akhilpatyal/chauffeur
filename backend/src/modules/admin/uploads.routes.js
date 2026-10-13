@@ -26,7 +26,7 @@ export default async function uploadRoutes(fastify) {
   fastify.post(
     '/uploads',
     {
-      preHandler: fastify.requirePermission('uploads:write'),
+      preHandler: fastify.requirePermission('uploads.write'),
       schema: {
         tags: ['admin:ops'],
         summary: 'Upload an image (multipart)',
@@ -89,7 +89,7 @@ export default async function uploadRoutes(fastify) {
   fastify.post(
     '/uploads/presign',
     {
-      preHandler: fastify.requirePermission('uploads:write'),
+      preHandler: fastify.requirePermission('uploads.write'),
       preValidation: validate({ body: presignBody }),
       schema: {
         tags: ['admin:ops'],

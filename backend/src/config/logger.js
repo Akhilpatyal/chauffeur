@@ -1,11 +1,36 @@
+import { createRequire } from 'node:module';
 import pino from 'pino';
 import { env } from './env.js';
 
 /*
  * Structured JSON logs on one line per event, which is what every aggregator
- * (Better Stack, Datadog, CloudWatch) expects. pino-pretty is only loaded in
+ * (Better Stack, Datadog, CloudWatch) expects. pino-pretty is only used in
  * development, where human-readable output matters more than machine parsing.
  */
+
+/*
+ * pino-pretty is a devDependency, and the Docker image installs production
+ * dependencies only. Asking for the transport when the package is absent does
+ * not degrade — pino throws "unable to determine transport target" at import
+ * time and the process dies before it can log why.
+ *
+ * That turned any container started with NODE_ENV=development into a crash
+ * loop whose only symptom was a stack trace about transports. Checking that
+ * the package actually resolves means the logger falls back to JSON instead,
+ * which is the correct behaviour everywhere it is missing.
+ */
+const require = createRequire(import.meta.url);
+
+function prettyAvailable() {
+  try {
+    require.resolve('pino-pretty');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const usePretty = env.isDevelopment && prettyAvailable();
 const redact = {
   paths: [
     'req.headers.authorization',
@@ -31,7 +56,7 @@ export const logger = pino({
   formatters: {
     level: (label) => ({ level: label }),
   },
-  ...(env.isDevelopment
+  ...(usePretty
     ? {
         transport: {
           target: 'pino-pretty',

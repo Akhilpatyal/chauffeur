@@ -194,7 +194,7 @@ export default function JourneyPage({ journeyId, onCheckAvailability }) {
         eyebrow="Travel Notes"
         title="Get travel inspiration & offers"
         subtitle="Stories, trails and journeys worth knowing about — straight to your inbox."
-        note="10,000+ explorers subscribe to our newsletter"
+        note="One email a month. Unsubscribe in a click."
         showAvatars
       />
       <Footer />

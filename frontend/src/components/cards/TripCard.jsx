@@ -13,6 +13,23 @@ import { SHOW_TRIP_RATINGS } from '../../data/companyFacts';
  * It renders an `<a>`, not a clickable div: the existing journal and group-tour
  * cards used divs with onClick, which cannot be focused, opened in a new tab,
  * or read as a link by a screen reader.
+ *
+ * EVERY CARD IS THE SAME HEIGHT, DELIBERATELY
+ *
+ * The title, description, meta line and tags are all optional and all of
+ * variable length, so cards ranged from 215px to 226px depending on which
+ * fields a record happened to have. In a grid that is merely untidy — until
+ * the content swaps. These pages render bundled content first and replace it
+ * with the API's a few hundred milliseconds later (see lib/content.js), and a
+ * card whose height depends on its copy makes that swap reflow the row: the
+ * measured layout shift on /journeys was 0.272, where anything above 0.25 is
+ * classed as poor. It is also the worst kind of shift, arriving about a second
+ * in, exactly when someone is reaching for a card to click.
+ *
+ * So each block below reserves its space whether or not it has content: the
+ * title is clamped to two lines and floored at two, the description likewise,
+ * and tags are capped to a single row. The height is then a function of the
+ * layout and not of the copy, and the swap cannot move anything.
  */
 export default function TripCard({ trip, href, ctaLabel = 'View details' }) {
   const {
@@ -46,18 +63,18 @@ export default function TripCard({ trip, href, ctaLabel = 'View details' }) {
         <span className="absolute inset-0 bg-gradient-to-t from-[#02170F]/55 via-transparent to-transparent" />
 
         {badge && (
-          <span className="absolute left-3 top-3 rounded-md bg-[#012C18]/92 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#F4F1E8]">
+          <span className="absolute left-3 top-3 rounded-md bg-[#012C18]/92 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-[#F4F1E8]">
             {badge}
           </span>
         )}
         {discount && (
-          <span className="absolute right-3 top-3 rounded-md bg-[#B89A5A] px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#012C18]">
+          <span className="absolute right-3 top-3 rounded-md bg-[#B89A5A] px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-[#012C18]">
             {discount}
           </span>
         )}
 
         {duration && (
-          <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 text-[11px] font-medium text-[#F4F1E8]">
+          <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 text-[12px] font-medium text-[#F4F1E8]">
             <Clock className="h-3 w-3" strokeWidth={2} />
             {duration}
           </span>
@@ -65,37 +82,41 @@ export default function TripCard({ trip, href, ctaLabel = 'View details' }) {
       </div>
 
       <div className="flex flex-1 flex-col p-4 sm:p-5">
-        {location && (
-          <p className="flex items-center gap-1.5 text-[11px] text-[#8A9189]">
-            <MapPin className="h-3 w-3 shrink-0 text-[#B89A5A]" strokeWidth={2} />
-            <span className="truncate">{location}</span>
-          </p>
-        )}
+        {/* Rendered even when empty so a record without a location does not
+            sit 17px shorter than its neighbour. */}
+        <p className="flex min-h-[17px] items-center gap-1.5 text-[11.5px] text-[#8A9189]">
+          {location && (
+            <>
+              <MapPin className="h-3 w-3 shrink-0 text-[#B89A5A]" strokeWidth={2} />
+              <span className="truncate">{location}</span>
+            </>
+          )}
+        </p>
 
-        <h3 className="mt-1.5 font-display text-[19px] leading-snug text-[#012C18] transition-colors group-hover:text-[#075333] sm:text-[21px]">
+        {/* Two lines, always: clamped so a long title cannot push the card
+            taller, floored so a short one cannot leave it shorter. */}
+        <h3 className="mt-1.5 line-clamp-2 min-h-[2lh] font-display text-[19px] leading-snug text-[#012C18] transition-colors group-hover:text-[#075333] sm:text-[21px]">
           {title}
         </h3>
 
-        {description && (
-          <p className="mt-2 line-clamp-2 text-[12.5px] leading-[1.65] text-[#5E6B63]">
-            {description}
-          </p>
-        )}
+        <p className="mt-2 line-clamp-2 min-h-[2lh] text-[13px] leading-[1.65] text-[#5E6B63]">
+          {description}
+        </p>
 
-        {meta && <p className="mt-2 text-[11.5px] text-[#8A9189]">{meta}</p>}
+        <p className="mt-2 min-h-[16px] text-[12px] text-[#8A9189]">{meta}</p>
 
-        {tags.length > 0 && (
-          <ul className="mt-3 flex flex-wrap gap-1.5">
-            {tags.slice(0, 3).map((tag) => (
-              <li
-                key={tag}
-                className="rounded-full border border-[#DDD4C1] px-2 py-0.5 text-[10.5px] text-[#4A5B50]"
-              >
-                {tag}
-              </li>
-            ))}
-          </ul>
-        )}
+        {/* One row only. Three short tags fit; three long ones used to wrap to
+            a second line and make that card the tallest in its row. */}
+        <ul className="mt-3 flex min-h-[22px] flex-nowrap gap-1.5 overflow-hidden">
+          {tags.slice(0, 3).map((tag) => (
+            <li
+              key={tag}
+              className="shrink-0 truncate rounded-full border border-[#DDD4C1] px-2 py-0.5 text-[11px] text-[#4A5B50]"
+            >
+              {tag}
+            </li>
+          ))}
+        </ul>
 
         {/* Price and rating sit on the bottom edge so cards of different copy
             lengths still line up in a grid. */}
@@ -120,7 +141,7 @@ export default function TripCard({ trip, href, ctaLabel = 'View details' }) {
             ) : null}
           </div>
 
-          <span className="inline-flex items-center gap-1 whitespace-nowrap text-[11.5px] font-bold uppercase tracking-wider text-[#012C18] transition-colors group-hover:text-[#075333]">
+          <span className="inline-flex items-center gap-1 whitespace-nowrap text-[12px] font-bold uppercase tracking-wider text-[#012C18] transition-colors group-hover:text-[#075333]">
             {ctaLabel}
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
           </span>

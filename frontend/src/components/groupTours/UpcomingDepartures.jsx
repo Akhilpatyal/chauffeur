@@ -69,7 +69,7 @@ export default function UpcomingDepartures({ onBook, onViewCalendar, onCustomQuo
                     <span className="font-display text-[17px] text-[#012C18]">
                       {departure.day}
                     </span>
-                    <span className="mt-0.5 font-mono text-[8.5px] uppercase tracking-[0.14em] text-[#8A9189]">
+                    <span className="mt-0.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-[#8A9189]">
                       {departure.month}
                     </span>
                   </span>

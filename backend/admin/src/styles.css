@@ -128,6 +128,104 @@ dl.facts { display: grid; grid-template-columns: 130px 1fr; gap: 6px 12px; margi
 dl.facts dt { color: var(--muted); }
 dl.facts dd { margin: 0; overflow-wrap: anywhere; }
 
+/* ---- shared layout helpers -------------------------------------------- */
+
+/* A plain badge with no status modifier, for roles and HTTP methods. */
+.badge { color: var(--muted); border-color: var(--sand); background: #f7f5ee; }
+.badge.sev-info { color: var(--muted); border-color: var(--sand); background: #f7f5ee; }
+.badge.sev-warn { color: #8a5b00; border-color: #f0dfb8; background: #fdf7e8; }
+.badge.sev-critical { color: var(--danger); border-color: #f2d2c9; background: #fdf1ee; }
+.badge.won { color: var(--ok); border-color: #c3e4d2; background: #eef8f2; }
+.badge.spam { color: var(--muted); border-color: var(--sand); background: #f1efe7; }
+
+.stats { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); margin-bottom: 18px; }
+.two-col { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); margin-top: 14px; }
+.card + .card, .card + .two-col, .two-col + .two-col { margin-top: 14px; }
+.card h3 { margin: 0 0 10px; font-size: 15px; }
+
+/* `.spacer` was only defined inside the sidebar; the toolbars need it too. */
+.toolbar { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; margin: 14px 0 10px; }
+.toolbar > * { flex: 0 1 auto; }
+.toolbar .spacer { flex: 1 1 auto; }
+.toolbar label { margin-bottom: 0; }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--sand); margin-bottom: 16px; flex-wrap: wrap; }
+.tabs button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  padding: 8px 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.tabs button:hover:not(:disabled) { border-color: transparent; color: var(--ink); background: #f7f5ee; }
+.tabs button[aria-selected="true"] { color: var(--forest); border-bottom-color: var(--forest); background: none; }
+/* The open-error count, so "something is broken" is visible without opening
+   the tab to find out. */
+.tabs button em {
+  font-style: normal;
+  margin-left: 6px;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #fdf1ee;
+  color: var(--danger);
+}
+
+.chart-legend { display: flex; gap: 14px; align-items: center; font-size: 12px; color: var(--muted); margin-top: 8px; flex-wrap: wrap; }
+.chart-legend i { display: inline-block; width: 10px; height: 2px; margin-right: 5px; vertical-align: middle; }
+
+/* Checkbox rows read as sentences, so the label sits beside the box rather
+   than above it the way every other label in this app does. */
+label.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+label.check input { width: auto; margin: 0; }
+label.check.changed { font-weight: 600; }
+
+fieldset { border: 1px solid var(--sand); border-radius: var(--radius); padding: 12px 14px; margin: 0; background: #fff; }
+legend { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; padding: 0 4px; }
+fieldset.permissions { margin-bottom: 10px; }
+fieldset.permissions label.check { margin-bottom: 2px; }
+
+dl.kv { display: grid; grid-template-columns: 150px 1fr; gap: 6px 12px; margin: 0 0 14px; font-size: 13px; }
+dl.kv dt { color: var(--muted); }
+dl.kv dd { margin: 0; overflow-wrap: anywhere; }
+
+/* A cell worth looking at. Kept to a tint rather than a loud colour: on a
+   table with twenty rows, three shouting cells are read and thirty are not. */
+.warn-cell { color: var(--danger); font-weight: 600; }
+tr.dimmed { opacity: 0.55; }
+
+pre.trace {
+  background: #fcfbf7;
+  border: 1px solid var(--sand);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0 0 14px;
+}
+
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+hr { border: 0; border-top: 1px solid var(--sand); margin: 20px 0; }
+h4 { margin: 0 0 8px; font-size: 14px; }
+
+@media (max-width: 760px) {
+  dl.kv { grid-template-columns: 1fr; gap: 2px; }
+  dl.kv dd { margin-bottom: 8px; }
+}
+
 @media (max-width: 760px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { flex-direction: row; flex-wrap: wrap; align-items: center; }

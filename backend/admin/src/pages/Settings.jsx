@@ -10,8 +10,8 @@ export default function Settings({ user, onPasswordChanged }) {
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '' });
   const [busy, setBusy] = useState(false);
 
-  const canToggleFlags = user.permissions.includes('flags:write');
-  const canReadAudit = user.permissions.includes('audit:read');
+  const canToggleFlags = user.permissions.includes('flags.write');
+  const canReadAudit = user.permissions.includes('audit.view');
 
   useEffect(() => {
     api.flags.list().then((response) => setFlags(response.data)).catch((caught) => setError(caught.message));

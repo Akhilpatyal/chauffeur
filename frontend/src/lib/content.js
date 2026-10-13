@@ -11,15 +11,31 @@ import { useEffect, useState } from 'react';
  *
  * The order matters:
  *
- *   1. Render the bundled data immediately. There is no spinner and no layout
- *      shift, because the data is already in the chunk the page just loaded.
- *   2. Fetch the API in the background.
- *   3. Swap only on success.
+ *   1. Render the bundled data immediately. There is no spinner, because the
+ *      data is already in the chunk the page just loaded.
+ *   2. Fetch the API in the background and cache it.
+ *   3. Use it from the cache — on this render if it is already there, on the
+ *      next mount if it is not.
  *
  * So an API outage degrades to "yesterday's content" rather than an empty
- * page, and the first paint never waits on a network round trip. For a travel
- * site where most content changes a few times a month, that is the right
- * trade.
+ * page, and the first paint never waits on a network round trip.
+ *
+ * WHY THE LIVE DATA IS NOT SWAPPED IN MID-VIEW
+ *
+ * It used to be, and the original version of this comment claimed that caused
+ * no layout shift. It did. The bundled copy and the API's are not the same
+ * length — five journeys against six here — so the swap landed about a second
+ * after paint and reflowed the grid underneath whoever was reading it. The
+ * measured shift on /journeys was 0.272, where 0.25 is the threshold for
+ * "poor", and it arrived at exactly the moment someone is reaching for a card.
+ *
+ * Replacing content under a reader's cursor is the thing to avoid, not the
+ * staleness. So the fetch still happens on mount, but its result is only
+ * *displayed* from the next mount onwards, and `warmContentCache()` runs at
+ * app start so the cache is almost always filled before the visitor reaches a
+ * listing page at all. The remaining case is someone landing directly on a
+ * listing URL: they see the deployed copy for that one view, and live content
+ * from their next navigation.
  */
 const BASE = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -67,28 +83,57 @@ async function fetchCollection(collection, limit) {
  * which source they are rendering.
  */
 export function useContent(collection, fallback, normalise, { limit = 50 } = {}) {
-  const [items, setItems] = useState(fallback);
-  const [source, setSource] = useState('bundled');
+  /*
+   * Read the cache during the first render, not in an effect. If the warm-up
+   * has already answered — which it usually has — the live content is in the
+   * very first paint and there is nothing to shift.
+   */
+  const cached = cache.get(`${collection}:${limit}`);
+  const [items] = useState(() =>
+    cached ? (normalise ? cached.map(normalise) : cached) : fallback,
+  );
 
   useEffect(() => {
-    let cancelled = false;
-
-    fetchCollection(collection, limit).then((live) => {
-      if (cancelled || !live) return;
-      setItems(normalise ? live.map(normalise) : live);
-      setSource('api');
-    });
-
-    return () => {
-      cancelled = true;
-    };
+    /* Still fetched on mount, so a visitor who lands straight on this page
+     * fills the cache for their next navigation. The result is deliberately
+     * not applied to this render — see the note at the top of the file. */
+    fetchCollection(collection, limit);
     /* `normalise` is defined inline by callers; depending on it would refetch
      * every render. The collection and limit are what actually identify the
      * request. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collection, limit]);
 
-  return { items, source };
+  return { items, source: cached ? 'api' : 'bundled' };
+}
+
+/*
+ * Called once at app start.
+ *
+ * The listing collections are small and cached for the session, so fetching
+ * them up front costs one round trip each on an idle connection and means a
+ * visitor who arrives on the homepage and then opens Journeys sees live
+ * content in the first paint rather than the deployed snapshot.
+ *
+ * Deliberately not awaited and never throws: this is an optimisation, and a
+ * failed warm-up simply leaves the bundled copy in place.
+ */
+export function warmContentCache(collections = ['journeys', 'weekend-escapes', 'group-tours', 'hotels', 'articles']) {
+  if (typeof window === 'undefined') return;
+
+  const start = () => {
+    for (const collection of collections) {
+      fetchCollection(collection, 50).catch(() => {});
+    }
+  };
+
+  /* After the page has settled, so the warm-up never competes with the images
+   * and fonts the first screen actually needs. */
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(start, { timeout: 3000 });
+  } else {
+    setTimeout(start, 1200);
+  }
 }
 
 /*

@@ -24,7 +24,10 @@ export default function Newsletter({
   eyebrow = 'MONTHLY TRAIL LOG',
   title = 'KEEP EXPLORING',
   subtitle = 'Stories, trails and journeys worth knowing about.',
-  note = '🔒 10,000+ wanderers subscribed. No spam, ever.',
+  /* No subscriber count: the old default claimed 10,000+, which is the same
+   * invented figure data/companyFacts.js exists to keep off the site. What is
+   * left is a promise the business controls and can keep. */
+  note = '🔒 One email a month. No spam, unsubscribe in a click.',
   showAvatars = false,
 }) {
   const [email, setEmail] = useState('');

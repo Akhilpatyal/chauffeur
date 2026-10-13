@@ -104,7 +104,7 @@ export default function LegalPage({ slug, onNavigate }) {
                           event.preventDefault();
                           onNavigate?.(other.slug);
                         }}
-                        className="group inline-flex items-center gap-1.5 text-[12.5px] font-medium text-[#075333] transition-colors hover:text-[#012C18]"
+                        className="group -ml-1 inline-flex min-h-[40px] items-center gap-1.5 px-1 text-[13px] font-medium text-[#075333] transition-colors hover:text-[#012C18] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
                       >
                         {other.title}
                         <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
@@ -123,7 +123,7 @@ export default function LegalPage({ slug, onNavigate }) {
                   <li>
                     <a
                       href={`mailto:${legalMeta.email}`}
-                      className="flex items-center gap-2.5 text-[12.5px] text-[#4A5B50] transition-colors hover:text-[#012C18]"
+                      className="flex min-h-[40px] items-center gap-2.5 text-[13px] text-[#4A5B50] transition-colors hover:text-[#012C18] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
                     >
                       <Mail className="h-4 w-4 shrink-0 text-[#8A713C]" strokeWidth={1.7} />
                       {legalMeta.email}
@@ -132,7 +132,7 @@ export default function LegalPage({ slug, onNavigate }) {
                   <li>
                     <a
                       href={`tel:${legalMeta.phone.replace(/\s/g, '')}`}
-                      className="flex items-center gap-2.5 text-[12.5px] text-[#4A5B50] transition-colors hover:text-[#012C18]"
+                      className="flex min-h-[40px] items-center gap-2.5 text-[13px] text-[#4A5B50] transition-colors hover:text-[#012C18] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
                     >
                       <Phone className="h-4 w-4 shrink-0 text-[#8A713C]" strokeWidth={1.7} />
                       {legalMeta.phone}

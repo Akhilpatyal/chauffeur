@@ -2,6 +2,7 @@ import fp from 'fastify-plugin';
 import mongoose from 'mongoose';
 import { AppError } from '../lib/errors.js';
 import { captureError } from '../config/sentry.js';
+import { recordError } from '../services/errorTracking.js';
 import { env } from '../config/env.js';
 
 /*
@@ -81,8 +82,25 @@ async function errorHandlerPlugin(fastify) {
         requestId: request.correlationId,
         route: request.routeOptions?.url ?? request.url,
       });
+
+      /*
+       * Grouped into the in-app error dashboard. Not awaited, and its failure
+       * swallowed: the client is waiting for this response, and a database
+       * problem is a likely cause of the very error being recorded — awaiting
+       * the write would turn one 500 into a slow 500, or a hung one.
+       */
+      recordError({ error, request, statusCode: translated.statusCode }).catch((trackingError) => {
+        request.log.warn({ err: trackingError }, 'could not record error group');
+      });
     } else {
       request.log.info(logPayload, 'request rejected');
+    }
+
+    /* A refused request can also be a security event — a denied permission, a
+     * tripped rate limit. The mapping lives in the observability plugin so a
+     * route added later is covered without being instrumented by hand. */
+    if (!isServerError && typeof fastify.noteSecurityEvent === 'function') {
+      fastify.noteSecurityEvent(request, translated).catch(() => {});
     }
 
     reply.status(translated.statusCode).send({

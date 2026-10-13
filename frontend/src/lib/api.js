@@ -15,6 +15,7 @@
  */
 const BASE = import.meta.env.VITE_API_URL || '/api/v1';
 const UTM_KEY = 'taifer_attribution';
+const VISIT_KEY = 'taifer_visit';
 const UTM_FIELDS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
 
 /* sessionStorage can throw in private mode or when storage is blocked, so every
@@ -63,6 +64,24 @@ export function attribution() {
     utm: stored?.utm ?? undefined,
     referrer: stored?.referrer || undefined,
   };
+}
+
+/*
+ * The current visit id, read directly from storage.
+ *
+ * Deliberately not imported from lib/analytics: that module imports
+ * `attribution` from this one, and importing back would make a cycle whose
+ * initialisation order depends on the bundler. Reading one key from
+ * sessionStorage is cheaper than the coupling, and the key is defined in both
+ * places as a constant so it cannot drift silently.
+ */
+function currentVisitId() {
+  if (typeof window === 'undefined') return null;
+  try {
+    return sessionStorage.getItem(VISIT_KEY);
+  } catch {
+    return null;
+  }
 }
 
 export class SubmitError extends Error {
@@ -161,6 +180,16 @@ export function submitLead({ source, honeypot, interest, ...fields }, key = idem
         referrer,
       },
       utm,
+      /*
+       * The visit this enquiry came from. It closes the funnel: without it the
+       * dashboard can count visits to a page and count enquiries, but cannot
+       * say that one produced the other — so a page with heavy traffic and no
+       * enquiries looks identical to a page nobody reaches.
+       *
+       * Absent when storage is blocked, which the dashboard handles by showing
+       * what it could not attribute rather than quietly undercounting.
+       */
+      sessionId: currentVisitId() ?? undefined,
     },
     key,
   );

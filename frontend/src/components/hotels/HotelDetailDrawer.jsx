@@ -40,7 +40,7 @@ export default function HotelDetailDrawer({ stay, onClose, onEnquire }) {
           >
             <X className="h-4 w-4" />
           </button>
-          <span className="absolute left-4 top-4 rounded-md bg-[#B89A5A] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[#012C18]">
+          <span className="absolute left-4 top-4 rounded-md bg-[#B89A5A] px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#012C18]">
             {stay.highlight || stay.badge}
           </span>
         </div>

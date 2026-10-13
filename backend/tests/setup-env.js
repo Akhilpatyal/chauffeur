@@ -25,8 +25,12 @@ process.env.RATE_LIMIT_LEADS_MAX = '1000';
 process.env.RATE_LIMIT_LOGIN_MAX = '1000';
 
 /*
- * The in-memory mongod can take well over the library's 10s default to launch
- * the first time on a machine where a virus scanner inspects the binary, which
- * shows up as a confusing "Instance failed to start" across every test.
+ * How long to wait for the in-memory mongod to come up.
+ *
+ * Read by tests/helpers/app.js and passed to MongoMemoryServer.create() as
+ * `instance.launchTimeout`. It is NOT one of the MONGOMS_* variables the
+ * package reads for itself — an earlier version of this file set
+ * MONGOMS_INSTANCE_START_TIMEOUT, which the package ignores entirely, so the
+ * 10s default stayed in force and the suite failed on any busy machine.
  */
-process.env.MONGOMS_INSTANCE_START_TIMEOUT ??= '60000';
+process.env.MONGOMS_LAUNCH_TIMEOUT ??= '60000';

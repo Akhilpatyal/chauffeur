@@ -59,10 +59,10 @@ function MapPanel({ onOpen }) {
       <span className="absolute left-6 top-[30%] font-display text-[19px] tracking-[0.22em] text-[#4A6154]/60">
         MANALI
       </span>
-      <span className="absolute right-8 top-[16%] text-[9px] tracking-[0.1em] text-[#6E7F72]/70">
+      <span className="absolute right-8 top-[16%] text-[10.5px] tracking-[0.1em] text-[#6E7F72]/70">
         Vashisht
       </span>
-      <span className="absolute left-10 top-[70%] text-[9px] tracking-[0.1em] text-[#6E7F72]/70">
+      <span className="absolute left-10 top-[70%] text-[10.5px] tracking-[0.1em] text-[#6E7F72]/70">
         Naggar
       </span>
 
@@ -71,7 +71,7 @@ function MapPanel({ onOpen }) {
         type="button"
         onClick={() => setMapView((v) => !v)}
         aria-pressed={mapView}
-        className="absolute right-3 top-3 flex items-center gap-2 rounded-full bg-[#FAF9F5] py-1 pl-3 pr-1 text-[9.5px] font-semibold text-[#012C18] shadow-sm"
+        className="absolute right-3 top-3 flex items-center gap-2 rounded-full bg-[#FAF9F5] py-1 pl-3 pr-1 text-[10.5px] font-semibold text-[#012C18] shadow-sm"
       >
         Map View
         <span
@@ -103,7 +103,7 @@ function MapPanel({ onOpen }) {
             loading="lazy"
             className="h-9 w-12 rounded-md object-cover shadow-md ring-2 ring-white"
           />
-          <span className="-mt-1 rounded-full bg-[#FAF9F5] px-2 py-[3px] text-[9px] font-bold text-[#012C18] shadow ring-1 ring-[#DDD4C1] group-hover:bg-[#043A25] group-hover:text-[#FAF9F5]">
+          <span className="-mt-1 rounded-full bg-[#FAF9F5] px-2 py-[3px] text-[10.5px] font-bold text-[#012C18] shadow ring-1 ring-[#DDD4C1] group-hover:bg-[#043A25] group-hover:text-[#FAF9F5]">
             {money(stay.price)}
           </span>
         </button>
@@ -136,10 +136,10 @@ function MapPanel({ onOpen }) {
           <span className="block truncate text-[11.5px] font-semibold text-[#012C18]">
             {anchor.name}
           </span>
-          <span className="block text-[9.5px] text-[#7C857E]">
+          <span className="block text-[10.5px] text-[#7C857E]">
             {anchor.location} · {anchor.distance}
           </span>
-          <span className="mt-0.5 flex items-center gap-1 text-[9.5px] text-[#3B473F]">
+          <span className="mt-0.5 flex items-center gap-1 text-[10.5px] text-[#3B473F]">
             <Star className="h-2.5 w-2.5 fill-[#B89A5A] text-[#B89A5A]" />
             <b>{anchor.rating}</b>
             <span className="text-[#98A09A]">({anchor.reviews})</span>

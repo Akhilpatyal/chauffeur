@@ -142,6 +142,16 @@ const leadSchema = new Schema(
     statusHistory: { type: [statusChangeSchema], default: [] },
     assignedTo: { type: Schema.Types.ObjectId, ref: 'AdminUser', default: null, index: true },
     assignedAt: Date,
+
+    /*
+     * Which team owns this lead.
+     *
+     * Stamped when the lead is assigned, and settable on its own so a manager
+     * can route incoming work to a team before picking a person. Without it,
+     * team scope has nothing to filter unassigned leads by, and a manager
+     * either sees every unclaimed lead on the platform or none of them.
+     */
+    team: { type: Schema.Types.ObjectId, ref: 'Team', default: null, index: true },
     notes: { type: [noteSchema], default: [] },
     tags: { type: [String], default: [] },
     lostReason: { type: String, maxlength: 500 },
@@ -216,6 +226,8 @@ const leadSchema = new Schema(
 leadSchema.index({ createdAt: -1 });
 leadSchema.index({ status: 1, createdAt: -1 });
 leadSchema.index({ assignedTo: 1, status: 1, createdAt: -1 });
+leadSchema.index({ team: 1, status: 1, createdAt: -1 });
+leadSchema.index({ team: 1, assignedTo: 1, createdAt: -1 });
 leadSchema.index({ source: 1, createdAt: -1 });
 leadSchema.index({ email: 1, createdAt: -1 });
 leadSchema.index({ contactKey: 1, createdAt: -1 });

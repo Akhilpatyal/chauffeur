@@ -35,7 +35,7 @@ beforeEach(async () => {
   const created = await createAdmin({
     email: 'agent@taifer.test',
     name: 'Sales Agent',
-    role: 'sales_agent',
+    role: 'team_manager',
   });
   agent = created.user;
   session = await signIn(app);

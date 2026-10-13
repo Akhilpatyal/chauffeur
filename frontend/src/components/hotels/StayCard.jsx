@@ -16,7 +16,7 @@ export function RecommendedCard({ stay, favorite, onToggleFavorite, onOpen }) {
       <div className="absolute inset-0 bg-gradient-to-t from-[#02170F] via-[#02170F]/45 to-[#02170F]/10" />
 
       <span
-        className={`absolute left-3 top-3 rounded-md px-2 py-1 text-[8.5px] font-bold uppercase tracking-[0.1em] ${
+        className={`absolute left-3 top-3 rounded-md px-2 py-1 text-[10.5px] font-bold uppercase tracking-[0.1em] ${
           stay.highlightTone === 'gold'
             ? 'bg-[#B89A5A] text-[#012C18]'
             : 'bg-[#043A25] text-[#F4F1E8]'
@@ -26,16 +26,31 @@ export function RecommendedCard({ stay, favorite, onToggleFavorite, onOpen }) {
         {stay.highlight}
       </span>
 
+      {/* z-10 because the caption block below is absolutely positioned and
+          later in the DOM, so it painted over the bottom half of this button
+          and swallowed taps there — the control was not merely small, part of
+          it did not work. */}
       <button
         type="button"
         aria-label={`Save ${stay.name}`}
         aria-pressed={favorite}
         onClick={() => onToggleFavorite(stay.id)}
-        className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition hover:bg-white/35"
+        /* The button is a real 40px box; the visible circle is the inner
+           span, still 28px. The pseudo-element trick used here before was
+           clipped by the card's own overflow-hidden and only reached 23px
+           wide, so the fix has to be in the button's actual geometry. The
+           inset is 6px rather than 12 so the circle lands where it always
+           did. */
+        className="group/save absolute right-1.5 top-1.5 z-10 grid h-10 w-10 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
-        <Heart
-          className={`h-3.5 w-3.5 ${favorite ? 'fill-[#D65A3A] text-[#D65A3A]' : 'fill-white/70 text-white'}`}
-        />
+        {/* Named group: the card itself is also a `group`, so a bare
+            group-hover here would brighten the circle whenever the card is
+            hovered rather than the button. */}
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition group-hover/save:bg-white/35">
+          <Heart
+            className={`h-3.5 w-3.5 ${favorite ? 'fill-[#D65A3A] text-[#D65A3A]' : 'fill-white/70 text-white'}`}
+          />
+        </span>
       </button>
 
       <div className="absolute inset-x-0 bottom-0 p-3.5">
@@ -55,7 +70,7 @@ export function RecommendedCard({ stay, favorite, onToggleFavorite, onOpen }) {
           {stay.amenities.map((a) => (
             <span
               key={a}
-              className="rounded-full border border-white/25 px-2 py-[3px] text-[9.5px] text-white/85"
+              className="rounded-full border border-white/25 px-2 py-[3px] text-[10.5px] text-white/85"
             >
               {a}
             </span>
@@ -63,7 +78,7 @@ export function RecommendedCard({ stay, favorite, onToggleFavorite, onOpen }) {
         </div>
 
         {stay.freeCancellation && (
-          <p className="mt-2 flex items-center gap-1 text-[9.5px] text-[#9BC7A5]">
+          <p className="mt-2 flex items-center gap-1 text-[10.5px] text-[#9BC7A5]">
             <CircleCheckBig className="h-2.5 w-2.5" />
             Free Cancellation
           </p>
@@ -72,12 +87,12 @@ export function RecommendedCard({ stay, favorite, onToggleFavorite, onOpen }) {
         <div className="mt-2.5 flex items-end justify-between">
           <p className="text-[15px] font-bold text-[#FAF9F5]">
             {money(stay.price)}
-            <span className="ml-1 text-[9.5px] font-normal text-white/60">/ night</span>
+            <span className="ml-1 text-[11px] font-normal text-white/60">/ night</span>
           </p>
           <button
             type="button"
             onClick={() => onOpen(stay)}
-            className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-[#B89A5A] transition hover:gap-1.5 hover:text-[#D6BA80]"
+            className="-mr-1 inline-flex min-h-[40px] items-center gap-1 px-1 text-[12px] font-semibold text-[#B89A5A] transition hover:gap-1.5 hover:text-[#D6BA80] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B89A5A]"
           >
             View Stay
             <ArrowRight className="h-3 w-3" />
@@ -116,7 +131,7 @@ export default function StayCard({
           className="absolute inset-0 h-full w-full object-cover transition duration-[900ms] group-hover:scale-[1.04]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#02170F]/35 to-transparent" />
-        <span className="absolute left-2.5 top-2.5 rounded-md bg-[#FAF9F5] px-2 py-1 text-[8.5px] font-bold uppercase tracking-[0.1em] text-[#012C18]">
+        <span className="absolute left-2.5 top-2.5 rounded-md bg-[#FAF9F5] px-2 py-1 text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#012C18]">
           {stay.badge}
         </span>
         <button
@@ -124,13 +139,15 @@ export default function StayCard({
           aria-label={`Save ${stay.name}`}
           aria-pressed={favorite}
           onClick={() => onToggleFavorite(stay.id)}
-          className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-white/85 transition hover:bg-white"
+          className="group/save absolute right-1 top-1 z-10 grid h-10 w-10 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
-          <Heart
-            className={`h-3.5 w-3.5 ${
-              favorite ? 'fill-[#D65A3A] text-[#D65A3A]' : 'text-[#4A5B50]'
-            }`}
-          />
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/85 transition group-hover/save:bg-white">
+            <Heart
+              className={`h-3.5 w-3.5 ${
+                favorite ? 'fill-[#D65A3A] text-[#D65A3A]' : 'text-[#4A5B50]'
+              }`}
+            />
+          </span>
         </button>
       </div>
 
@@ -205,7 +222,7 @@ export default function StayCard({
               {stay.discount}% OFF
             </p>
           )}
-          <p className="mt-1 text-[9.5px] text-[#98A09A]">+ taxes &amp; fees</p>
+          <p className="mt-1 text-[10.5px] text-[#98A09A]">+ taxes &amp; fees</p>
         </div>
         <button
           type="button"

@@ -12,7 +12,7 @@ function Field({ icon: Icon, label, href, value, className = '' }) {
     >
       <Icon className="h-4 w-4 shrink-0 text-[#075333]" strokeWidth={1.75} />
       <span className="min-w-0 flex-1 text-left">
-        <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-[#8A9189]">
+        <span className="block text-[10.5px] font-bold uppercase tracking-[0.14em] text-[#8A9189]">
           {label}
         </span>
         <span className="block truncate text-[13px] font-semibold text-[#012C18]">
@@ -47,7 +47,7 @@ export default function ContactHero({ onPlanTrip }) {
               <span className="block text-[12px] font-semibold leading-tight text-white">
                 {deskCard.title}
               </span>
-              <span className="flex items-center gap-1 text-[9.5px] text-white/65">
+              <span className="flex items-center gap-1 text-[10.5px] text-white/65">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#6FBF8B]" />
                 {deskCard.status}
               </span>
@@ -58,7 +58,7 @@ export default function ContactHero({ onPlanTrip }) {
             {deskCard.hours.map((slot) => (
               <li
                 key={slot.days}
-                className="flex items-center justify-between text-[9.5px] text-white/80"
+                className="flex items-center justify-between text-[10.5px] text-white/80"
               >
                 <span>{slot.days}</span>
                 <span className="font-semibold text-white">{slot.time}</span>
@@ -66,7 +66,7 @@ export default function ContactHero({ onPlanTrip }) {
             ))}
           </ul>
 
-          <p className="mt-2.5 border-t border-white/10 pt-2 text-center text-[8.5px] text-white/55">
+          <p className="mt-2.5 border-t border-white/10 pt-2 text-center text-[10.5px] text-white/55">
             {deskCard.note}
           </p>
         </div>

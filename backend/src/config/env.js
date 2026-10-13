@@ -68,8 +68,25 @@ const schema = z.object({
   RECAPTCHA_SECRET: z.string().default(''),
   RECAPTCHA_MIN_SCORE: z.coerce.number().min(0).max(1).default(0.5),
 
-  EMAIL_PROVIDER: z.enum(['resend', 'sendgrid', 'postmark', 'console']).default('console'),
+  EMAIL_PROVIDER: z.enum(['resend', 'sendgrid', 'postmark', 'smtp', 'console']).default('console'),
   EMAIL_API_KEY: z.string().default(''),
+
+  /*
+   * SMTP, for EMAIL_PROVIDER=smtp.
+   *
+   * Defaults are Gmail's submission port. 587 with STARTTLS rather than 465
+   * with implicit TLS because 587 is the port that is actually open on most
+   * hosts; SMTP_SECURE flips to implicit TLS when 465 is what you have.
+   *
+   * SMTP_PASSWORD with Gmail must be an App Password, not the account
+   * password: Google refuses plain password auth for SMTP, and the failure
+   * reads as a credentials error rather than as a policy one.
+   */
+  SMTP_HOST: z.string().default('smtp.gmail.com'),
+  SMTP_PORT: z.coerce.number().int().min(1).max(65_535).default(587),
+  SMTP_SECURE: z.coerce.boolean().default(false),
+  SMTP_USER: z.string().default(''),
+  SMTP_PASSWORD: z.string().default(''),
   EMAIL_FROM: z.string().default('Taifer <hello@taifer.com>'),
   EMAIL_REPLY_TO: z.string().default('hello@taifer.com'),
   LEAD_ALERT_EMAILS: csv,

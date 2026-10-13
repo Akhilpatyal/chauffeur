@@ -23,6 +23,12 @@ export const unauthorized = (message = 'Authentication required.') =>
   new AppError(401, 'UNAUTHORIZED', message);
 export const forbidden = (message = 'You do not have access to this.') =>
   new AppError(403, 'FORBIDDEN', message);
+/* Its own code, not plain FORBIDDEN. A failed CSRF check and a denied
+ * permission are both 403 to the client and two different things on the
+ * security timeline: one is a stale tab, the other is somebody reaching for
+ * data they are not entitled to. */
+export const csrfInvalid = (message = 'Missing or invalid CSRF token.') =>
+  new AppError(403, 'CSRF_INVALID', message);
 export const notFound = (what = 'Resource') => new AppError(404, 'NOT_FOUND', `${what} not found.`);
 export const conflict = (message, details) => new AppError(409, 'CONFLICT', message, details);
 export const tooManyRequests = (message = 'Too many requests. Please slow down.') =>

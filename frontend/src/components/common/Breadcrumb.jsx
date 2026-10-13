@@ -27,7 +27,7 @@ export default function Breadcrumb({ items, className = '' }) {
 
   return (
     <nav aria-label="Breadcrumb" className={className}>
-      <ol className="flex flex-wrap items-center gap-1.5 text-[11px] text-[#8A9189]">
+      <ol className="flex flex-wrap items-center gap-x-1.5 text-[12.5px] text-[#8A9189]">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
 
@@ -46,7 +46,12 @@ export default function Breadcrumb({ items, className = '' }) {
                   {item.label}
                 </span>
               ) : (
-                <a {...linkProps(item.path)} className="transition-colors hover:text-[#075333]">
+                <a
+                  {...linkProps(item.path)}
+                  /* 40px tall so the trail is usable on a phone; the text
+                     still sits on the same baseline as the separators. */
+                  className="inline-flex min-h-[40px] items-center transition-colors hover:text-[#075333] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
+                >
                   {item.label}
                 </a>
               )}

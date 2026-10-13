@@ -33,7 +33,7 @@ async function main() {
   const providedPassword = arg('password');
 
   if (!email || !name) {
-    console.error('usage: npm run admin:create -- --email <email> --name <name> [--role super_admin|sales_agent] [--password <password>]');
+    console.error('usage: npm run admin:create -- --email <email> --name <name> [--role super_admin|admin|team_manager|caller] [--password <password>]');
     process.exit(1);
   }
   if (!ROLES.includes(role)) {

@@ -36,6 +36,20 @@ function csrfToken() {
   return match ? decodeURIComponent(match[1]) : '';
 }
 
+/*
+ * URLSearchParams stringifies everything, so an absent filter arrives at the
+ * server as the literal text "undefined" and is then matched against. Dropping
+ * empty values here means a component can pass its whole filter state without
+ * first pruning it.
+ */
+function clean(query) {
+  return Object.fromEntries(
+    Object.entries(query ?? {}).filter(
+      ([, value]) => value !== undefined && value !== null && value !== '',
+    ),
+  );
+}
+
 export class ApiError extends Error {
   constructor(status, body) {
     super(body?.error?.message ?? `Request failed (${status})`);
@@ -158,6 +172,45 @@ export const api = {
 
   analytics: (query) => call(`/admin/analytics/leads?${new URLSearchParams(query)}`),
   team: () => call('/admin/team'),
+
+  users: {
+    list: (query = {}) => call(`/admin/users?${new URLSearchParams(clean(query))}`),
+    get: (id) => call(`/admin/users/${id}`),
+    /* The permission catalogue and the roles this user may actually assign.
+     * Fetched rather than hard-coded, so the editor cannot drift from the
+     * server's own list and offer a role the server will refuse. */
+    meta: () => call('/admin/users/meta'),
+    create: (body) => call('/admin/users', { method: 'POST', body }),
+    update: (id, body) => call(`/admin/users/${id}`, { method: 'PATCH', body }),
+    setPermissions: (id, body) => call(`/admin/users/${id}/permissions`, { method: 'PUT', body }),
+    revokeSessions: (id) => call(`/admin/users/${id}/revoke-sessions`, { method: 'POST' }),
+    deactivate: (id) => call(`/admin/users/${id}`, { method: 'DELETE' }),
+  },
+
+  teams: {
+    list: (query = {}) => call(`/admin/teams?${new URLSearchParams(clean(query))}`),
+    get: (id) => call(`/admin/teams/${id}`),
+    create: (body) => call('/admin/teams', { method: 'POST', body }),
+    update: (id, body) => call(`/admin/teams/${id}`, { method: 'PATCH', body }),
+    /* A delta, never a replacement roster: two managers editing the same team
+     * at once would otherwise silently undo each other's change. */
+    setMembers: (id, body) => call(`/admin/teams/${id}/members`, { method: 'POST', body }),
+    deactivate: (id) => call(`/admin/teams/${id}`, { method: 'DELETE' }),
+  },
+
+  observability: {
+    summary: (range) => call(`/admin/observability/summary?range=${range}`),
+    series: (range) => call(`/admin/observability/series?range=${range}`),
+    routes: (query) => call(`/admin/observability/routes?${new URLSearchParams(clean(query))}`),
+    errors: (query) => call(`/admin/observability/errors?${new URLSearchParams(clean(query))}`),
+    error: (id) => call(`/admin/observability/errors/${id}`),
+    setErrorStatus: (id, body) =>
+      call(`/admin/observability/errors/${id}`, { method: 'PATCH', body }),
+    security: (query) => call(`/admin/observability/security?${new URLSearchParams(clean(query))}`),
+    visitors: (query) => call(`/admin/observability/visitors?${new URLSearchParams(clean(query))}`),
+    exportCsv: (dataset, range) =>
+      call(`/admin/observability/export.csv?dataset=${dataset}&range=${range}`, { raw: true }),
+  },
   audit: (query) => call(`/admin/audit?${new URLSearchParams(query)}`),
   flags: {
     list: () => call('/admin/flags'),

@@ -82,7 +82,10 @@ export default function StoriesPage() {
         facts={[
           { icon: BookOpen, label: 'Stories', value: `${journalArticles.length} published` },
           { icon: PenLine, label: 'Written by', value: `${authors} guides` },
-          { icon: Users, label: 'Readers', value: '10,000+ subscribers' },
+          /* The other two facts here are counted from the catalogue; this
+             one was an invented subscriber figure sitting beside them, which
+             made the real ones look invented too. */
+          { icon: Users, label: 'Updated', value: 'Monthly' },
         ]}
       />
 
@@ -148,7 +151,7 @@ export default function StoriesPage() {
         eyebrow="Monthly trail log"
         title="Get new stories by email"
         subtitle="One letter a month: where we have been, what the weather is doing up there, and which departures still have seats."
-        note="10,000+ explorers subscribe to our newsletter"
+        note="One email a month. Unsubscribe in a click."
         showAvatars
       />
       <Footer />

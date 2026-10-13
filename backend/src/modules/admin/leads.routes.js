@@ -41,7 +41,7 @@ export default async function adminLeadRoutes(fastify) {
   fastify.get(
     '/leads',
     {
-      preHandler: fastify.requirePermission('leads:read'),
+      preHandler: fastify.requirePermission('leads.view'),
       preValidation: validate({ query: listLeadsQuery }),
       schema: {
         tags: ['admin:leads'],
@@ -55,13 +55,13 @@ export default async function adminLeadRoutes(fastify) {
         response: { 200: { description: 'A page of leads', type: 'object' } },
       },
     },
-    async (request) => listLeads(request.query),
+    async (request) => listLeads(request.query, request.user),
   );
 
   fastify.get(
     '/leads/export.csv',
     {
-      preHandler: fastify.requirePermission('leads:export'),
+      preHandler: fastify.requirePermission('leads.export'),
       preValidation: validate({ query: listLeadsQuery }),
       schema: {
         tags: ['admin:leads'],
@@ -73,7 +73,7 @@ export default async function adminLeadRoutes(fastify) {
       },
     },
     async (request, reply) => {
-      const rows = await leadsForExport(request.query);
+      const rows = await leadsForExport(request.query, request.user);
       await recordAudit({
         request,
         action: 'leads.export',
@@ -93,7 +93,7 @@ export default async function adminLeadRoutes(fastify) {
   fastify.get(
     '/leads/:id',
     {
-      preHandler: fastify.requirePermission('leads:read'),
+      preHandler: fastify.requirePermission('leads.view'),
       preValidation: validate({ params: leadIdParams }),
       schema: {
         tags: ['admin:leads'],
@@ -106,13 +106,15 @@ export default async function adminLeadRoutes(fastify) {
         },
       },
     },
-    async (request) => ({ data: await getLead(request.params.id) }),
+    async (request) => ({ data: await getLead(request.params.id, request.user) }),
   );
 
   fastify.patch(
     '/leads/:id/status',
     {
-      preHandler: fastify.requirePermission('leads:write'),
+      /* A caller may move a lead through the pipeline without holding the
+         broader leads.edit permission. */
+      preHandler: fastify.requirePermission('leads.edit_status'),
       preValidation: validate({ params: leadIdParams, body: updateLeadStatusBody }),
       schema: {
         tags: ['admin:leads'],
@@ -143,7 +145,7 @@ export default async function adminLeadRoutes(fastify) {
   fastify.patch(
     '/leads/:id/assign',
     {
-      preHandler: fastify.requirePermission('leads:write'),
+      preHandler: fastify.requirePermission('leads.assign'),
       preValidation: validate({ params: leadIdParams, body: assignLeadBody }),
       schema: {
         tags: ['admin:leads'],
@@ -173,7 +175,7 @@ export default async function adminLeadRoutes(fastify) {
   fastify.post(
     '/leads/:id/notes',
     {
-      preHandler: fastify.requirePermission('leads:write'),
+      preHandler: fastify.requirePermission('leads.add_activity'),
       preValidation: validate({ params: leadIdParams, body: addNoteBody }),
       schema: {
         tags: ['admin:leads'],
@@ -200,7 +202,7 @@ export default async function adminLeadRoutes(fastify) {
   fastify.post(
     '/leads/:id/resend-notifications',
     {
-      preHandler: fastify.requirePermission('leads:write'),
+      preHandler: fastify.requirePermission('leads.edit'),
       preValidation: validate({ params: leadIdParams }),
       schema: {
         tags: ['admin:leads'],
@@ -214,7 +216,7 @@ export default async function adminLeadRoutes(fastify) {
       },
     },
     async (request, reply) => {
-      const result = await resendNotifications(request.params.id);
+      const result = await resendNotifications(request.params.id, request.user);
       await recordAudit({
         request,
         action: 'lead.resend-notifications',

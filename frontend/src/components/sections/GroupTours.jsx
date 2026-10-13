@@ -41,7 +41,7 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
 
               <button
                 onClick={onExploreAllGroups}
-                className="inline-flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-wider text-[#003B24] hover:text-[#075333] transition-colors cursor-pointer mt-3"
+                className="mt-2 -ml-1 inline-flex min-h-[40px] cursor-pointer items-center gap-1.5 px-1 text-[12.5px] font-sans font-bold uppercase tracking-wider text-[#003B24] transition-colors hover:text-[#075333] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
               >
                 <span>View all group tours</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -93,7 +93,7 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
                     <span className="text-[10px] font-mono uppercase text-[#003B24]/60">Per Person</span>
                     <p className="text-xl font-bold text-[#003B24] font-mono">{featuredTour.price}</p>
                   </div>
-                  <button className="px-4 py-2 rounded-lg bg-[#003B24] hover:bg-[#075333] text-white text-xs font-bold uppercase tracking-wide transition-colors">
+                  <button className="inline-flex min-h-[40px] items-center rounded-lg bg-[#003B24] px-4 text-[12.5px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#075333] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#003B24]">
                     Join Journey
                   </button>
                 </div>
@@ -130,7 +130,7 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
                       {tour.price}
                     </p>
                     {tour.hot && (
-                      <span className="text-[9px] font-mono font-bold text-[#D65A3A] uppercase">Hot</span>
+                      <span className="text-[10.5px] font-mono font-bold text-[#D65A3A] uppercase">Hot</span>
                     )}
                   </div>
                 </div>

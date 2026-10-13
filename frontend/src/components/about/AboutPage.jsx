@@ -85,7 +85,7 @@ export default function AboutPage({ onPlanTrip, onExploreJourneys, onWatchStory 
         eyebrow="Stay Inspired"
         title="Keep Exploring."
         subtitle="Stories, trails and journeys worth knowing about."
-        note="10,000+ explorers subscribe to our newsletter"
+        note="One email a month. Unsubscribe in a click."
         showAvatars
       />
       <Footer />

@@ -72,7 +72,15 @@ export default function HeroSection({ onSearchSubmit }) {
             <Sparkles className="mb-2 h-4 w-4 text-[#ffd85d]" /><p className="text-sm font-bold">Best Price</p><p className="text-sm font-bold">Guaranteed</p><p className="mt-1 text-[10px] leading-relaxed text-white/75">Get the best deals on every booking.</p>
           </div>
           <div className="absolute right-[10%] top-[39%] hidden w-40 rounded-2xl border border-white/15 bg-[#07586a]/75 px-5 py-4 text-center shadow-xl backdrop-blur-md xl:block">
-            <ShieldCheck className="mx-auto mb-2 h-4 w-4 text-[#ffd85d]" /><p className="text-sm font-bold">Trusted by</p><p className="text-sm font-bold">50K+ Travelers</p><p className="mt-1 text-[10px] leading-relaxed text-white/75">Real reviews. Real experiences.</p>
+            {/* Was "Trusted by 50K+ Travelers — Real reviews. Real
+                experiences." Neither number nor claim came from anywhere, and
+                data/companyFacts.js already sets the rule for this site: a
+                stat is either derived from the catalogue or carries a
+                `verified` flag, and an unverified one is not rendered at all.
+                India's 2023 dark-pattern guidelines treat fabricated reviews
+                as a prohibited practice, so this is not only a trust problem.
+                Replaced with something that is true by construction. */}
+            <ShieldCheck className="mx-auto mb-2 h-4 w-4 text-[#ffd85d]" /><p className="text-sm font-bold">Led by</p><p className="text-sm font-bold">local guides</p><p className="mt-1 text-[10px] leading-relaxed text-white/75">Every route driven and walked by the people who plan it.</p>
           </div>
 
           <div className="relative">

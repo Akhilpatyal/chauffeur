@@ -61,6 +61,7 @@ const TravelerStoryModal = lazy(() => import('./components/modals/TravelerStoryM
 
 import { navigateTo, redirectLegacyHash, resolveRoute, usePathname } from './router';
 import { useDocumentMeta } from './lib/seo';
+import { trackPageView } from './lib/analytics';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -70,6 +71,16 @@ export default function App() {
   const pathname = usePathname();
   const { page, param } = resolveRoute(pathname);
   const journeyId = page === 'journey' ? param : null;
+
+  /*
+   * One page view per route change. With client-side routing the server only
+   * ever sees the first request of a visit, so without this the dashboard
+   * would report every visit as a single page and the browse — which is what
+   * actually indicates interest — would be invisible.
+   */
+  useEffect(() => {
+    trackPageView(pathname);
+  }, [pathname]);
 
   /*
    * Only the homepage sets its own metadata here; every other page owns its

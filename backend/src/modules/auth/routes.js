@@ -1,7 +1,7 @@
 import { env } from '../../config/env.js';
 import { validate, docSchema, errorResponseSchema } from '../../lib/validate.js';
 import { REFRESH_COOKIE } from '../../plugins/auth.js';
-import { forbidden, unauthorized } from '../../lib/errors.js';
+import { unauthorized, csrfInvalid } from '../../lib/errors.js';
 import { randomToken, safeEqual } from '../../lib/crypto.js';
 import { loginBody, changePasswordBody } from './schemas.js';
 import { login, refresh, logout, changePassword } from './service.js';
@@ -46,7 +46,7 @@ function assertCsrf(request) {
   const cookie = request.cookies?.[CSRF_COOKIE];
   const header = request.headers['x-csrf-token'];
   if (!cookie || !header || !safeEqual(cookie, header)) {
-    throw forbidden('Missing or invalid CSRF token.');
+    throw csrfInvalid();
   }
 }
 

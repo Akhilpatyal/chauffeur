@@ -1,4 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=DM+Serif+Display&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Oswald:wght@300;400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');@import "tailwindcss";
+/*
+ * Fonts are loaded by the <link> in index.html, not here.
+ *
+ * A CSS `@import` of a remote stylesheet cannot start until this file has
+ * itself been fetched and parsed, so the fonts queued behind it and the page
+ * rendered in fallback type for noticeably longer. The <link> in the document
+ * head starts downloading alongside the CSS instead. Both existed, loading
+ * overlapping but different families, so this one goes.
+ */
+@import "tailwindcss";
 
 @theme {
   --color-primary: #012C18;
@@ -15,7 +24,7 @@
 
   --font-serif: "DM Serif Display", Georgia, serif;
   --font-serif-editorial: "Instrument Serif", "DM Serif Display", Georgia, serif;
-  --font-sans: "Plus Jakarta Sans", "Manrope", system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
@@ -97,3 +106,131 @@
   scrollbar-width: none;
 }
 
+
+/*
+ * Leaflet ships its own typography.
+ *
+ * Its stylesheet sets `font: 12px/1.5 "Helvetica Neue", Arial, …` on the map
+ * container, so the attribution, popups and zoom controls were the only text
+ * on the site in a font the site does not otherwise use — and at 11px, below
+ * the floor everything else respects. Inheriting instead keeps the map part of
+ * the page rather than an embedded widget.
+ */
+.leaflet-container,
+.leaflet-container .leaflet-control,
+.leaflet-container .leaflet-popup-content {
+  font-family: var(--font-sans);
+  font-size: 12px;
+}
+
+.leaflet-container .leaflet-control-attribution {
+  /* Attribution is a legal requirement, so it stays legible rather than being
+     shrunk out of the way. */
+  font-size: 11px;
+  padding: 2px 6px;
+}
+
+.leaflet-container .leaflet-control-attribution a {
+  /* Leaflet's default link colour is a blue that belongs to no palette here. */
+  color: var(--color-forest);
+  text-decoration: underline;
+}
+
+/*
+ * Zoom controls are 26px square by default, which is below the 40px a thumb
+ * needs. The map is the one place on a trip page where people pinch and tap
+ * repeatedly, so the buttons are sized for that on touch viewports.
+ */
+@media (pointer: coarse) {
+  .leaflet-container .leaflet-control-zoom a {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 20px;
+  }
+}
+
+/*
+ * A readable floor on small screens.
+ *
+ * The design uses small uppercase tracked labels throughout — around 175 of
+ * them at 10 to 11px. That reads as deliberate and editorial on a desktop,
+ * and it is genuinely hard to read on a phone held at arm's length on a bus,
+ * which is where most of this site's traffic is.
+ *
+ * Raising each call site by hand would mean 175 edits and would not stop the
+ * next one being added at 10px, so the step sizes are redefined below the
+ * `sm` breakpoint instead. The desktop design is untouched — these selectors
+ * only exist under the media query, and Tailwind's `sm:text-[...]` variants
+ * apply from 640px up and so are unaffected.
+ *
+ * The escaped brackets match Tailwind's generated arbitrary-value classes.
+ */
+@media (max-width: 639.98px) {
+  .text-\[10px\]   { font-size: 11px; }
+  .text-\[10\.5px\] { font-size: 11.5px; }
+  .text-\[11px\]   { font-size: 12px; }
+  .text-\[11\.5px\] { font-size: 12.5px; }
+  .text-\[12px\]   { font-size: 12.5px; }
+}
+
+/*
+ * iOS Safari zooms the page whenever a focused form control is under 16px,
+ * and it does not zoom back out. On the enquiry forms that means the keyboard
+ * appears, the layout jumps to roughly double size, and the visitor has to
+ * pinch out to find the next field — which is where people abandon a form.
+ *
+ * Applied to coarse pointers rather than to a width, so it follows the input
+ * method rather than guessing from screen size, and set here once rather than
+ * on each of the two dozen controls.
+ */
+@media (pointer: coarse) {
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/*
+ * An opt-in touch target.
+ *
+ * Small icon buttons — save, dismiss, a social glyph — are deliberately
+ * compact in the design and should stay that way under a mouse, where a
+ * pointer is pixel-accurate. A finger is not: the usual guidance is around
+ * 44px, and several of these were 24.
+ *
+ * So the element keeps its drawn size and grows only its hit area, and only
+ * on touch. Applied by name rather than by a blanket selector, because a rule
+ * matching every button would also stretch the inline-flex badges and pills
+ * that happen to be links and quietly reflow half the page.
+ *
+ * KNOW THIS BEFORE REACHING FOR IT
+ *
+ * The pseudo-element is clipped by any ancestor with `overflow: hidden`, and
+ * painted under any absolutely positioned sibling that comes later in the
+ * DOM. Inside a card — which is usually where small icon buttons live — both
+ * are normal, and the measured hit area came out at 23px wide rather than 44
+ * with no visible sign anything was wrong. It is a convenience for controls
+ * sitting in open space, not a substitute for sizing the control.
+ *
+ * Where it does not apply, make the button itself 40px and draw the small
+ * visible circle on an inner span. StayCard and OurTeam both do that.
+ */
+@media (pointer: coarse) {
+  .tap-target {
+    position: relative;
+  }
+
+  /* The hit area is a pseudo-element, so the button's own box — and therefore
+     the layout around it — does not change at all. */
+  .tap-target::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+}

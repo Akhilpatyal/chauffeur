@@ -18,6 +18,8 @@ alarm when one gets stuck.
 - [Environment variables](#environment-variables)
 - [Running the tests](#running-the-tests)
 - [The admin dashboard](#the-admin-dashboard)
+- [Roles and what they can see](#roles-and-what-they-can-see)
+- [Monitoring](#monitoring)
 - [Deployment](#deployment)
 - [Operations runbook](#operations-runbook)
 - [Design decisions worth knowing](#design-decisions-worth-knowing)
@@ -134,10 +136,13 @@ backend/
 │   │   ├── newsletter/
 │   │   ├── content/        registry-driven CRUD for all 7 collections
 │   │   ├── auth/
+│   │   ├── teams/          team CRUD + the scope rules that depend on it
+│   │   ├── telemetry/      the public page-view beacon
 │   │   ├── admin/
 │   │   └── health/
-│   ├── plugins/            security, auth, error handling, swagger
-│   ├── services/           email, WhatsApp, storage, flags, retention, audit
+│   ├── plugins/            security, auth, error handling, observability, swagger
+│   ├── services/           email, WhatsApp, storage, flags, retention, audit,
+│   │                       access control, metrics, error + security tracking
 │   ├── utils/              pagination, sanitising, slugs, CSV
 │   └── workers/            BullMQ workers + the outbox sweeper
 ├── admin/                  React admin dashboard (separate Vite app)
@@ -159,6 +164,13 @@ one forgets to invalidate its cache.
 schema both validates and documents each endpoint. The pass-through compilers are
 load-bearing — read the comment there before changing them.
 
+**`src/config/permissions.js`** is the single description of the role hierarchy:
+the ranks, the permission catalogue, what each role grants, how much data each
+role can see, and which fields each role may read and write. Nothing else
+hard-codes a role name. **`src/services/access.js`** is the enforcement — scope
+filters, field filters and the rank guard — and it is the file to read before
+touching anything to do with who can see what.
+
 ---
 
 ## Environment variables
@@ -176,6 +188,7 @@ The ones you must set in production:
 | `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `COOKIE_SECRET` | 32+ characters, all different. Boot fails on placeholders or a short value. |
 | `CORS_ORIGINS` | Exact frontend origins, comma-separated. `*` is rejected. |
 | `EMAIL_PROVIDER` + `EMAIL_API_KEY` | `resend`, `sendgrid` or `postmark`. Without this, the default `console` provider only logs. |
+| `EMAIL_PROVIDER=smtp` + `SMTP_*` | Plain SMTP, Gmail by default. See *Sending email* below. |
 | `LEAD_ALERT_EMAILS` | Who gets the instant new-enquiry alert. If empty, nobody is told. |
 
 Generate a secret:
@@ -188,6 +201,53 @@ Optional but worth configuring: `WHATSAPP_*` (instant alerts to phones),
 `S3_*` (image uploads from the dashboard), `SENTRY_DSN`, `RECAPTCHA_SECRET`,
 `FIELD_ENCRYPTION_KEY` (needed once you store payment references).
 
+### Sending email
+
+Four hosted providers plus SMTP. `console` is the default and only logs, so
+nothing is delivered until this is set — deliberately, since a fresh checkout
+should not be able to email real people.
+
+```bash
+npm run check:email                      # verify the connection and credentials
+npm run check:email -- you@example.com   # also send one real message
+```
+
+The two steps are separate on purpose. `verify()` authenticates without sending
+anything, which is what belongs in a deploy check; actually sending is the only
+way to know a message is accepted and arrives, so it takes an explicit address.
+
+**SMTP with Gmail** is the fastest way to start: an account, an App Password,
+no DNS records and no monthly minimum.
+
+```
+EMAIL_PROVIDER=smtp
+SMTP_USER=you@gmail.com
+SMTP_PASSWORD=<16-character App Password, not your account password>
+```
+
+Google refuses plain password auth for SMTP, so it must be an App Password —
+turn on 2-step verification first, then create one. Using the account password
+fails with a credentials error that does not say the real reason, which is why
+`check:email` recognises it and says so.
+
+Two limits worth knowing before relying on it. Gmail allows roughly 500
+messages a day on a personal account and about 2,000 on Workspace, counting
+each recipient — ample for lead alerts to a small desk, nowhere near enough for
+a newsletter once the list grows. And mail goes out *as* the Gmail account, on
+that account's reputation rather than the site's domain, so once there is a
+domain worth protecting one of the hosted providers with SPF, DKIM and DMARC
+configured is a genuine deliverability upgrade rather than a formality.
+
+The connection is pooled and the transport built once: creating one per message
+costs a TLS handshake and an AUTH round trip every time, which on a burst of
+lead alerts is most of the time spent.
+
+Failures are classified before they reach the queue. A missing credential
+throws with `retryable: false`, because no amount of backoff will supply a
+password and retrying only hides the misconfiguration for hours. A 5xx SMTP
+reply is permanent and a 4xx is transient, so greylisting is retried and a
+rejected address is not.
+
 ---
 
 ## Running the tests
@@ -199,7 +259,24 @@ npm run lint
 ```
 
 The suite starts its own in-memory MongoDB per test file and runs with Redis
-disabled, so there is nothing to set up and nothing to clean up. It covers:
+disabled, so there is nothing to set up and nothing to clean up.
+
+**If `npm test` fails with "Instance failed to start":** the in-memory server
+works by executing a downloaded `mongod` binary, and some machines refuse to
+run it — Windows Application Control blocks it outright, and the error looks
+like a timeout rather than a refusal. Run the suite against a real MongoDB
+instead:
+
+```bash
+npm run test:docker            # uses mongodb://127.0.0.1:27017
+MONGODB_TEST_URI=... npm test  # or any other server
+```
+
+Each test file still gets its own uniquely named database and drops it
+afterwards, so a shared server is as isolated as a private one and your
+development data is never touched.
+
+It covers:
 
 - lead capture: validation, honeypot, idempotency, duplicate threading, outbox
   state, XSS and NoSQL-operator stripping, maintenance mode
@@ -239,12 +316,105 @@ npm run build    # -> admin/dist
 
 It covers lead management (filter, search, assign, status, notes, CSV export,
 re-queue notifications), content CRUD for all seven collections with image
-upload, analytics, feature flags, the audit log, and password changes.
+upload, people and teams, monitoring, analytics, feature flags, the audit log,
+and password changes.
 
-Two deliberate choices: the access token is held in memory only, never in
+Navigation is built from the signed-in user's **permissions**, not their role
+name - a per-user override is the whole point of having them, and a role check
+would hide what somebody was deliberately granted. A hidden tab is not a
+security measure: every route behind it checks the same permission again on the
+server, recomputed from the database on each request.
+
+Two other deliberate choices: the access token is held in memory only, never in
 `localStorage`, so an injected script cannot read it; and concurrent 401s share a
 single refresh call, because six parallel refreshes would trip the server's reuse
 detection and revoke the session.
+
+### Roles and what they can see
+
+Four levels. `ROLE_RANK` in [`src/config/permissions.js`](src/config/permissions.js)
+is the whole hierarchy; the rule that nobody may create, edit, or assign a role
+at or above their own lives in [`src/services/access.js`](src/services/access.js)
+and closes three escalation routes at once - promoting yourself, promoting a
+colleague above you, and two admins demoting each other.
+
+| Role | Sees | Notably can | Notably cannot |
+|---|---|---|---|
+| `caller` | only enquiries assigned to them | update status, add notes | reassign work, see other people, read spam scores or hashed IPs |
+| `team_manager` | their teams' enquiries | assign within the team, export, see teammates | reach another team, change roles |
+| `admin` | everything | manage people and teams, set roles below their own, publish content, monitoring | grant per-user permissions, touch another admin |
+| `super_admin` | everything | the full catalogue, including per-user overrides | edit their own account through the user API |
+
+Three further rules hold everywhere:
+
+- **Scope fails closed.** A team manager with no team sees nothing, not
+  everything - the filter returns their own records rather than an empty query,
+  because an empty filter in MongoDB means "all documents".
+- **Overrides are differences, not a set.** A grant is stored as "additionally
+  has X" rather than a flattened permission list, so it survives a later change
+  to what the role means. A revocation always beats a grant.
+- **Permissions are recomputed per request.** Revoking something takes effect
+  on the user's next call, not when their access token happens to expire.
+
+Existing databases are migrated with `npm run migrate:roles` (`--dry-run`
+first). It maps the old `sales_agent` to `caller` rather than `team_manager`:
+promoting someone afterwards takes one click, whereas silently handing every
+former agent sight of a whole team's customer records is the kind of migration
+nobody notices until it matters.
+
+---
+
+## Monitoring
+
+Four questions, one screen (Monitoring in the dashboard, or
+`/api/v1/admin/observability/*`): is the site fast, what is broken, is anybody
+trying to get in, and are visitors turning into enquiries.
+
+**Traffic** is pre-aggregated. Counters live in process memory and flush as
+`$inc` upserts every 15 seconds, so a thousand requests a minute costs tens of
+writes rather than a thousand - otherwise the observability becomes the load it
+exists to measure. Routes are recorded as patterns (`/admin/leads/:id`), never
+as URLs, because grouping by URL means one row per lead ever viewed: unbounded
+cardinality, and "how slow is the lead page" becomes unanswerable.
+
+Latency is stored as a fixed histogram and percentiles are read off the summed
+buckets. Averaging per-minute percentiles would be easier and is meaningless -
+the mean of a p99 is not a p99 of anything. The trade is explicit: a process
+killed between flushes loses up to 15 seconds of counters, which is acceptable
+for traffic statistics and would never be acceptable for a lead. Errors and
+security events are written individually for exactly that reason.
+
+**Errors** are grouped by a fingerprint derived from the error name, the route
+and the top stack frames - deliberately *not* the message, which interpolates
+ids and would file every occurrence as a brand new fault. Absolute paths are
+made project-relative so the same fault fingerprints identically on a laptop
+and in the container. A group marked resolved **reopens by itself** if the
+fault happens again, and the regression is counted, because marking something
+fixed is a claim and this is the check on it.
+
+**Security** is a separate timeline from the audit log. The audit log is
+evidence about deliberate changes; this is about attempts, most of which failed
+and most of which are not users. A brute-force burst would otherwise push a
+month of genuine changes off the first page. Source addresses are the same keyed
+hashes used elsewhere, never addresses. The recorder's `detail` field is
+scrubbed recursively against a deny list before storage, so a password or token
+handed to it by accident is dropped rather than redacted - a redacted field
+still tells a reader that a value existed.
+
+**Visitors** answers the one question the lead table cannot: of the people who
+looked at the Spiti page, how many asked us anything? The site is a static
+bundle with client-side routing, so page views are reported by a beacon
+(`POST /api/v1/telemetry/page-view`) - counting server-side would report one
+page view per visit and miss the browse entirely. No cookie is set, the visit id
+lives in `sessionStorage` and dies with the tab, it is hashed before storage,
+and referrers are reduced to a hostname because a full referring URL can carry
+somebody's search terms. Crawlers are flagged and excluded by default, so the
+conversion rate is a rate among people.
+
+The dashboard also prints `attributionGap`: enquiries that arrived with no
+tracked visit, by phone or with tracking blocked. Showing the attributed figure
+alone would understate the marketing by however much that is, and nobody would
+know why.
 
 ---
 
@@ -388,6 +558,38 @@ receives a 201 keeps filling it. Likewise, reCAPTCHA being *unreachable* allows 
 submission through and flags it — a lost genuine enquiry costs more than a spam row
 someone deletes.
 
+**Permission, not role, is what the code checks.** Routes guard on a named
+permission; roles are a bundle of them, and per-user overrides are a deliberate
+difference from that bundle. Nothing in the codebase branches on a role name
+except the rank comparison that stops escalation, so adding a fifth role is a
+table entry rather than a hunt through conditionals. The permission set is
+recomputed from the database on every request, which is what makes a revocation
+take effect immediately rather than when a token expires.
+
+**Scope filters fail closed.** A team manager with no team sees nothing. That
+sounds obvious until you notice an empty MongoDB filter matches every document:
+returning `{}` for "no teams" would silently grant the opposite of what was
+meant. The filter returns their own records instead, and a test pins it.
+
+**A permission check and a field check are both needed.** The permission decides
+whether you may call the endpoint; the field policy decides which columns of the
+record you may read and write. Without the second, a caller who may legitimately
+update a lead's status could also reassign it by adding one key to the request
+body, because the UI not showing a control has never stopped anybody.
+
+**Observability is aggregated where losing a row is acceptable, and not where it
+is not.** Traffic counters batch in memory and flush every 15 seconds, because a
+write per request would make the monitoring the load. Errors and security events
+are written individually, because losing one changes what you conclude. The line
+between the two is "would anybody make a different decision if this row were
+missing" — see [Monitoring](#monitoring).
+
+**A statistic about a page is not personal data about a visitor.** A visit
+records that it converted in two separate fields: a boolean, and a link to the
+enquiry. When somebody asks to be erased the link goes and the boolean stays, so
+the request is honoured without quietly corrupting everyone else's conversion
+rate as the price.
+
 **Cache invalidation is by tag, not by TTL.** An admin edit drops every cached key
 derived from that collection immediately. Waiting for a TTL means serving content
 the editor can see is wrong, which teaches people to distrust the dashboard.
@@ -438,6 +640,25 @@ Worth stating plainly rather than discovering later:
 - **No end-to-end browser tests.** The API is covered by integration tests and the
   dashboard by hand; a Playwright run over the three public forms would be the
   highest-value addition.
+- **No sign-in by one-time code.** Authentication is email and password, with
+  rotating refresh tokens and lockout. An emailed OTP was considered and
+  deliberately left out.
+- **Request counters are per process, flushed every 15 seconds.** They converge
+  correctly across cluster workers because every write is an `$inc`, but a
+  worker killed between flushes loses its window — a gap in a traffic chart,
+  never a lost lead. Exact request accounting would need a different design.
+- **Latency percentiles are histogram estimates.** They are read from fixed
+  buckets and capped at the observed maximum, so they are never impossible, but
+  a p95 of 506ms means "between 250 and 1000, nearer 500". Precise percentiles
+  would mean storing every duration.
+- **Visitor analytics undercount by design.** No cookie, a visit id that dies
+  with the tab, and nothing recorded when storage is blocked. Enquiries that
+  arrive by phone or from a browser with tracking off cannot be attributed, so
+  the dashboard prints that gap beside the attributed figure rather than
+  pretending it is zero.
+- **Teams are a flat list.** There is no hierarchy of teams, and a person on two
+  teams sees the union of both. Nested desks would need the scope filter to
+  walk a tree.
 
 ---
 
@@ -465,7 +686,10 @@ shows up as a reviewable diff rather than a surprise after deploy.
 | `GET` | `/api/v1/{collection}/:slug` | Detail by slug. |
 | `GET` | `/api/v1/home` | Homepage bundle in one request. |
 | `POST` | `/api/v1/auth/login` · `/refresh` · `/logout` | Access token + httpOnly refresh cookie. |
-| `*` | `/api/v1/admin/**` | Authenticated. Leads, content, analytics, audit, flags, uploads, compliance. |
+| `POST` | `/api/v1/telemetry/page-view` | Anonymous page-view beacon. No cookie, hashed visit id. |
+| `*` | `/api/v1/admin/**` | Authenticated. Leads, content, people, teams, monitoring, analytics, audit, flags, uploads, compliance. |
+| `*` | `/api/v1/admin/users/**` · `/teams/**` | Four-level hierarchy, rank-guarded. See *Roles*. |
+| `GET` | `/api/v1/admin/observability/{summary,series,routes,errors,security,visitors}` | Monitoring. `export.csv` is a separate permission. |
 | `GET` | `/health` · `/ready` | Liveness and readiness. |
 
 All errors share one shape:

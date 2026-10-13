@@ -15,7 +15,7 @@ function JourneyRow({ item, onClick }) {
   const highlighted = item.id === 'ladakh-expedition';
   return (
     <button onClick={onClick} className={`group relative flex w-full shrink-0 items-center gap-3 rounded-[18px] border bg-[#fffdf7] p-3 text-left shadow-[0_5px_18px_rgba(7,63,50,.05)] transition duration-300 hover:-translate-y-1 hover:border-[#0b604b] hover:shadow-[0_12px_25px_rgba(7,63,50,.1)] sm:p-3.5 ${highlighted ? 'border-[#13805f] ring-1 ring-[#13805f]/20' : 'border-[#ded8c9]'}`}>
-      {highlighted && <span className="absolute right-[-2px] top-[-2px] rounded-bl-lg rounded-tr-[15px] bg-[#073f32] px-2 py-1 text-[8px] font-bold tracking-[.16em] text-[#e2bd74]">POPULAR</span>}
+      {highlighted && <span className="absolute right-[-2px] top-[-2px] rounded-bl-lg rounded-tr-[15px] bg-[#073f32] px-2 py-1 text-[10.5px] font-bold tracking-[.16em] text-[#e2bd74]">POPULAR</span>}
       <img src={item.image} alt="" className="h-14 w-14 shrink-0 rounded-xl object-cover transition duration-500 group-hover:scale-105 sm:h-16 sm:w-16" />
       <span className="min-w-0 flex-1">
         <span className="block truncate font-display text-base leading-tight text-[#123d34] sm:text-lg">{item.title}</span>
@@ -84,7 +84,7 @@ export default function HandpickedJourneys({ onSelectJourney, onExploreAll }) {
       <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <header className="relative mb-10 flex flex-col gap-5 lg:mb-12 lg:flex-row lg:items-start lg:justify-between">
           <div><span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[.16em] text-[#31574d]"><Sparkles className="h-3.5 w-3.5 text-[#c69a52]" />EXPLORE THE WORLD</span><h2 className="mt-3 max-w-2xl font-display text-5xl leading-[.86] tracking-tight sm:text-6xl lg:text-7xl">Your next adventure<br /><span className="italic text-[#c69a52]">starts</span> here.</h2></div>
-          <button onClick={onExploreAll} className="group mt-2 inline-flex items-center gap-2 self-start text-xs font-bold tracking-[.12em] text-[#123d34] transition hover:text-[#c69a52]">VIEW ALL JOURNEYS <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></button>
+          <button onClick={onExploreAll} className="group -ml-1 mt-1 inline-flex min-h-[40px] items-center gap-2 self-start px-1 text-[12.5px] font-bold tracking-[.12em] text-[#123d34] transition hover:text-[#c69a52] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#123d34]">VIEW ALL JOURNEYS <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></button>
         </header>
 
         <div className="grid items-stretch gap-7 lg:grid-cols-[1.25fr_.95fr_.82fr]">

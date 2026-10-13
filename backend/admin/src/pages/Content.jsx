@@ -12,8 +12,8 @@ export default function Content({ user }) {
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState(null);
 
-  const canWrite = user.permissions.includes('content:write');
-  const canPublish = user.permissions.includes('content:publish');
+  const canWrite = user.permissions.includes('content.edit');
+  const canPublish = user.permissions.includes('content.publish');
 
   const load = useCallback(async () => {
     setError(null);

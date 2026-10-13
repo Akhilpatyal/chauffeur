@@ -70,7 +70,7 @@ describe('GET /api/v1/auth/me', () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.json().data.role).toBe('super_admin');
-    expect(response.json().data.permissions).toContain('leads:export');
+    expect(response.json().data.permissions).toContain('leads.export');
   });
 
   it('rejects a request with no token', async () => {
@@ -122,13 +122,18 @@ describe('refresh token rotation', () => {
     });
 
     expect(response.statusCode).toBe(403);
-    expect(response.json().error.code).toBe('FORBIDDEN');
+    /* Its own code rather than plain FORBIDDEN. A failed CSRF check and a
+     * denied permission are both 403 to the client and two different things on
+     * the security timeline — while they shared a code, the admin app's
+     * first-load refresh was filed as somebody being denied a permission. */
+    expect(response.json().error.code).toBe('CSRF_INVALID');
   });
 
   it('refuses a CSRF header that does not match the cookie', async () => {
     const session = await signIn(app);
     const response = await refreshWith(session, { 'x-csrf-token': 'some-other-value' });
     expect(response.statusCode).toBe(403);
+    expect(response.json().error.code).toBe('CSRF_INVALID');
   });
 
   it('revokes the whole family when a used token is replayed', async () => {
@@ -168,11 +173,11 @@ describe('refresh token rotation', () => {
 });
 
 describe('role-based access control', () => {
-  it('denies a sales agent an action reserved for super admins', async () => {
+  it('denies a caller an action reserved for higher roles', async () => {
     await createAdmin({
       email: 'agent@taifer.test',
       name: 'Agent',
-      role: 'sales_agent',
+      role: 'caller',
       password: PASSWORD,
     });
     const session = await signIn(app, { email: 'agent@taifer.test', password: PASSWORD });
@@ -187,11 +192,11 @@ describe('role-based access control', () => {
     expect(response.json().error.code).toBe('FORBIDDEN');
   });
 
-  it('allows a sales agent to read leads', async () => {
+  it('allows a caller to read their own leads', async () => {
     await createAdmin({
       email: 'agent@taifer.test',
       name: 'Agent',
-      role: 'sales_agent',
+      role: 'caller',
       password: PASSWORD,
     });
     const session = await signIn(app, { email: 'agent@taifer.test', password: PASSWORD });

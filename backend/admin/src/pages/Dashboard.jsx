@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api.js';
-import { Banner, Bars, Stat } from '../components/ui.jsx';
+import { Banner, Bars, Stat, Empty, Spinner, StatusBadge, formatAgo } from '../components/ui.jsx';
 
 const RANGES = [
   { key: '7', label: 'Last 7 days' },
@@ -15,7 +15,125 @@ function since(days) {
   return date.toISOString();
 }
 
-export default function Dashboard({ onOpenLeads }) {
+export default function Dashboard({ user, onOpenLeads }) {
+  /*
+   * A caller has no analytics permission, so the company-wide dashboard would
+   * be an error banner — the first thing they ever saw. What they need instead
+   * is their own queue: which of the enquiries assigned to them is still
+   * waiting. Both are "the dashboard"; which one you get follows from what you
+   * are allowed to know.
+   */
+  if (!(user?.permissions ?? []).includes('analytics.view')) {
+    return <MyWork onOpenLeads={onOpenLeads} />;
+  }
+
+  return <TeamDashboard onOpenLeads={onOpenLeads} />;
+}
+
+/*
+ * The caller's view: their own work, oldest first.
+ *
+ * Oldest first rather than newest, because the enquiry somebody has been
+ * waiting longest on is the one that needs answering — a newest-first list
+ * quietly buries exactly the person most likely to give up on us.
+ */
+function MyWork({ onOpenLeads }) {
+  const [leads, setLeads] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    /*
+     * `sort=createdAt` is ascending — the server's convention is a leading `-`
+     * for descending — and there is no multi-status filter, so the closed
+     * states are dropped client-side. Both details were wrong in the first
+     * version of this and the request simply 422'd.
+     */
+    api.leads
+      .list({ sort: 'createdAt', limit: 50 })
+      .then((response) => {
+        if (cancelled) return;
+        const openOnly = response.data.filter(
+          (lead) => !['won', 'lost', 'spam'].includes(lead.status),
+        );
+        setLeads({ ...response, data: openOnly.slice(0, 25), openCount: openOnly.length });
+      })
+      .catch((caught) => {
+        if (cancelled) return;
+        setError(caught.message);
+        setLeads({ data: [] });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const waiting = leads?.data.filter((lead) => lead.status === 'new').length ?? 0;
+
+  return (
+    <>
+      <div className="page-head">
+        <div>
+          <h2>Your work</h2>
+          <p>The enquiries assigned to you, the longest-waiting first.</p>
+        </div>
+      </div>
+
+      <Banner onDismiss={() => setError(null)}>{error}</Banner>
+
+      {!leads ? (
+        <Spinner />
+      ) : (
+        <>
+          <div className="stats">
+            <Stat label="Open with you" value={leads.openCount ?? leads.data.length} />
+            <Stat
+              label="Not yet contacted"
+              value={waiting}
+              note={waiting > 0 ? 'these are waiting on you' : 'nothing outstanding'}
+              warn={waiting > 0}
+            />
+          </div>
+
+          {leads.data.length === 0 ? (
+            <Empty>Nothing assigned to you right now.</Empty>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Who</th>
+                  <th>Asking about</th>
+                  <th>Waiting</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leads.data.map((lead) => (
+                  <tr key={lead._id} onClick={onOpenLeads} style={{ cursor: 'pointer' }}>
+                    <td>
+                      <strong>{lead.name}</strong>
+                    </td>
+                    <td className="muted small">{lead.topic ?? lead.interest?.label ?? '—'}</td>
+                    <td className="muted small">{formatAgo(lead.createdAt)}</td>
+                    <td>
+                      <StatusBadge value={lead.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+
+          <button type="button" className="link" style={{ marginTop: 12 }} onClick={onOpenLeads}>
+            Open the full list
+          </button>
+        </>
+      )}
+    </>
+  );
+}
+
+function TeamDashboard({ onOpenLeads }) {
   const [range, setRange] = useState('30');
   const [data, setData] = useState(null);
   const [queues, setQueues] = useState(null);

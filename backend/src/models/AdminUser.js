@@ -1,28 +1,20 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import {
+  ROLES,
+  ROLE_PERMISSIONS,
+  ROLE_SCOPE,
+  isPermission,
+} from '../config/permissions.js';
 
 const { Schema } = mongoose;
 
-export const ROLES = ['super_admin', 'sales_agent'];
-
 /*
- * Permissions are derived from the role rather than stored per user, so a
- * role change takes effect everywhere at once and there is no drift between
- * what a token claims and what the role actually allows.
+ * Roles, their permissions and their data scope all come from
+ * config/permissions.js. Re-exported here because most callers already import
+ * them from the model.
  */
-export const ROLE_PERMISSIONS = {
-  super_admin: [
-    'leads:read', 'leads:write', 'leads:export', 'leads:delete',
-    'content:read', 'content:write', 'content:publish',
-    'users:read', 'users:write',
-    'analytics:read', 'audit:read', 'flags:write', 'uploads:write',
-    'compliance:export', 'compliance:erase',
-  ],
-  sales_agent: [
-    'leads:read', 'leads:write', 'leads:export',
-    'content:read', 'analytics:read', 'uploads:write',
-  ],
-};
+export { ROLES, ROLE_PERMISSIONS };
 
 const BCRYPT_ROUNDS = 12;
 
@@ -39,7 +31,25 @@ const adminUserSchema = new Schema(
     },
     /* select:false so a stray .find() can never leak hashes into a response. */
     passwordHash: { type: String, required: true, select: false },
-    role: { type: String, enum: ROLES, default: 'sales_agent', index: true },
+    role: { type: String, enum: ROLES, default: 'caller', index: true },
+
+    /* Which teams this person belongs to. Drives data scope for team managers
+     * and callers; ignored for admins and above, who see everything. */
+    teams: [{ type: Schema.Types.ObjectId, ref: 'Team', index: true }],
+
+    /*
+     * Per-user exceptions to the role's permissions.
+     *
+     * `granted` adds, `revoked` removes, and revoked wins — so taking export
+     * away from one person is a single edit rather than inventing a role for
+     * them. Both are validated against the catalogue on save, so a typo
+     * cannot silently grant nothing or hide a real permission.
+     */
+    permissionOverrides: {
+      granted: { type: [String], default: [] },
+      revoked: { type: [String], default: [] },
+    },
+
     isActive: { type: Boolean, default: true, index: true },
 
     /* Failed-login lockout state. */
@@ -70,7 +80,29 @@ const adminUserSchema = new Schema(
 );
 
 adminUserSchema.virtual('permissions').get(function permissions() {
-  return ROLE_PERMISSIONS[this.role] ?? [];
+  const base = new Set(ROLE_PERMISSIONS[this.role] ?? []);
+  for (const granted of this.permissionOverrides?.granted ?? []) base.add(granted);
+  /* Revoked last: an explicit removal beats both the role and a grant. */
+  for (const revoked of this.permissionOverrides?.revoked ?? []) base.delete(revoked);
+  return [...base];
+});
+
+adminUserSchema.virtual('scope').get(function scope() {
+  return ROLE_SCOPE[this.role] ?? 'own';
+});
+
+/* Reject unknown permission strings rather than storing them. A typo that
+ * silently does nothing is harder to notice than a failed save. */
+adminUserSchema.pre('validate', function validateOverrides(next) {
+  const all = [
+    ...(this.permissionOverrides?.granted ?? []),
+    ...(this.permissionOverrides?.revoked ?? []),
+  ];
+  const unknown = all.filter((value) => !isPermission(value));
+  if (unknown.length > 0) {
+    return next(new Error(`Unknown permission(s): ${unknown.join(', ')}`));
+  }
+  return next();
 });
 
 adminUserSchema.virtual('isLocked').get(function isLocked() {

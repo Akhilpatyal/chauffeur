@@ -9,6 +9,7 @@ import requestContextPlugin from './plugins/requestContext.js';
 import errorHandlerPlugin from './plugins/errorHandler.js';
 import performancePlugin from './plugins/performance.js';
 import authPlugin from './plugins/auth.js';
+import observabilityPlugin from './plugins/observability.js';
 import swaggerPlugin from './plugins/swagger.js';
 
 import healthRoutes from './modules/health/routes.js';
@@ -20,8 +21,11 @@ import adminLeadRoutes from './modules/admin/leads.routes.js';
 import adminContentRoutes from './modules/admin/content.routes.js';
 import adminOpsRoutes from './modules/admin/ops.routes.js';
 import adminUserRoutes from './modules/admin/users.routes.js';
+import adminTeamRoutes from './modules/admin/teams.routes.js';
 import uploadRoutes from './modules/admin/uploads.routes.js';
 import complianceRoutes from './modules/admin/compliance.routes.js';
+import adminObservabilityRoutes from './modules/admin/observability.routes.js';
+import telemetryRoutes from './modules/telemetry/routes.js';
 
 export const API_PREFIX = '/api/v1';
 
@@ -33,7 +37,7 @@ export const API_PREFIX = '/api/v1';
  * version prefix later means either breaking the live frontend or maintaining
  * an unversioned alias forever.
  */
-export async function buildApp({ logger: loggerOption = logger } = {}) {
+export async function buildApp({ logger: loggerOption = logger, observability = true } = {}) {
   /*
    * Fastify 5 distinguishes between logger *options* and a pre-built logger
    * *instance*; passing our configured pino instance under `logger` is rejected
@@ -66,6 +70,7 @@ export async function buildApp({ logger: loggerOption = logger } = {}) {
   await app.register(performancePlugin);
   await app.register(securityPlugin);
   await app.register(authPlugin);
+  await app.register(observabilityPlugin, { enabled: observability });
   await app.register(multipart, {
     limits: { fileSize: env.UPLOAD_MAX_BYTES, files: 1, fields: 10 },
   });
@@ -81,6 +86,7 @@ export async function buildApp({ logger: loggerOption = logger } = {}) {
       await publicApi.register(newsletterRoutes);
       await publicApi.register(contentRoutes);
       await publicApi.register(authRoutes);
+      await publicApi.register(telemetryRoutes);
     },
     { prefix: API_PREFIX },
   );
@@ -95,8 +101,10 @@ export async function buildApp({ logger: loggerOption = logger } = {}) {
       await adminApi.register(adminContentRoutes);
       await adminApi.register(adminOpsRoutes);
       await adminApi.register(adminUserRoutes);
+      await adminApi.register(adminTeamRoutes);
       await adminApi.register(uploadRoutes);
       await adminApi.register(complianceRoutes);
+      await adminApi.register(adminObservabilityRoutes);
     },
     { prefix: `${API_PREFIX}/admin` },
   );

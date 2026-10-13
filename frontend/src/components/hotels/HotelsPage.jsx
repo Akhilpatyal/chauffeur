@@ -51,15 +51,19 @@ const breadcrumbs = ['Home', 'Hotels', 'Himachal Pradesh', 'Manali'];
 /* Removable chip summarising one active filter */
 function FilterChip({ label, onRemove }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#DDD4C1] bg-[#FAF9F5] py-1 pl-3 pr-2 text-[11px] font-medium text-[#3B473F]">
+    <span className="inline-flex items-center gap-0.5 rounded-full border border-[#DDD4C1] bg-[#FAF9F5] py-0.5 pl-3 pr-0.5 text-[12px] font-medium text-[#3B473F]">
       {label}
+      {/* The glyph stays small; the button around it is 32px square and the
+          chip keeps its shape. At 12x12 this was the smallest thing on the
+          site and sat right next to the text it removes, which is the worst
+          place to put a target people miss. */}
       <button
         type="button"
         onClick={onRemove}
         aria-label={`Remove ${label} filter`}
-        className="text-[#98A09A] transition hover:text-[#D65A3A]"
+        className="tap-target grid h-8 w-8 place-items-center rounded-full text-[#98A09A] transition hover:bg-[#EFE9DA] hover:text-[#D65A3A] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#075333]"
       >
-        <X className="h-3 w-3" />
+        <X className="h-3.5 w-3.5" />
       </button>
     </span>
   );

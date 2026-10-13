@@ -1,7 +1,7 @@
 import fp from 'fastify-plugin';
 import jwt from '@fastify/jwt';
 import { env } from '../config/env.js';
-import { AdminUser, ROLE_PERMISSIONS } from '../models/AdminUser.js';
+import { AdminUser } from '../models/AdminUser.js';
 import { unauthorized, forbidden } from '../lib/errors.js';
 
 export const REFRESH_COOKIE = 'taifer_rt';
@@ -37,19 +37,29 @@ async function authPlugin(fastify) {
       throw unauthorized('Your session is no longer valid. Please sign in again.');
     }
 
+    /*
+     * Permissions are recomputed from the database on every request, not read
+     * from the token. A revoked permission or a role change therefore takes
+     * effect immediately, instead of lingering until the access token happens
+     * to expire.
+     */
+    const hydrated = AdminUser.hydrate(user);
+
     request.user = {
       id: String(user._id),
       name: user.name,
       email: user.email,
       role: user.role,
-      permissions: ROLE_PERMISSIONS[user.role] ?? [],
+      permissions: hydrated.permissions,
+      scope: hydrated.scope,
+      teams: (user.teams ?? []).map(String),
       mustChangePassword: user.mustChangePassword,
     };
   });
 
   /*
    * Permission check, not role check. Routes state what they need
-   * ('leads:export'), so adding a third role later is a change to one table
+   * ('leads.export'), so adding a third role later is a change to one table
    * rather than a hunt through every route file.
    */
   fastify.decorate('requirePermission', function requirePermission(...needed) {

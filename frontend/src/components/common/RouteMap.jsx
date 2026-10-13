@@ -70,8 +70,19 @@ function pinHtml(number, state) {
   return `<span style="display:grid;place-items:center;width:${size}px;height:${size}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${fill};border:2px solid #FFFFFF;box-shadow:0 0 0 1.5px ${active ? '#8A3B22' : '#043A25'},0 3px 8px rgba(1,44,24,.4);font:700 ${active ? 13 : 11}px/1 ui-monospace,monospace;color:${text}"><span style="transform:rotate(45deg)">${number}</span></span>`;
 }
 
+/*
+ * Pins are drawn at their design size on a mouse and enlarged on touch.
+ *
+ * 26px is a comfortable marker to click and an awkward one to tap, and the
+ * map is the part of a trip page people poke at repeatedly — tapping day 4
+ * and getting day 5 is the whole experience of a map with small pins.
+ */
+const coarsePointer = () =>
+  typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches;
+
 const iconFor = (L, number, state) => {
-  const size = state === 'active' ? 32 : 26;
+  const touch = coarsePointer();
+  const size = state === 'active' ? (touch ? 40 : 32) : touch ? 34 : 26;
   return L.divIcon({
     html: pinHtml(number, state),
     className: 'taifer-pin',

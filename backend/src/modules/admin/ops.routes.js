@@ -39,7 +39,7 @@ export default async function adminOpsRoutes(fastify) {
   fastify.get(
     '/analytics/leads',
     {
-      preHandler: fastify.requirePermission('analytics:read'),
+      preHandler: fastify.requirePermission('analytics.view'),
       preValidation: validate({ query: analyticsQuery }),
       schema: {
         tags: ['admin:ops'],
@@ -58,7 +58,7 @@ export default async function adminOpsRoutes(fastify) {
   fastify.get(
     '/analytics/newsletter',
     {
-      preHandler: fastify.requirePermission('analytics:read'),
+      preHandler: fastify.requirePermission('analytics.view'),
       schema: {
         tags: ['admin:ops'],
         summary: 'Newsletter analytics',
@@ -72,7 +72,7 @@ export default async function adminOpsRoutes(fastify) {
   fastify.get(
     '/audit',
     {
-      preHandler: fastify.requirePermission('audit:read'),
+      preHandler: fastify.requirePermission('audit.view'),
       preValidation: validate({ query: auditQuery }),
       schema: {
         tags: ['admin:ops'],
@@ -111,7 +111,7 @@ export default async function adminOpsRoutes(fastify) {
   fastify.get(
     '/team',
     {
-      preHandler: fastify.requirePermission('leads:read'),
+      preHandler: fastify.requirePermission('leads.view'),
       schema: {
         tags: ['admin:ops'],
         summary: 'List active admin users (for lead assignment)',
@@ -127,7 +127,7 @@ export default async function adminOpsRoutes(fastify) {
   fastify.get(
     '/flags',
     {
-      preHandler: fastify.requirePermission('content:read'),
+      preHandler: fastify.requirePermission('content.view'),
       schema: {
         tags: ['admin:ops'],
         summary: 'List feature flags',
@@ -141,7 +141,7 @@ export default async function adminOpsRoutes(fastify) {
   fastify.put(
     '/flags/:key',
     {
-      preHandler: fastify.requirePermission('flags:write'),
+      preHandler: fastify.requirePermission('flags.write'),
       preValidation: validate({ params: flagParams, body: flagBody }),
       schema: {
         tags: ['admin:ops'],
@@ -179,7 +179,7 @@ export default async function adminOpsRoutes(fastify) {
   fastify.get(
     '/queues',
     {
-      preHandler: fastify.requirePermission('audit:read'),
+      preHandler: fastify.requirePermission('audit.view'),
       schema: {
         tags: ['admin:ops'],
         summary: 'Queue depth and failure counts',

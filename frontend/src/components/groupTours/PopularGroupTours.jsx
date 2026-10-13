@@ -20,7 +20,7 @@ function TourCard({ tour, favorite, onToggleFavorite, onView }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#02170F]/65 via-transparent to-[#02170F]/25" />
 
-        <span className="absolute left-2.5 top-2.5 rounded-md bg-[#B89A5A] px-2 py-1 text-[8.5px] font-bold uppercase tracking-[0.1em] text-[#012C18]">
+        <span className="absolute left-2.5 top-2.5 rounded-md bg-[#B89A5A] px-2 py-1 text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#012C18]">
           {tour.badge}
         </span>
 
@@ -29,11 +29,18 @@ function TourCard({ tour, favorite, onToggleFavorite, onView }) {
           onClick={() => onToggleFavorite(tour.id)}
           aria-label={`Save ${tour.title}`}
           aria-pressed={favorite}
-          className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-white/85 transition hover:bg-white"
+          /* Same shape as StayCard: a real 40px button with the 28px circle
+             drawn inside it. The .tap-target utility was tried here and
+             measured 25px wide — the card's overflow-hidden clips the
+             pseudo-element, and z-10 is needed because the duration pill
+             below is a later absolute sibling. */
+          className="group/save absolute right-1 top-1 z-10 grid h-10 w-10 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
-          <Heart
-            className={`h-3.5 w-3.5 ${favorite ? 'fill-[#D65A3A] text-[#D65A3A]' : 'text-[#4A5B50]'}`}
-          />
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/85 transition group-hover/save:bg-white">
+            <Heart
+              className={`h-3.5 w-3.5 ${favorite ? 'fill-[#D65A3A] text-[#D65A3A]' : 'text-[#4A5B50]'}`}
+            />
+          </span>
         </button>
 
         <span className="absolute bottom-2.5 left-2.5 rounded-md bg-[#FAF9F5] px-2 py-1 text-[10px] font-bold text-[#012C18]">
@@ -77,7 +84,7 @@ function TourCard({ tour, favorite, onToggleFavorite, onView }) {
         <button
           type="button"
           onClick={() => onView(tour.id)}
-          className="mt-3 w-full rounded-lg bg-[#043A25] py-2.5 text-[12px] font-semibold text-[#FAF9F5] transition-colors hover:bg-[#012C18]"
+          className="mt-3 min-h-[42px] w-full rounded-lg bg-[#043A25] text-[12.5px] font-semibold text-[#FAF9F5] transition-colors hover:bg-[#012C18] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#043A25]"
         >
           View Details
         </button>

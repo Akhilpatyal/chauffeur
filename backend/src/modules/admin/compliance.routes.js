@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { validate, docSchema, errorResponseSchema } from '../../lib/validate.js';
 import { Lead } from '../../models/Lead.js';
 import { NewsletterSubscriber } from '../../models/NewsletterSubscriber.js';
+import { VisitorSession } from '../../models/VisitorSession.js';
 import { notFound } from '../../lib/errors.js';
 import { recordAudit } from '../../services/audit.js';
 import { contactKeyFor } from '../../utils/identity.js';
@@ -20,7 +21,7 @@ export default async function complianceRoutes(fastify) {
   fastify.get(
     '/compliance/subject',
     {
-      preHandler: fastify.requirePermission('compliance:export'),
+      preHandler: fastify.requirePermission('compliance.export'),
       preValidation: validate({ query: subjectQuery }),
       schema: {
         tags: ['admin:ops'],
@@ -72,7 +73,7 @@ export default async function complianceRoutes(fastify) {
   fastify.delete(
     '/compliance/subject',
     {
-      preHandler: fastify.requirePermission('compliance:erase'),
+      preHandler: fastify.requirePermission('compliance.erase'),
       preValidation: validate({ query: subjectQuery }),
       schema: {
         tags: ['admin:ops'],
@@ -95,19 +96,40 @@ export default async function complianceRoutes(fastify) {
 
       const removed = await NewsletterSubscriber.deleteMany({ email });
 
+      /*
+       * Sever the visit-to-enquiry link.
+       *
+       * A visitor session holds no name or address, but a pointer from it to
+       * this person's enquiry is a thread from a customer record back to what
+       * they browsed, and the hashed address makes two visits linkable. Both
+       * go. The `converted` flag stays, because "a visit to the Spiti page
+       * produced an enquiry" is a fact about a page — erasing it would quietly
+       * corrupt the conversion rate for everybody else as the price of one
+       * person's request, which is not what they asked for.
+       */
+      const unlinked = await VisitorSession.updateMany(
+        { convertedLead: { $in: leads.map((lead) => lead._id) } },
+        { $set: { convertedLead: null, ipHash: null } },
+      );
+
       await recordAudit({
         request,
         action: 'compliance.erase',
         entity: 'data_subject',
         entityId: contactKey,
         entityLabel: email,
-        after: { leadsAnonymised: leads.length, subscriptionsDeleted: removed.deletedCount },
+        after: {
+          leadsAnonymised: leads.length,
+          subscriptionsDeleted: removed.deletedCount,
+          visitsUnlinked: unlinked.modifiedCount ?? 0,
+        },
       });
 
       return {
         data: {
           leadsAnonymised: leads.length,
           subscriptionsDeleted: removed.deletedCount,
+          visitsUnlinked: unlinked.modifiedCount ?? 0,
         },
       };
     },

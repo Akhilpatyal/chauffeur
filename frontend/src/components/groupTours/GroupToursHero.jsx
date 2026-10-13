@@ -17,7 +17,7 @@ function Field({ icon: Icon, label, children, className = '' }) {
     <div className={`flex items-center gap-2.5 px-4 py-2.5 sm:px-5 ${className}`}>
       <Icon className="h-4 w-4 shrink-0 text-[#075333]" strokeWidth={1.75} />
       <div className="min-w-0 flex-1 text-left">
-        <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-[#8A9189]">
+        <span className="block text-[10.5px] font-bold uppercase tracking-[0.14em] text-[#8A9189]">
           {label}
         </span>
         {children}
@@ -58,7 +58,7 @@ export default function GroupToursHero({
               <span className="block text-[12px] font-semibold leading-tight text-white">
                 Group Travel
               </span>
-              <span className="block text-[9.5px] text-white/65">Benefits included</span>
+              <span className="block text-[10.5px] text-white/65">Benefits included</span>
             </span>
           </div>
 
@@ -66,7 +66,7 @@ export default function GroupToursHero({
             {groupBenefits.items.map((item) => (
               <li
                 key={item.label}
-                className="flex items-center gap-1.5 text-[9.5px] text-white/80"
+                className="flex items-center gap-1.5 text-[10.5px] text-white/80"
               >
                 <GroupIcon name={item.icon} className="h-3 w-3 shrink-0 text-[#B89A5A]" />
                 {item.label}
@@ -82,7 +82,7 @@ export default function GroupToursHero({
             {groupBenefits.cta}
           </button>
 
-          <p className="mt-1.5 text-center text-[8.5px] text-white/55">
+          <p className="mt-1.5 text-center text-[10.5px] text-white/55">
             {groupBenefits.footnote}
           </p>
         </div>

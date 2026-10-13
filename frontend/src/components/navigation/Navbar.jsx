@@ -97,7 +97,7 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
           {/* Logo */}
           <a
             href="#"
-            className="flex items-center gap-3 focus:outline-none"
+            className="inline-flex min-h-[44px] items-center gap-3 rounded-md focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B89A5A]"
             onClick={(e) => {
               e.preventDefault();
               if (activePage !== 'home') {
@@ -122,8 +122,11 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
                 href={link.path || `/#${link.anchor}`}
                 onClick={(e) => handleLinkClick(e, link)}
                 className={cn(
-                  'text-[14px] font-sans font-medium tracking-wide relative py-1 transition-all duration-300 hover:-translate-y-px hover:text-[#B89A5A]',
-                  'after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-[#B89A5A] after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100',
+                  'relative inline-flex min-h-[40px] items-center text-[14px] font-sans font-medium tracking-wide transition-all duration-300 hover:-translate-y-px hover:text-[#B89A5A]',
+                  /* The box is 40px tall for the thumb, but the underline
+                     belongs under the text, not at the bottom of the hit
+                     area — hence the offset rather than bottom-0. */
+                  'after:absolute after:bottom-[9px] after:left-0 after:h-px after:w-full after:bg-[#B89A5A] after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100',
                   link.path === activePath
                     ? 'after:scale-x-100 text-[#B89A5A]'
                     : 'after:scale-x-0',
@@ -142,7 +145,7 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
             <button
               onClick={onSearchClick}
               className={cn(
-                'flex items-center gap-1.5 text-xs font-sans font-medium transition-colors cursor-pointer',
+                'inline-flex min-h-[40px] cursor-pointer items-center gap-1.5 text-[13px] font-sans font-medium transition-colors',
                 isScrolled ? 'text-[#003B24] hover:text-[#075333]' : 'text-white/90 hover:text-white'
               )}
             >
@@ -155,7 +158,7 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
               href="/contact"
               onClick={(e) => handleLinkClick(e, { path: '/contact' })}
               className={cn(
-                'flex items-center gap-1.5 text-xs font-sans font-medium transition-colors',
+                'inline-flex min-h-[40px] items-center gap-1.5 text-[13px] font-sans font-medium transition-colors',
                 activePage === 'contact' ? 'text-[#B89A5A]' : '',
                 isScrolled ? 'text-[#003B24] hover:text-[#075333]' : 'text-white/90 hover:text-white'
               )}
@@ -167,7 +170,7 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
             {/* Plan a Journey button */}
             <button
               onClick={onPlanTripClick}
-              className="px-5 py-2.5 rounded-lg bg-[#B89A5A] hover:bg-[#A88849] text-[#003B24] text-xs font-sans font-bold tracking-wide uppercase inline-flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+              className="inline-flex min-h-[42px] cursor-pointer items-center gap-1.5 rounded-lg bg-[#B89A5A] px-5 text-[12.5px] font-sans font-bold uppercase tracking-wide text-[#003B24] shadow-sm transition-colors hover:bg-[#A88849] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B89A5A]"
             >
               <span>Plan a Journey</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -176,9 +179,12 @@ export default function Navbar({ onPlanTripClick, onSearchClick, activePage = 'h
 
           {/* Mobile Menu Toggle */}
           <div className="flex sm:hidden items-center gap-2">
+            {/* The primary call to action on a phone, and it was 28px tall.
+                Now 40, which is also what the menu toggle beside it measures,
+                so the two line up. */}
             <button
               onClick={onPlanTripClick}
-              className="px-3 py-1.5 bg-[#B89A5A] text-[#003B24] text-xs font-bold rounded-md"
+              className="inline-flex min-h-[40px] items-center rounded-md bg-[#B89A5A] px-4 text-[13px] font-bold text-[#003B24] transition-colors hover:bg-[#A88849] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B89A5A]"
             >
               Plan
             </button>

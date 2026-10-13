@@ -24,7 +24,7 @@ export default async function adminContentRoutes(fastify) {
     fastify.get(
       base,
       {
-        preHandler: fastify.requirePermission('content:read'),
+        preHandler: fastify.requirePermission('content.view'),
         preValidation: validate({ query: adminListQuery }),
         schema: {
           tags: ['admin:content'],
@@ -40,7 +40,7 @@ export default async function adminContentRoutes(fastify) {
     fastify.get(
       `${base}/:id`,
       {
-        preHandler: fastify.requirePermission('content:read'),
+        preHandler: fastify.requirePermission('content.view'),
         preValidation: validate({ params: idParams }),
         schema: {
           tags: ['admin:content'],
@@ -59,7 +59,7 @@ export default async function adminContentRoutes(fastify) {
     fastify.post(
       base,
       {
-        preHandler: fastify.requirePermission('content:write'),
+        preHandler: fastify.requirePermission('content.edit'),
         preValidation: validate({ body: type.writeSchema }),
         schema: {
           tags: ['admin:content'],
@@ -89,7 +89,7 @@ export default async function adminContentRoutes(fastify) {
     fastify.put(
       `${base}/:id`,
       {
-        preHandler: fastify.requirePermission('content:write'),
+        preHandler: fastify.requirePermission('content.edit'),
         preValidation: validate({ params: idParams, body: type.writeSchema.partial() }),
         schema: {
           tags: ['admin:content'],
@@ -130,7 +130,7 @@ export default async function adminContentRoutes(fastify) {
     fastify.delete(
       `${base}/:id`,
       {
-        preHandler: fastify.requirePermission('content:publish'),
+        preHandler: fastify.requirePermission('content.publish'),
         preValidation: validate({ params: idParams }),
         schema: {
           tags: ['admin:content'],
