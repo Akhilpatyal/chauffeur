@@ -39,6 +39,8 @@ import { useEffect, useState } from 'react';
  */
 const BASE = import.meta.env.VITE_API_URL || '/api/v1';
 
+import { applyAvailability } from '../data/availability';
+
 /* Module-level cache: navigating back to a listing should not refetch. */
 const cache = new Map();
 const inflight = new Map();
@@ -120,6 +122,24 @@ export function useContent(collection, fallback, normalise, { limit = 50 } = {})
  */
 export function warmContentCache(collections = ['journeys', 'weekend-escapes', 'group-tours', 'hotels', 'articles']) {
   if (typeof window === 'undefined') return;
+
+  /*
+   * Availability is fetched immediately rather than on idle like the rest.
+   *
+   * It decides whether a card says "Coming soon" and whether a page shows
+   * booking controls at all, so arriving late means the first thing somebody
+   * sees is last week's answer. It is one small object and it is cached for a
+   * minute at the edge.
+   */
+  fetch(`${BASE}/availability`, { headers: { accept: 'application/json' } })
+    .then((response) => (response.ok ? response.json() : null))
+    .then((body) => {
+      if (body?.data) applyAvailability(body.data);
+    })
+    .catch(() => {
+      /* The bundled map stands. Failing to the last known state is better
+       * than failing to a blank page, and it fails closed. */
+    });
 
   const start = () => {
     for (const collection of collections) {

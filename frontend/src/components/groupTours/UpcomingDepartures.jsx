@@ -2,6 +2,7 @@ import React, { useMemo, useRef } from 'react';
 import { ArrowRight, Check, Flame } from 'lucide-react';
 import { departures, privateGroup } from '../../data/groupToursPage';
 import { upcomingDepartures } from '../../data/departures';
+import { isOpen } from '../../data/availability';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
 import { SHOW_SEAT_SCARCITY } from '../../data/companyFacts';
 
@@ -18,6 +19,13 @@ export default function UpcomingDepartures({ onBook, onViewCalendar, onCustomQuo
   const rows = useMemo(
     () =>
       departures
+        /*
+         * A departure for a tour we are not running is not an upcoming
+         * departure. Without this the page advertised a 2 January Spiti
+         * expedition with eight seats left, while the Spiti page said the
+         * road reopens in May — two claims on one site, one of them false.
+         */
+        .filter((departure) => isOpen(departure.tourId))
         .map((departure) => {
           const [next] = upcomingDepartures(departure.tourId, { count: 1, nights: 5 });
           return next ? { ...departure, day: next.day, month: next.month, start: next.start } : null;
@@ -56,6 +64,33 @@ export default function UpcomingDepartures({ onBook, onViewCalendar, onCustomQuo
                 <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
               </button>
             </div>
+
+            {/*
+              An honest empty state rather than a bare heading.
+
+              The dated rows are generated from `departureSchedules`, which is
+              keyed by journey slug — none of the group tours have an entry,
+              so only the Spiti row ever appeared here, and filtering Spiti
+              out for the season left the heading standing over nothing. Until
+              the desk adds real group-tour schedules, this says what is true:
+              the dates come from us, by asking.
+            */}
+            {rows.length === 0 && (
+              <div className="mt-5 rounded-2xl border border-dashed border-[#DDD4C1] bg-[#FAF9F5] p-8 text-center">
+                <p className="text-[13.5px] leading-[1.75] text-[#5E6B63]">
+                  We have not published fixed group dates for this season yet. Tell us when you
+                  want to go and how many of you there are, and we will put a departure together.
+                </p>
+                <button
+                  type="button"
+                  onClick={onViewCalendar}
+                  className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-[#043A25] px-5 text-[12.5px] font-semibold text-[#FAF9F5] transition-colors hover:bg-[#012C18]"
+                >
+                  Ask about dates
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
 
             <ul className="mt-5 space-y-3">
               {rows.map((departure) => (

@@ -55,6 +55,11 @@ const NotFoundPage = lazy(() =>
   import('./components/destinations/DestinationPage').then((m) => ({ default: m.NotFoundPage }))
 );
 
+/* The signed-in area. Lazy like the rest — most visitors never sign in, and
+ * this pulls in the account client and four screens. */
+const AccountPage = lazy(() => import('./components/account/AccountPage'));
+const AuthPage = lazy(() => import('./components/account/AuthPage'));
+
 /* Modals are opened by a click, never on load, so they are always deferred. */
 const PlanMyTripModal = lazy(() => import('./components/modals/PlanMyTripModal'));
 const TravelerStoryModal = lazy(() => import('./components/modals/TravelerStoryModal'));
@@ -69,7 +74,7 @@ redirectLegacyHash();
 
 export default function App() {
   const pathname = usePathname();
-  const { page, param } = resolveRoute(pathname);
+  const { page, param, extra } = resolveRoute(pathname);
   const journeyId = page === 'journey' ? param : null;
 
   /*
@@ -99,7 +104,6 @@ export default function App() {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     ScrollTrigger.refresh();
   }, [pathname]);
-  const [activeCategory, setActiveCategory] = useState('all');
   /*
    * One enquiry modal for the whole site, carrying what the visitor was
    * looking at when they opened it. `null` means a generic "plan a trip".
@@ -180,28 +184,6 @@ export default function App() {
 
   const handleSearchSubmit = () => navigateTo('/journeys');
 
-  /*
-   * The hero category rail routes to the page that actually holds that
-   * category instead of setting filter state nothing consumed and scrolling to
-   * an unfiltered section.
-   */
-  const handleCategorySelect = (categoryId) => {
-    setActiveCategory(categoryId);
-
-    const destinations = {
-      weekend: '/weekend-escapes',
-      group: '/group-tours',
-      treks: '/journeys',
-      mountains: '/journeys',
-      roadtrips: '/journeys',
-      family: '/journeys',
-      couples: '/journeys',
-      adventure: '/journeys',
-    };
-
-    navigateTo(destinations[categoryId] ?? '/journeys');
-  };
-
   return (
     <div className="min-h-screen bg-[#F4F1E8] text-[#003B24] relative selection:bg-[#075333] selection:text-[#F4F1E8] overflow-x-hidden font-sans">
 
@@ -243,6 +225,12 @@ export default function App() {
 
       {page === 'notFound' && <NotFoundPage />}
 
+      {/* The account area renders its own shell, header and session guard —
+          it is a different context from the marketing site and deliberately
+          does not carry the public nav. */}
+      {page === 'account' && <AccountPage section={param} reference={extra} />}
+      {page === 'auth' && <AuthPage mode={param} />}
+
       {page === 'journey' && (
         <JourneyPage journeyId={journeyId} onCheckAvailability={openEnquiry} />
       )}
@@ -263,28 +251,19 @@ export default function App() {
           onSearchSubmit={handleSearchSubmit}
         />
 
-        {/* 2. IVORY: Horizontal Category Rail */}
-        <CategoryRail
-          activeCategory={activeCategory}
-          onSelectCategory={handleCategorySelect}
-        />
+        {/* 2. IVORY: the kinds of travel we do. Labels, not links — see the
+            note in CategoryRail. */}
+        <CategoryRail />
 
         {/* 3. IVORY EDITORIAL: Handpicked Journeys (Interactive Hover Crossfade Index) */}
-        <HandpickedJourneys
-          onSelectJourney={handleSelectJourney}
-          onExploreAll={() => {
-            const el = document.getElementById('destinations');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-        />
+        {/* Routes to its own cards now — the "view all journeys" link the
+            scroll handler served has been removed from the section. */}
+        <HandpickedJourneys />
 
         {/* 4. FULL-WIDTH COVER: Journey of the Season (Spiti Valley) */}
-        <CampaignBanner
-          onExploreDeals={() => {
-            const el = document.getElementById('journeys');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-        />
+        {/* "View the Journey" goes to the trip, not to an anchor further up
+            the same page. */}
+        <CampaignBanner onExploreDeals={() => navigateTo('/destinations/bir-billing')} />
 
         {/* 5. IVORY DESTINATIONS: Terrain Atlas Asymmetric Mosaic */}
         <WhereToDisappear
@@ -305,7 +284,7 @@ export default function App() {
           onExploreAllGroups={() => navigateTo('/group-tours')}
         />
 
-        {/* 8. DARK WHY TAIFER: Pinned 4-Pillar Ethos (50/50 Split) */}
+        {/* 8. DARK: the Chaufer difference, pinned 4-pillar ethos (50/50 split) */}
         <WhyUsStorytelling />
 
         {/* 10. IVORY JOURNAL: From the Trail Journal */}

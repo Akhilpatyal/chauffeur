@@ -3,6 +3,7 @@ import api from './api.js';
 import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Leads from './pages/Leads.jsx';
+import Reservations from './pages/Reservations.jsx';
 import Content from './pages/Content.jsx';
 import People from './pages/People.jsx';
 import Observability from './pages/Observability.jsx';
@@ -22,6 +23,7 @@ import { Banner } from './components/ui.jsx';
 const NAV = [
   { key: 'dashboard', label: 'Dashboard', permission: 'dashboard.view' },
   { key: 'leads', label: 'Enquiries', permission: 'leads.view' },
+  { key: 'reservations', label: 'Reservations', permission: 'bookings.view' },
   { key: 'content', label: 'Content', permission: 'content.view' },
   { key: 'people', label: 'People', permission: 'users.view' },
   /* Either tab of the monitoring screen is enough to justify the entry; the
@@ -121,6 +123,7 @@ export default function App() {
 
         {current === 'dashboard' && <Dashboard user={user} onOpenLeads={() => setPage('leads')} />}
         {current === 'leads' && <Leads user={user} />}
+        {current === 'reservations' && <Reservations user={user} />}
         {current === 'content' && <Content user={user} />}
         {current === 'people' && <People user={user} />}
         {current === 'monitoring' && <Observability user={user} />}

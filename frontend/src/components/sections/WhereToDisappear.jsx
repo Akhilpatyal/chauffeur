@@ -2,20 +2,31 @@ import React from 'react';
 import { ArrowRight, Compass } from 'lucide-react';
 import { destinations } from '../../data/destinations';
 import { navigateTo } from '../../router';
+import { responsiveImage } from '../../lib/images';
+import { AvailabilityTag } from '../common/Availability';
+import { availabilityFor, OPEN } from '../../data/availability';
 
 export default function WhereToDisappear({ onSelectDestination }) {
+  /*
+   * Looked up by id rather than by array position. The previous version
+   * indexed destinations[0], [7], [5] and so on, so adding Bir Billing to the
+   * catalogue silently reshuffled which card was which.
+   */
+  const pick = (id) => destinations.find((d) => d.id === id);
+
+  /* Bir Billing leads, because it is the one we are actually running. */
   const topDestinations = [
-    { name: 'Spiti Valley', desc: 'High altitude desert', image: destinations[0].image, data: destinations[0] },
-    { name: 'Kashmir', desc: 'Paradise on Earth', image: destinations[1].image, data: destinations[1] },
-    { name: 'Ladakh', desc: 'Land of High Passes', image: destinations[2].image, data: destinations[2] },
-  ];
+    { name: 'Bir Billing', desc: 'Currently available', data: pick('bir-billing') },
+    { name: 'Spiti Valley', desc: 'High altitude desert', data: pick('spiti') },
+    { name: 'Dharamshala', desc: 'Under the Dhauladhar', data: pick('dharamshala') },
+  ].filter((entry) => entry.data);
 
   const bottomDestinations = [
-    { name: 'Himachal Pradesh', desc: 'Mountains & Valleys', image: destinations[7].image, data: destinations[7] },
-    { name: 'Meghalaya', desc: 'Land of Clouds', image: destinations[5].image, data: destinations[5] },
-    { name: 'Rajasthan', desc: 'Royal Heritage', image: destinations[3].image, data: destinations[3] },
-    { name: 'Uttarakhand', desc: 'Land of Devbhoomi', image: destinations[6].image, data: destinations[6] },
-  ];
+    { name: 'Himachal Pradesh', desc: 'Mountains & Valleys', data: pick('himachal') },
+    { name: 'Kashmir', desc: 'Paradise on Earth', data: pick('kashmir') },
+    { name: 'Ladakh', desc: 'Land of High Passes', data: pick('ladakh') },
+    { name: 'Meghalaya', desc: 'Land of Clouds', data: pick('meghalaya') },
+  ].filter((entry) => entry.data);
 
   return (
     <section id="destinations" className="py-16 sm:py-20 bg-[#F4F1E8] text-[#003B24] relative overflow-hidden">
@@ -32,10 +43,10 @@ export default function WhereToDisappear({ onSelectDestination }) {
 
             <div className="relative z-10">
               <span className="text-[11px] font-mono font-bold tracking-[0.2em] uppercase text-[#B89A5A] block mb-1">
-                TOP DESTINATIONS
+                DESTINATIONS
               </span>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-4xl font-normal text-[#003B24] leading-tight mb-4">
-                Where do you want to disappear?
+                Every direction holds a story.
               </h2>
 
               {/* Was onSelectDestination(destinations[0]), which opened the
@@ -44,7 +55,7 @@ export default function WhereToDisappear({ onSelectDestination }) {
                 onClick={() => navigateTo('/destinations')}
                 className="-ml-1 inline-flex min-h-[40px] cursor-pointer items-center gap-1.5 px-1 text-[12.5px] font-sans font-bold uppercase tracking-wider text-[#003B24] transition-colors hover:text-[#075333] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
               >
-                <span>View all destinations</span>
+                <span>Explore destinations</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -62,11 +73,17 @@ export default function WhereToDisappear({ onSelectDestination }) {
                   className="group relative h-48 sm:h-52 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
                 >
                   <img
-                    src={dest.image}
+                    {...responsiveImage(dest.data.image, '(min-width: 640px) 25vw, 50vw')}
                     alt={dest.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108"
+                    loading="lazy"
+                    decoding="async"
+                    className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-108 ${
+                      availabilityFor(dest.data?.id).state === OPEN ? '' : 'saturate-[0.45]'
+                    }`}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  {/* Top-left, clear of the arrow in the bottom-right. */}
+                  <AvailabilityTag id={dest.data?.id} showOpen className="absolute left-3 top-3" />
 
                   <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between text-white">
                     <div>
@@ -93,11 +110,17 @@ export default function WhereToDisappear({ onSelectDestination }) {
                   className="group relative h-40 sm:h-44 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
                 >
                   <img
-                    src={dest.image}
+                    {...responsiveImage(dest.data.image, '(min-width: 640px) 25vw, 50vw')}
                     alt={dest.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108"
+                    loading="lazy"
+                    decoding="async"
+                    className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-108 ${
+                      availabilityFor(dest.data?.id).state === OPEN ? '' : 'saturate-[0.45]'
+                    }`}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  {/* Top-left, clear of the arrow in the bottom-right. */}
+                  <AvailabilityTag id={dest.data?.id} showOpen className="absolute left-3 top-3" />
 
                   <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white">
                     <div>

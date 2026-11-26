@@ -1,4 +1,4 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import { MongoClient } from 'mongodb';
 import { buildApp } from '../../src/app.js';
@@ -100,8 +100,20 @@ export async function startTestApp({ inlineJobs = true, extraRoutes = null } = {
      * The package default is 10s, which is plenty on an idle machine and not
      * nearly enough on one already running Docker and two dev servers.
      */
-    mongod = await MongoMemoryServer.create({
-      instance: { launchTimeout: Number(process.env.MONGOMS_LAUNCH_TIMEOUT ?? 60_000) },
+    /*
+     * A one-member replica set, not a standalone.
+     *
+     * Booking creation writes the reservation and its first history event in
+     * a transaction, and MongoDB refuses transactions outside a replica set —
+     * so a standalone server turns every one of those paths into a 500 that
+     * reads as a broken feature rather than a missing server capability.
+     * One member is enough to satisfy the requirement and costs nothing.
+     */
+    mongod = await MongoMemoryReplSet.create({
+      replSet: { count: 1, storageEngine: 'wiredTiger' },
+      instanceOpts: [
+        { launchTimeout: Number(process.env.MONGOMS_LAUNCH_TIMEOUT ?? 60_000) },
+      ],
     });
     await connectMongo(mongod.getUri('taifer_test'));
   }

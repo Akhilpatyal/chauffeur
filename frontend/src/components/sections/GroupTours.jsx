@@ -1,26 +1,32 @@
 import React, { useState } from 'react';
-import { Calendar, Users, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { groupTourCards } from '../../data/groupToursPage';
+import { whyUsStages } from '../../data/whyUsData';
+import { availabilityFor, isOpen } from '../../data/availability';
 import { SHOW_SEAT_SCARCITY } from '../../data/companyFacts';
-import { upcomingDepartures } from '../../data/departures';
 
 export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
   const [activeIdx, setActiveIdx] = useState(0);
   const featuredTour = groupTourCards[activeIdx] || groupTourCards[0];
 
-  const upcomingTours = [
-    /* One catalogue, shared with the Group Tours page - no contradictory pricing */
-    ...groupTourCards.slice(0, 4).map((tour, i) => ({
-      id: i + 1,
-      title: tour.title,
-      sub: SHOW_SEAT_SCARCITY
-        ? `${tour.duration} · ${tour.seatsRemaining} seats left`
-        : tour.duration,
-      price: tour.price,
-      hot: tour.badge === 'Best Seller',
-      data: tour,
-    })),
-  ];
+  /*
+   * The departures list, read off the same catalogue as the Group Tours page.
+   *
+   * Each row now carries whether we are running that tour. Without it this
+   * column advertised "Spiti Valley Expedition · ₹28,999 · HOT" two hundred
+   * pixels below a Spiti card reading "Opens May 2027" — the site arguing
+   * with itself on one screen.
+   */
+  const upcomingTours = groupTourCards.slice(0, 4).map((tour, i) => ({
+    id: i + 1,
+    title: tour.title,
+    sub: SHOW_SEAT_SCARCITY ? `${tour.duration} · ${tour.seatsRemaining} seats left` : tour.duration,
+    price: tour.price,
+    hot: tour.badge === 'Best Seller',
+    open: isOpen(tour.id),
+    availability: availabilityFor(tour.id),
+    data: tour,
+  }));
 
   return (
     <section id="group-tours" className="py-16 sm:py-20 bg-[#F4F1E8] text-[#003B24]">
@@ -39,11 +45,16 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
                 Travel together. <br /> Remember forever.
               </h2>
 
+              <p className="mt-3 max-w-[46ch] text-[13.5px] leading-[1.7] text-[#003B24]/75">
+                Not just places to go, but stories to share. A new collection of journeys is on
+                its way.
+              </p>
+
               <button
                 onClick={onExploreAllGroups}
-                className="mt-2 -ml-1 inline-flex min-h-[40px] cursor-pointer items-center gap-1.5 px-1 text-[12.5px] font-sans font-bold uppercase tracking-wider text-[#003B24] transition-colors hover:text-[#075333] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
+                className="mt-3 -ml-1 inline-flex min-h-[40px] cursor-pointer items-center gap-1.5 px-1 text-[12.5px] font-sans font-bold uppercase tracking-wider text-[#003B24] transition-colors hover:text-[#075333] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
               >
-                <span>View all group tours</span>
+                <span>Explore what&rsquo;s next</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -62,8 +73,10 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
                 <div className="absolute top-3 left-3">
-                  <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-[#D65A3A] text-white">
-                    {SHOW_SEAT_SCARCITY ? `${featuredTour.seatsRemaining} SEATS LEFT` : 'SEATS AVAILABLE'}
+                  {/* "SEATS AVAILABLE" in urgency orange on a tour that is
+                      not running was the strongest false signal on the page. */}
+                  <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-[0.14em] bg-[#012C18]/88 text-[#E6E2D4] backdrop-blur-sm">
+                    COMING SOON
                   </span>
                 </div>
 
@@ -72,31 +85,14 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
                 </div>
               </div>
 
-              <div className="p-4 space-y-3">
-                <div className="flex items-center gap-4 text-xs font-sans text-[#003B24]/70">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5 text-[#B89A5A]" />
-                    {/* The stored `dates` string had already expired; show
-                        the next computed departure instead. */}
-                    {upcomingDepartures(featuredTour.id, { count: 1, nights: 5 })[0]?.label ??
-                      featuredTour.duration}
-                  </span>
-                  <span>{featuredTour.duration}</span>
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5 text-[#B89A5A]" />
-                    {SHOW_SEAT_SCARCITY ? `${featuredTour.seatsRemaining} Available` : 'Open'}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between pt-2 border-t border-[#DDD4C1]">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase text-[#003B24]/60">Per Person</span>
-                    <p className="text-xl font-bold text-[#003B24] font-mono">{featuredTour.price}</p>
-                  </div>
-                  <button className="inline-flex min-h-[40px] items-center rounded-lg bg-[#003B24] px-4 text-[12.5px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#075333] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#003B24]">
-                    Join Journey
-                  </button>
-                </div>
+              {/* The duration, the seat count, the per-person price and the
+                  "Join Journey" button are all gone while this is not running.
+                  Each of them is a commitment, and the card is an
+                  announcement now rather than an offer. */}
+              <div className="p-4">
+                <p className="text-[12.5px] leading-[1.7] text-[#003B24]/70">
+                  Dates and pricing announced soon.
+                </p>
               </div>
             </div>
           </div>
@@ -126,11 +122,26 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-sm font-bold font-mono ${activeIdx === idx ? 'text-[#F4F1E8]' : 'text-[#003B24]'}`}>
-                      {tour.price}
-                    </p>
-                    {tour.hot && (
-                      <span className="text-[10.5px] font-mono font-bold text-[#D65A3A] uppercase">Hot</span>
+                    {/* A price and a "Hot" flash on a tour nobody can book are
+                        the two most misleading things this row could carry, so
+                        a closed one states its status instead. */}
+                    {tour.open ? (
+                      <>
+                        <p className={`text-sm font-bold font-mono ${activeIdx === idx ? 'text-[#F4F1E8]' : 'text-[#003B24]'}`}>
+                          {tour.price}
+                        </p>
+                        {tour.hot && (
+                          <span className="text-[10.5px] font-mono font-bold text-[#D65A3A] uppercase">Hot</span>
+                        )}
+                      </>
+                    ) : (
+                      <span
+                        className={`font-mono text-[10.5px] font-bold uppercase tracking-[0.12em] ${
+                          activeIdx === idx ? 'text-[#DDD4C1]/80' : 'text-[#003B24]/50'
+                        }`}
+                      >
+                        {tour.availability.short ?? 'Coming soon'}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -138,29 +149,31 @@ export default function GroupTours({ onJoinTour, onExploreAllGroups }) {
             </div>
           </div>
 
-          {/* Column 3: Why TAIFER Compact Card (Span 3) */}
+          {/* Column 3: the Chaufer difference, compact (Span 3) */}
           <div className="lg:col-span-3 rounded-2xl bg-[#003B24] text-[#F4F1E8] p-6 sm:p-7 flex flex-col justify-between">
             <div className="space-y-3">
               <span className="text-[11px] font-mono font-bold tracking-[0.2em] uppercase text-[#B89A5A] block">
-                WHY TAIFER
+                THE CHAUFER DIFFERENCE
               </span>
               <h3 className="font-display text-2xl text-white font-normal leading-tight">
-                We don't sell trips. We create stories.
+                Travel is more than getting there. It&rsquo;s everything along the way.
               </h3>
             </div>
 
             <div className="space-y-3 my-5">
-              {[
-                { n: '01', label: 'Local Experts', sub: 'Native mountain leaders' },
-                { n: '02', label: 'Handpicked Experiences', sub: 'Curated for depth, not volume' },
-                { n: '03', label: 'Small Groups', sub: '12–14 travelers max' },
-                { n: '04', label: '24/7 Support', sub: 'Always with you on trail' },
-              ].map((p) => (
+              {/* Read from data/whyUsData.js rather than written out again.
+                  This card used to carry its own hardcoded four — "12–14
+                  travelers max", "Native mountain leaders" — which already
+                  disagreed with the pillars section further down the page the
+                  moment either was edited. */}
+              {whyUsStages.map((p) => (
                 <div key={p.n} className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors">
-                  <span className="text-xs font-mono font-bold text-[#B89A5A] shrink-0 mt-0.5">{p.n}</span>
+                  <span className="text-xs font-mono font-bold text-[#B89A5A] shrink-0 mt-0.5">{p.step}</span>
                   <div>
-                    <p className="text-xs font-bold text-[#F4F1E8] font-sans">{p.label}</p>
-                    <p className="text-[11px] text-[#DDD4C1]/70 font-sans">{p.sub}</p>
+                    <p className="text-xs font-bold text-[#F4F1E8] font-sans">{p.title}</p>
+                    {/* Two lines at most: these are full sentences now, and
+                        this card is a 3-of-12 column. */}
+                    <p className="line-clamp-2 text-[11px] leading-snug text-[#DDD4C1]/70 font-sans">{p.desc}</p>
                   </div>
                 </div>
               ))}

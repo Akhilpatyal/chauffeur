@@ -4,9 +4,13 @@ import Footer from '../footer/Footer';
 import { destinations } from '../../data/destinations';
 import { journeys } from '../../data/journeys';
 import { groupTourCards } from '../../data/groupToursPage';
+import { weekendEscapes } from '../../data/weekendEscapes';
+import { AvailabilityTag, AvailabilityNotice } from '../common/Availability';
+import { availabilityFor, OPEN, openFirst } from '../../data/availability';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
 import { linkProps, navigateTo } from '../../router';
 import { useDocumentMeta } from '../../lib/seo';
+import Photo from '../common/Photo';
 
 /* Matches a destination to the journeys and tours that actually visit it */
 function tripsFor(destination) {
@@ -16,11 +20,46 @@ function tripsFor(destination) {
   return [
     ...journeys
       .filter((j) => matches(j.location) || matches(j.title))
-      .map((j) => ({ id: j.id, title: j.title, meta: j.duration, price: j.price, image: j.image })),
+      .map((j) => ({
+        id: j.id,
+        title: j.title,
+        meta: j.duration,
+        price: j.price,
+        image: j.image,
+        href: `/journeys/${j.id}`,
+      })),
+    /*
+     * Weekend escapes were missing from this list, which mattered the moment
+     * Dharamshala became a region of its own: its one bookable trip is the
+     * Triund trek, and its own page did not mention it.
+     */
+    ...weekendEscapes
+      .filter((e) => matches(e.location) || matches(e.title))
+      .map((e) => ({
+        id: e.slug,
+        title: e.title,
+        meta: e.duration,
+        price: e.price,
+        image: e.image,
+        href: `/weekend-escapes/${e.slug}`,
+      })),
     ...groupTourCards
       .filter((t) => matches(t.title) || matches(t.description))
-      .map((t) => ({ id: t.id, title: t.title, meta: t.duration, price: t.price, image: t.image })),
-  ].filter((trip, i, all) => all.findIndex((x) => x.id === trip.id) === i);
+      .map((t) => ({
+        id: t.id,
+        title: t.title,
+        meta: t.duration,
+        price: t.price,
+        image: t.image,
+        /* Group tours have no detail route of their own, so they go to the
+           listing. Previously they linked to /journeys/<tour id>, which is
+           not a journey and rendered a not-found page. */
+        href: '/group-tours',
+      })),
+  ]
+    .filter((trip, i, all) => all.findIndex((x) => x.id === trip.id) === i)
+    /* What somebody can book, first. */
+    .sort((a, b) => openFirst(a.id, b.id));
 }
 
 export default function DestinationPage({ slug, onPlanTrip }) {
@@ -57,6 +96,9 @@ export default function DestinationPage({ slug, onPlanTrip }) {
       source: 'plan_my_trip',
     });
 
+  /* One question, asked once, for every control on this page. */
+  const open = availabilityFor(destination.id).state === OPEN;
+
   const facts = [
     { icon: Mountain, label: 'Elevation', value: destination.elevation },
     { icon: Star, label: 'Best season', value: destination.bestSeason },
@@ -80,6 +122,7 @@ export default function DestinationPage({ slug, onPlanTrip }) {
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.32em] text-[#F4F1E8]/75">
             {destination.state}
           </p>
+          <AvailabilityTag id={destination.id} className="mt-3" />
           <h1 className="mt-3 font-display text-[38px] leading-[1.05] text-[#FAF9F5] sm:text-5xl lg:text-[56px]">
             {destination.name}
           </h1>
@@ -144,6 +187,11 @@ export default function DestinationPage({ slug, onPlanTrip }) {
               )}
             </article>
 
+            {!open ? (
+              /* The panel that would take a booking is replaced wholesale,
+                 rather than left in place with its button greyed out. */
+              <AvailabilityNotice id={destination.id} onNotify={enquire} />
+            ) : (
             <aside data-reveal className="rounded-2xl border border-[#E0D6BE] bg-[#E9E1CD] p-5">
               <h2 className="font-display text-[19px] text-[#012C18]">Plan this trip</h2>
               <p className="mt-2 text-[12px] leading-[1.6] text-[#5E6B63]">
@@ -167,6 +215,7 @@ export default function DestinationPage({ slug, onPlanTrip }) {
                 Plan My Trip
               </button>
             </aside>
+            )}
           </div>
 
           {/* Trips that visit here */}
@@ -184,7 +233,7 @@ export default function DestinationPage({ slug, onPlanTrip }) {
                 {trips.map((trip) => (
                   <li key={trip.id} data-reveal>
                     <a
-                      {...linkProps(`/journeys/${trip.id}`)}
+                      {...linkProps(trip.href ?? `/journeys/${trip.id}`)}
                       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#E3DDCB] bg-[#FAF9F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#B7C4B4]"
                     >
                       <span className="relative block h-[132px] overflow-hidden">
@@ -214,15 +263,16 @@ export default function DestinationPage({ slug, onPlanTrip }) {
                 className="mt-6 rounded-2xl border border-dashed border-[#DDD4C1] bg-[#FAF9F5] p-10 text-center"
               >
                 <p className="text-[13px] text-[#5E6B63]">
-                  We run {destination.name} as a custom journey rather than a fixed
-                  departure.
+                  {open
+                    ? `We run ${destination.name} as a custom journey rather than a fixed departure.`
+                    : `We are not running trips in ${destination.name} yet.`}
                 </p>
                 <button
                   type="button"
                   onClick={enquire}
                   className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#043A25] px-6 py-3 text-[12px] font-semibold text-[#FAF9F5] transition-colors hover:bg-[#012C18]"
                 >
-                  Ask for a route
+                  {open ? 'Ask for a route' : 'Tell me when it opens'}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -270,16 +320,21 @@ export function DestinationsIndex() {
     title: 'Destinations We Know Well',
     description:
       'Eight Himalayan and Indian regions we run routes in: Spiti, Kashmir, Ladakh, Meghalaya, Rajasthan, Kerala, Uttarakhand and Himachal.',
-    image: '/banner1.jpg',
+    /* The social-share image. JPEG rather than WebP because some scrapers
+       still refuse WebP, and 1600px rather than the 6000px master because
+       several reject anything over a few megabytes outright. */
+    image: '/img/banner1-1600.jpg',
   });
 
   return (
     <div className="min-h-screen bg-[#F4F1E8] text-[#012C18]">
       <section className="relative overflow-hidden bg-[#012C18]">
-        <img
-          src="/banner1.jpg"
+        <Photo
+          name="banner1"
           alt=""
           aria-hidden="true"
+          sizes="100vw"
+          priority
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#02170F]/85 via-[#022014]/65 to-[#02170F]/90" />
@@ -293,7 +348,9 @@ export function DestinationsIndex() {
             Destinations
           </h1>
           <p className="mt-3 text-[13.5px] text-white/75 sm:text-[15px]">
-            Eight regions we know well enough to plan properly.
+            {/* Counted rather than written down: this line said "Eight"
+                while the list held ten. */}
+            {destinations.length} regions, and the ones we are running right now.
           </p>
         </div>
       </section>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Clock } from 'lucide-react';
 import { linkProps } from '../../router';
+import { responsiveImage } from '../../lib/images';
 
 /*
  * Journal card, in three shapes.
@@ -22,9 +23,10 @@ export default function StoryCard({ story, variant = 'default' }) {
       >
         <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl">
           <img
-            src={story.image}
+            {...responsiveImage(story.image, '80px')}
             alt={story.title}
             loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>

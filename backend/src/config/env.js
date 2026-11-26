@@ -47,6 +47,16 @@ const schema = z.object({
 
   JWT_ACCESS_SECRET: secret,
   JWT_REFRESH_SECRET: secret,
+  /*
+   * Customer tokens are signed with their own key, not the admin one.
+   *
+   * The audience claim already separates the two, but an audience is data
+   * inside a token we sign ourselves — sharing the key would make that claim
+   * the only thing standing between a customer token and the admin API.
+   * Separate keys make the boundary cryptographic rather than declarative.
+   */
+  JWT_CUSTOMER_SECRET: secret,
+  JWT_CUSTOMER_REFRESH_SECRET: secret,
   JWT_ACCESS_TTL: z.string().default('15m'),
   JWT_REFRESH_TTL_DAYS: int(30),
   COOKIE_SECRET: secret,
@@ -90,6 +100,11 @@ const schema = z.object({
   EMAIL_FROM: z.string().default('Taifer <hello@taifer.com>'),
   EMAIL_REPLY_TO: z.string().default('hello@taifer.com'),
   LEAD_ALERT_EMAILS: csv,
+
+  /* Overrides which catalogue trips take bookings — see config/catalogue.js.
+   * Empty means "use the built-in list", so a mistyped value cannot
+   * accidentally close the whole catalogue. */
+  OPEN_TRIP_SLUGS: csv,
 
   WHATSAPP_PROVIDER: z.enum(['meta', 'twilio', 'none']).default('none'),
   WHATSAPP_PHONE_NUMBER_ID: z.string().default(''),
@@ -136,14 +151,33 @@ const raw = parsed.data;
  * startup rather than quietly run with dev defaults. */
 if (raw.NODE_ENV === 'production') {
   const problems = [];
-  for (const key of ['JWT_ACCESS_SECRET', 'JWT_REFRESH_SECRET', 'COOKIE_SECRET']) {
+  for (const key of [
+    'JWT_ACCESS_SECRET',
+    'JWT_REFRESH_SECRET',
+    'JWT_CUSTOMER_SECRET',
+    'JWT_CUSTOMER_REFRESH_SECRET',
+    'COOKIE_SECRET',
+  ]) {
     if (raw[key].length < 32) problems.push(`${key} must be at least 32 characters in production`);
     if (raw[key].startsWith('change-me') || raw[key].startsWith('dev-only')) {
       problems.push(`${key} still holds the placeholder value`);
     }
   }
-  if (raw.JWT_ACCESS_SECRET === raw.JWT_REFRESH_SECRET) {
-    problems.push('JWT_ACCESS_SECRET and JWT_REFRESH_SECRET must differ');
+  /* Every signing key must be distinct. Reusing one anywhere collapses the
+   * boundary it was there to create — most importantly between the admin and
+   * customer audiences. */
+  const keys = {
+    JWT_ACCESS_SECRET: raw.JWT_ACCESS_SECRET,
+    JWT_REFRESH_SECRET: raw.JWT_REFRESH_SECRET,
+    JWT_CUSTOMER_SECRET: raw.JWT_CUSTOMER_SECRET,
+    JWT_CUSTOMER_REFRESH_SECRET: raw.JWT_CUSTOMER_REFRESH_SECRET,
+  };
+  for (const [nameA, valueA] of Object.entries(keys)) {
+    for (const [nameB, valueB] of Object.entries(keys)) {
+      if (nameA < nameB && valueA === valueB) {
+        problems.push(`${nameA} and ${nameB} must differ`);
+      }
+    }
   }
   if (!raw.REDIS_URL) {
     problems.push('REDIS_URL is required in production (rate limiting and queues depend on it)');

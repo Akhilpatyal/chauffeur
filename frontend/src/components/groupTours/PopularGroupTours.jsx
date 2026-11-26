@@ -1,4 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
+import { AvailabilityTag } from '../common/Availability';
+import { availabilityFor, OPEN } from '../../data/availability';
 import { ArrowRight, Heart, SlidersHorizontal, Users } from 'lucide-react';
 import { groupTourCards, tourFilters } from '../../data/groupToursPage';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
@@ -16,13 +18,21 @@ function TourCard({ tour, favorite, onToggleFavorite, onView }) {
           src={tour.image}
           alt={tour.title}
           loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] group-hover:scale-[1.06]"
+          className={`absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] group-hover:scale-[1.06] ${
+            availabilityFor(tour.id).state === OPEN ? '' : 'saturate-[0.45]'
+          }`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#02170F]/65 via-transparent to-[#02170F]/25" />
 
-        <span className="absolute left-2.5 top-2.5 rounded-md bg-[#B89A5A] px-2 py-1 text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#012C18]">
-          {tour.badge}
-        </span>
+        {/* A closed tour's badge is replaced, not joined: "Best seller" over
+            "Opens in June" is the card arguing with itself. */}
+        {availabilityFor(tour.id).state === OPEN ? (
+          <span className="absolute left-2.5 top-2.5 rounded-md bg-[#B89A5A] px-2 py-1 text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#012C18]">
+            {tour.badge}
+          </span>
+        ) : (
+          <AvailabilityTag id={tour.id} className="absolute left-2.5 top-2.5" />
+        )}
 
         <button
           type="button"
@@ -86,7 +96,7 @@ function TourCard({ tour, favorite, onToggleFavorite, onView }) {
           onClick={() => onView(tour.id)}
           className="mt-3 min-h-[42px] w-full rounded-lg bg-[#043A25] text-[12.5px] font-semibold text-[#FAF9F5] transition-colors hover:bg-[#012C18] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#043A25]"
         >
-          View Details
+          {availabilityFor(tour.id).state === OPEN ? 'View Details' : 'Read more'}
         </button>
       </div>
     </article>

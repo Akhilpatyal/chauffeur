@@ -31,7 +31,7 @@ export default function TravelJournal() {
               TRAIL JOURNAL
             </span>
             <h2 className="font-display text-3xl font-normal text-[#003B24] sm:text-4xl">
-              From the Trail Journal.
+              The world, in stories.
             </h2>
           </div>
 

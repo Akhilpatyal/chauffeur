@@ -53,9 +53,9 @@ export const weekendEscapes = [
     rating: 4.8,
     reviews: 164,
     badge: 'Easiest to Reach',
-    image: '/banner1.jpg',
+    image: '/img/banner1-1024.webp',
     gallery: [
-      '/banner1.jpg',
+      '/img/banner1-1024.webp',
       photo('1571401835393-8c5f35328320'),
       photo('1626621341517-bbf3d9990a23'),
     ],
@@ -136,8 +136,8 @@ export const weekendEscapes = [
     rating: 4.7,
     reviews: 243,
     badge: 'Good First Trip',
-    image: '/aboutus.png',
-    gallery: ['/aboutus.png', '/banner2.jpg', photo('1544735716-392fe2489ffa')],
+    image: '/img/aboutus-1024.webp',
+    gallery: ['/img/aboutus-1024.webp', '/img/banner2-1024.webp', photo('1544735716-392fe2489ffa')],
     tags: ['Old Manali', 'Solang Valley', 'Café Trail', 'Family-Friendly'],
     description:
       'The cedar lanes of Old Manali, a morning in Solang before the day-trippers arrive, and the Jogini waterfall trail. Short enough for a long weekend, paced so you are not in a vehicle the whole time.',
@@ -223,7 +223,7 @@ export const weekendEscapes = [
     gallery: [
       photo('1626621341517-bbf3d9990a23'),
       photo('1539635278303-d4002c07eae3'),
-      '/banner3.jpg',
+      '/img/banner3-1024.webp',
     ],
     tags: ['Ridge Camp', 'First Trek', 'Sunrise', 'Stargazing'],
     description:
@@ -301,7 +301,7 @@ export const weekendEscapes = [
     reviews: 276,
     badge: 'Shortest Drive',
     image: photo('1506197603052-3cc9c3a201bd'),
-    gallery: [photo('1506197603052-3cc9c3a201bd'), '/banner1.jpg', '/banner2.jpg'],
+    gallery: [photo('1506197603052-3cc9c3a201bd'), '/img/banner1-1024.webp', '/img/banner2-1024.webp'],
     tags: ['Rafting', 'Riverside Camp', 'Cliff Jump', 'Group-Friendly'],
     description:
       'Close enough to Delhi to leave after work on Friday. Sixteen kilometres of Grade II–III rapids from Shivpuri, an evening at the Parmarth Niketan aarti, and two nights at a camp on the sand.',
@@ -450,7 +450,7 @@ export const weekendEscapes = [
     reviews: 98,
     badge: 'South India',
     image: photo('1588668214407-6ea9a6d8c272'),
-    gallery: [photo('1588668214407-6ea9a6d8c272'), '/banner2.jpg'],
+    gallery: [photo('1588668214407-6ea9a6d8c272'), '/img/banner2-1024.webp'],
     tags: ['Shola Forest', 'Lake Walk', 'Viewpoints', 'Couples'],
     description:
       'The Palani hills without the honeymoon circuit. Dolphin’s Nose at dawn, a walk through Pillar Rocks shola, and the lake loop on a cycle before the mist burns off.',

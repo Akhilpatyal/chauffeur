@@ -19,7 +19,7 @@ export const contactHero = {
   title: 'Get in',
   titleAccent: 'Touch',
   subtitle: 'Real people, real answers — usually within two hours.',
-  image: '/banner2.jpg',
+  image: '/img/banner2-1024.webp',
 };
 
 export const deskCard = {

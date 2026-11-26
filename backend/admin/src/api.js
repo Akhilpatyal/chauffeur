@@ -198,6 +198,34 @@ export const api = {
     deactivate: (id) => call(`/admin/teams/${id}`, { method: 'DELETE' }),
   },
 
+  /*
+   * The reservation pipeline.
+   *
+   * `list` returns the page plus the per-status counts for the caller's own
+   * scope, so the board's tab figures match the rows that caller can open
+   * rather than the whole company's.
+   */
+  reservations: {
+    list: (query) => call(`/admin/reservations?${new URLSearchParams(clean(query))}`),
+    get: (id) => call(`/admin/reservations/${id}`),
+    transition: (id, body) => call(`/admin/reservations/${id}/status`, { method: 'PATCH', body }),
+    assign: (id, assignedTo) =>
+      call(`/admin/reservations/${id}/assign`, { method: 'PATCH', body: { assignedTo } }),
+    addNote: (id, body) => call(`/admin/reservations/${id}/notes`, { method: 'POST', body }),
+
+    /*
+     * Quotations. A draft is editable; a sent one never is — a change means
+     * a new version, which is what `create` always produces.
+     */
+    quotations: (id) => call(`/admin/reservations/${id}/quotations`),
+    createQuotation: (id, body) =>
+      call(`/admin/reservations/${id}/quotations`, { method: 'POST', body }),
+    updateQuotation: (quotationId, body) =>
+      call(`/admin/quotations/${quotationId}`, { method: 'PATCH', body }),
+    sendQuotation: (quotationId) =>
+      call(`/admin/quotations/${quotationId}/send`, { method: 'POST' }),
+  },
+
   observability: {
     summary: (range) => call(`/admin/observability/summary?range=${range}`),
     series: (range) => call(`/admin/observability/series?range=${range}`),

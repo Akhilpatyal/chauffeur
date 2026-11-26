@@ -42,11 +42,11 @@ export default function WhyUsStorytelling() {
           <div className="lg:col-span-6 space-y-6">
             <div>
               <span className="text-[11px] font-mono font-bold tracking-[0.2em] uppercase text-[#B89A5A] block mb-2">
-                WHY TAIFER
+                THE CHAUFER DIFFERENCE
               </span>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight">
-                We don't sell trips. <br />
-                <span className="text-[#DDD4C1]">We create stories.</span>
+                Travel is more than getting there. <br />
+                <span className="text-[#DDD4C1]">It&rsquo;s everything along the way.</span>
               </h2>
             </div>
 

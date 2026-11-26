@@ -20,6 +20,9 @@ alarm when one gets stuck.
 - [The admin dashboard](#the-admin-dashboard)
 - [Roles and what they can see](#roles-and-what-they-can-see)
 - [Monitoring](#monitoring)
+- [Bookings](#bookings)
+- [Inventory and concurrency](#inventory-and-concurrency)
+- [MongoDB must be a replica set](#mongodb-must-be-a-replica-set)
 - [Deployment](#deployment)
 - [Operations runbook](#operations-runbook)
 - [Design decisions worth knowing](#design-decisions-worth-knowing)
@@ -418,6 +421,182 @@ know why.
 
 ---
 
+## Bookings
+
+A reservation is a request, not a trip. Everything in this part of the system
+exists to keep that distinction visible, because the expensive failure here is
+a traveller buying flights against a departure nobody agreed to run.
+
+### The lifecycle
+
+```
+REQUESTED -> AVAILABILITY_CHECK -> QUOTED -> AWAITING_PAYMENT -> CONFIRMED -> COMPLETED
+     |                |              |              |
+     +----------------+--------------+--------------+--> REJECTED / CANCELLED / EXPIRED
+```
+
+Legal moves are a **table** in `modules/admin/reservations.service.js`, not
+checks scattered through route handlers. Nine statuses means seventy-two
+conceivable moves and most are nonsense; as a table the legal ones are the
+exhaustive list and everything else is refused by default — so a status added
+later is unreachable until somebody deliberately says where it can go.
+
+Rejecting or cancelling requires a reason, and **that reason is what the
+customer is shown**. A refusal nobody can understand generates a phone call.
+
+### Confirming is not the same as being paid
+
+`CONFIRMED` is gated on two things, checked server-side every time:
+
+1. The deposit is paid in full, verified with the provider — not claimed by
+   the browser.
+2. Every `VendorAllocation` on the booking is `CONFIRMED`.
+
+A Spiti trip needs rooms in Kaza, rooms in Tabo, a vehicle and a permit: four
+suppliers, four separate yes-or-nos arriving over two days. A single
+`vendorConfirmed` boolean would make the dangerous case invisible — three
+confirmed and one refusing is exactly when a booking must *not* be confirmed,
+and it is indistinguishable from "nobody asked yet" in a boolean. So each
+requirement is a row, and `confirmationBlockers()` names what is outstanding.
+The admin detail endpoint returns that list so the UI can explain why the
+button is unavailable rather than letting somebody press it.
+
+### History is append-only
+
+`Booking` holds only current state. Every transition is a `BookingEvent`, and
+the model refuses `updateOne`, `findOneAndUpdate` and every delete with an
+error. Rewriting history is the one thing that collection exists to prevent,
+and a convention is what gets forgotten by somebody in a hurry.
+
+The customer's timeline **is** those rows, filtered to `customerVisible`.
+There is no hardcoded list of stages with dates slotted in, so a step that has
+not happened has no row and cannot render as complete. `customerVisible`
+defaults to false: the safe direction for a mistake is an internal note the
+customer never sees rather than one they should not have.
+
+### Money
+
+Every amount is an **integer number of paise**. Nothing is a float anywhere.
+`0.1 + 0.2` is `0.30000000000000004`, and a quotation is a dozen line items
+against which somebody pays a deposit and later a balance — carry floats
+through that and the balance sits at ₹0.01 owing forever. See `utils/money.js`:
+parse once at the edge, store integers, format only for display.
+
+Quotation totals are **derived from the line items on save**, never supplied
+by a caller, so the total a customer accepts always equals the lines they were
+shown.
+
+### Quotations are versioned, never edited
+
+A material change creates a new version and supersedes the old one. Acceptance
+is recorded against a version, and a changed quotation needs fresh acceptance.
+Editing an accepted quotation in place would silently move the goalposts after
+agreement; whether or not anyone would do that deliberately, a schema that
+permits it will eventually do it by accident.
+
+Payment is only ever requested against an accepted, unexpired version —
+enforced in `Quotation.isPayable()`, not hoped for.
+
+### Customer accounts are not admin accounts
+
+Separate collection, separate JWT audience (`taifer-customer` against
+`taifer-admin`), **separate signing keys**, separate refresh store, separate
+cookie names.
+
+The audience claim alone would not be enough: an audience is data inside a
+token we sign ourselves, so sharing a key would make that claim the only thing
+between a customer token and the admin API. With separate keys a customer
+token presented to an admin route fails signature verification inside the
+library rather than failing a permission check somebody had to remember to
+write. The app refuses to boot in production if any two JWT secrets match.
+
+Customer records have **no role field at all**. Their authority is entirely
+"this row is mine", enforced by making ownership part of the query rather than
+a check after loading — a filter that cannot match somebody else's row is
+harder to get wrong than an `if` somebody has to remember.
+
+### Rate limits are per account, not per address
+
+`lib/rateLimitKeys.js` reads the subject claim from the bearer token
+*unverified*, purely to choose a counter. Rate limiting runs on `onRequest`,
+long before authentication, so a key generator reading `request.customer` is
+always reading `undefined` and silently degrading to per-IP — which locks out
+strangers sharing an office or carrier NAT.
+
+Reading it unverified is safe because the address is always mixed into the
+key: an attacker cannot drain a victim's quota without also draining their
+own. Nothing there authorises anything; the route still verifies properly.
+
+### Payments
+
+The provider interface is built; **no live keys are configured**. Set
+`PAYMENT_PROVIDER` and the Razorpay credentials to enable it. Until then a
+booking reaches `AWAITING_PAYMENT` and stops there honestly rather than
+pretending.
+
+A payment is `succeeded` only with `verifiedAt` *and* `verificationMethod`
+set — `Payment.isVerifiedSuccess()` demands both. A status can be set by any
+code path; the evidence cannot. The browser saying "payment complete" is a
+claim by an untrusted party, and anyone can call that callback with a made-up
+order id.
+
+No card numbers, CVVs or UPI handles are stored. The gateway holds all of it
+and we keep opaque references, because we never need to re-charge a card, only
+to look a transaction up.
+
+---
+
+## Inventory and concurrency
+
+`Departure` tracks `capacity`, `seatsHeld` and `seatsBooked` as three separate
+numbers. A seat held during checkout is not sold — it may be released in
+fifteen minutes — but it is also not available. Collapse them into "seatsLeft"
+and either two customers pay for the same last seat, or seats sit unsellable
+after an abandoned checkout.
+
+The last seat is protected by a **single conditional update**, not a
+read-then-write: the availability test is in the filter of a
+`findOneAndUpdate` (`Departure.claimFilter`), so MongoDB applies concurrent
+claims one at a time and the second matches nothing. Two requests that both
+read "1 left" cannot both proceed.
+
+`confirmationMode` records whether a seat count means anything. `managed` is
+our own vehicle and allocation, so the number is real. `on_request` depends on
+suppliers we have to ring, so the UI says availability needs confirming and is
+given no number to misreport. It defaults to `on_request`, because the honest
+answer when nobody has configured it is "we will check".
+
+Holds carry `expiresAt` and are returned by a sweeper. The TTL index is a
+backstop only — deleting the hold row does **not** decrement the departure's
+counter, so TTL alone would leak seats.
+
+---
+
+## MongoDB must be a replica set
+
+Even in development, even as one node.
+
+Booking state changes write several collections at once — the booking, its
+event history, the inventory counter — and those must commit or fail together.
+A booking that exists with no record of being submitted is one whose history
+starts in the middle. MongoDB offers transactions only on a replica set, so a
+standalone `mongod` makes that guarantee *silently unavailable* rather than
+loudly broken.
+
+```bash
+docker run -d --name taifer-mongo -p 27017:27017 -v taifer-mongo-data:/data/db \
+  mongo:7 mongod --replSet rs0 --bind_ip_all
+
+docker exec taifer-mongo mongosh --eval \
+  "rs.initiate({_id:'rs0',members:[{_id:0,host:'127.0.0.1:27017'}]})"
+```
+
+Connection strings need `?directConnection=true` so the driver talks to this
+host rather than discovering the set's own member addresses — the member is
+registered as `127.0.0.1` for the host machine while containers reach it by
+service name.
+---
+
 ## Deployment
 
 The image is plain Docker, so it runs on Railway, Render, Fly.io, ECS or a VM
@@ -690,6 +869,16 @@ shows up as a reviewable diff rather than a surprise after deploy.
 | `*` | `/api/v1/admin/**` | Authenticated. Leads, content, people, teams, monitoring, analytics, audit, flags, uploads, compliance. |
 | `*` | `/api/v1/admin/users/**` · `/teams/**` | Four-level hierarchy, rank-guarded. See *Roles*. |
 | `GET` | `/api/v1/admin/observability/{summary,series,routes,errors,security,visitors}` | Monitoring. `export.csv` is a separate permission. |
+| `POST` | `/api/v1/account/auth/{register,login,refresh,logout,logout-all,change-password}` | Customer sessions. Own audience and signing key — never valid on an admin route. |
+| `GET` `PATCH` | `/api/v1/account/me` | Customer profile. The sign-in email is not editable here. |
+| `POST` `GET` | `/api/v1/account/bookings` | Request a trip; list your own. Send `idempotencyKey` so a retry does not book twice. |
+| `GET` | `/api/v1/account/bookings/:id` | One booking with its timeline and next action. |
+| `POST` | `/api/v1/account/bookings/:id/cancellation` | Records a cancellation request. Does not cancel. |
+| `GET` | `/api/v1/admin/reservations` | The pipeline. `view=new\|checking\|quoted\|awaiting_payment\|confirmed\|departing\|cancellation_requested`. |
+| `GET` | `/api/v1/admin/reservations/:id` | Full detail: history, supplier allocations with costs, confirmation blockers. |
+| `PATCH` | `/api/v1/admin/reservations/:id/status` | Move through the lifecycle. Refuses illegal moves and unready confirmations. |
+| `PATCH` | `/api/v1/admin/reservations/:id/assign` | Assign to a colleague. |
+| `POST` | `/api/v1/admin/reservations/:id/notes` | Internal note, or a message to the customer. |
 | `GET` | `/health` · `/ready` | Liveness and readiness. |
 
 All errors share one shape:

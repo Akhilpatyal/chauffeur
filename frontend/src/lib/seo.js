@@ -11,7 +11,7 @@ import { useEffect } from 'react';
  * This hook rewrites the handful of tags that matter per route and restores the
  * site defaults on unmount, so nothing leaks between pages.
  */
-const SITE_NAME = 'TAIFER — The Great Outdoors';
+const SITE_NAME = 'Chaufer — Journeys that stay with you';
 
 /* Read once, before any page overwrites them. */
 const defaults = {

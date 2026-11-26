@@ -74,6 +74,11 @@ export default function PlanMyTripModal({
     setFormData((current) => ({
       ...current,
       destination: interest?.destination ?? interest?.title ?? current.destination,
+      /* Set when the enquiry came from clicking a specific departure on the
+       * availability calendar. Retyping the dates you just tapped is the kind
+       * of small friction that loses a booking, and the desk otherwise has to
+       * write back to ask which one you meant. */
+      month: interest?.preferredDates ?? current.month,
     }));
   }
 

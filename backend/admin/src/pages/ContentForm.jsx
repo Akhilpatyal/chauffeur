@@ -9,10 +9,29 @@ const toLines = (value) => (Array.isArray(value) ? value.join('\n') : '');
 const fromLines = (value) =>
   value.split('\n').map((line) => line.trim()).filter(Boolean);
 
+/*
+ * Reads a dotted path such as "availability.state". Fields without a dot are
+ * unaffected, so every existing definition keeps working.
+ */
+const readPath = (record, name) =>
+  String(name).split('.').reduce((node, key) => (node == null ? undefined : node[key]), record);
+
+/* Writes a dotted path into a payload, creating the objects on the way. */
+function writePath(target, name, value) {
+  const keys = String(name).split('.');
+  const last = keys.pop();
+  let node = target;
+  for (const key of keys) {
+    node[key] = node[key] ?? {};
+    node = node[key];
+  }
+  node[last] = value;
+}
+
 function initialValues(type, record) {
   const values = {};
   for (const field of FIELDS[type]) {
-    const current = record?.[field.name];
+    const current = readPath(record, field.name);
     switch (field.kind) {
       case 'list':
         values[field.name] = toLines(current);
@@ -25,6 +44,11 @@ function initialValues(type, record) {
         break;
       case 'multiselect':
         values[field.name] = Array.isArray(current) ? current : [];
+        break;
+      case 'date':
+        /* <input type="date"> wants YYYY-MM-DD; the API returns an ISO
+           timestamp. */
+        values[field.name] = current ? String(current).slice(0, 10) : '';
         break;
       default:
         values[field.name] = current ?? '';
@@ -58,27 +82,35 @@ function buildPayload(type, values) {
 
     switch (field.kind) {
       case 'list':
-        payload[field.name] = fromLines(value ?? '');
+        writePath(payload, field.name, fromLines(value ?? ''));
         break;
       case 'money': {
         const money = parseMoney(value);
-        if (money) payload[field.name] = money;
+        if (money) writePath(payload, field.name, money);
         break;
       }
       case 'number':
         // An empty number field means "leave unset", not zero.
         if (value !== '' && value !== null && value !== undefined) {
-          payload[field.name] = Number(value);
+          writePath(payload, field.name, Number(value));
         }
         break;
       case 'boolean':
-        payload[field.name] = Boolean(value);
+        writePath(payload, field.name, Boolean(value));
         break;
       case 'multiselect':
-        payload[field.name] = value ?? [];
+        writePath(payload, field.name, value ?? []);
+        break;
+      case 'date':
+        /* Empty clears the date rather than leaving the old one in place —
+           "this no longer opens on a schedule" is a real edit, and the API
+           accepts null for exactly that. */
+        writePath(payload, field.name, value ? new Date(value).toISOString() : null);
         break;
       default:
-        if (value !== '' && value !== null && value !== undefined) payload[field.name] = value;
+        if (value !== '' && value !== null && value !== undefined) {
+          writePath(payload, field.name, value);
+        }
     }
   }
 
@@ -135,6 +167,7 @@ function Field({ field, value, onChange, onUpload, uploading }) {
         </div>
       )}
 
+      {field.kind === 'date' && <input type="date" {...common} />}
       {field.kind === 'boolean' && (
         <input
           id={id}

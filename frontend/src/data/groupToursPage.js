@@ -16,7 +16,7 @@ export const groupHero = {
   subtitle: 'Shared journeys. Bigger smiles.',
   intro:
     'Carefully curated group experiences with like-minded travelers. More connections, more adventures.',
-  image: '/banner3.jpg',
+  image: '/img/banner3-1024.webp',
   assurances: [
     { icon: 'users', label: 'Small Groups' },
     { icon: 'shield', label: 'Safe & Trusted' },

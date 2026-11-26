@@ -21,13 +21,13 @@ const subscriberAvatars = [
  */
 export default function Newsletter({
   variant = 'ivory',
-  eyebrow = 'MONTHLY TRAIL LOG',
-  title = 'KEEP EXPLORING',
-  subtitle = 'Stories, trails and journeys worth knowing about.',
+  eyebrow = 'THE CHAUFER LETTER',
+  title = 'A little more world, in your inbox.',
+  subtitle = 'Travel inspiration, remarkable places and stories worth discovering. Delivered once a month.',
   /* No subscriber count: the old default claimed 10,000+, which is the same
    * invented figure data/companyFacts.js exists to keep off the site. What is
    * left is a promise the business controls and can keep. */
-  note = '🔒 One email a month. No spam, unsubscribe in a click.',
+  note = 'One thoughtful email each month. No clutter. Unsubscribe anytime.',
   showAvatars = false,
 }) {
   const [email, setEmail] = useState('');

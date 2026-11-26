@@ -22,20 +22,22 @@ export default function PlanYourEscape({ onOpenTripBuilder }) {
         {/* Eyebrow */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 text-[#B89A5A] text-xs font-mono font-bold uppercase tracking-[0.25em] mb-6">
           <Compass className="w-3.5 h-3.5" />
-          <span>TAILORED EXPEDITION CONCIERGE</span>
+          <span>PLAN MY JOURNEY</span>
         </div>
 
         {/* Big Headline */}
         <h2 className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#F4F1E8] font-normal leading-[1.08] tracking-tight mb-6">
-          DON'T KNOW WHERE TO GO? <br />
+          Not sure where to begin? <br />
           <span className="font-editorial italic font-light text-[#B89A5A]">
-            Let's find your next adventure.
+            Let&rsquo;s find a journey that feels like yours.
           </span>
         </h2>
 
         {/* Narrative Copy */}
         <p className="text-base sm:text-xl text-[#DDD4C1]/90 font-light leading-relaxed max-w-2xl mx-auto mb-10">
-          Whether you seek a high-altitude solo retreat, an overland 4x4 caravan with friends, or an off-grid cedar homestay—we craft custom routes down to the trail coordinates.
+          From remote mountain escapes and overland adventures to quiet stays tucked away in
+          nature, we bring together journeys shaped around your interests, pace and sense of
+          discovery.
         </p>
 
         {/* Dual Actions */}
@@ -51,23 +53,27 @@ export default function PlanYourEscape({ onOpenTripBuilder }) {
           </MagneticButton>
 
           <a
-            href="https://wa.me/919876543210?text=Hi%20TAIFER,%20I%20would%20like%20to%20plan%20a%20mountain%20journey"
+            href="https://wa.me/919876543210?text=Hi%20Chaufer,%20I%20would%20like%20to%20plan%20a%20mountain%20journey"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-md text-xs sm:text-sm font-mono font-bold tracking-wider uppercase transition-all duration-300 shadow-sm"
           >
             <MessageCircle className="w-4 h-4 text-[#25D366]" />
-            <span>Talk to an Expert</span>
+            <span>Talk to our travel team</span>
           </a>
         </div>
 
         {/* Coordinate Strip */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-xs text-[#DDD4C1]/70 font-mono">
+          {/* "32°N HIMALAYAN EXP-08" and "Certified High-Altitude Protocol" are
+              gone: neither names a real registration or certification, and an
+              invented accreditation is the most costly kind of filler to
+              leave on a page that takes money. */}
           <span>⚡ Curated within 24 Hours</span>
           <span>·</span>
-          <span>📍 32°N HIMALAYAN EXP-08</span>
+          <span>✦ Thoughtfully Curated Experiences</span>
           <span>·</span>
-          <span>🛡️ Certified High-Altitude Protocol</span>
+          <span>🛡️ Human Support</span>
         </div>
 
       </div>

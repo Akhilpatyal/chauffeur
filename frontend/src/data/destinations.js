@@ -134,5 +134,56 @@ export const destinations = [
     aspectRatio: "wide",
     badge: "Classic Haven",
     tags: ["Cedar Trails", "Cottages", "Riverside", "Valley Walks"],
+  },
+
+  /*
+   * The two Kangra valley regions we actually run.
+   *
+   * NO RATING, AND THAT IS DELIBERATE
+   *
+   * Every other record here carries a rating and a review count. These two
+   * do not, because we have not run enough of them to have earned one, and
+   * DestinationPage renders the rating only when it exists. An invented
+   * 4.9 from 300 travellers on a region we opened last month is the single
+   * most tempting lie on a travel site and the easiest one to catch.
+   *
+   * The photographs are placeholders from the existing library. Both want a
+   * real picture of the place before this goes anywhere near a customer.
+   */
+  {
+    id: "dharamshala",
+    name: "Dharamshala",
+    state: "Himachal Pradesh",
+    tagline: "A Tibetan Town Under a Wall of Rock",
+    description:
+      "The Dhauladhar rises almost five thousand feet straight out of the Kangra valley, and McLeod Ganj sits on the shelf beneath it — the seat of the Tibetan government in exile since 1960, with the prayer-wheel kora, the cedar forest and the Triund ridge all within a morning's walk.",
+    coordinates: "32.2190° N, 76.3234° E",
+    elevation: "4,780 – 6,830 ft",
+    bestSeason: "Mar – Jun · Sep – Dec",
+    temperature: "21°C / 7°C",
+    image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=85",
+    aspectRatio: "standard",
+    badge: "Open Now",
+    tags: ["Tibetan Quarter", "Dhauladhar", "Kora Walk", "First Treks"],
+  },
+  {
+    id: "bir-billing",
+    name: "Bir Billing",
+    state: "Himachal Pradesh",
+    tagline: "Take Off at Fourteen Hundred Feet Above the Tea",
+    description:
+      "A Tibetan settlement in the tea gardens below the Dhauladhar, and the launch at Billing on the ridge above it — one of the highest paragliding take-offs in the world, with a landing field beside the Chokling monastery and a flight that crosses the whole Kangra valley on the way down.",
+    coordinates: "32.0420° N, 76.7230° E",
+    elevation: "4,900 ft · launch at 7,900 ft",
+    bestSeason: "Mar – Jun · Sep – Nov",
+    temperature: "24°C / 9°C",
+    /* The site's own ridge photograph rather than a stock one. The first
+       attempt reused the Himachal record's image, which is a volcano — a
+       picture of Indonesia under a heading about the Kangra valley. Still a
+       placeholder: Bir wants a photograph of Bir. */
+    image: "/img/banner2-1600.webp",
+    aspectRatio: "wide",
+    badge: "Open Now",
+    tags: ["Paragliding", "Tea Gardens", "Monasteries", "Slow Days"],
   }
 ];

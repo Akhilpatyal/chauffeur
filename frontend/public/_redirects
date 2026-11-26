@@ -1,0 +1,27 @@
+# Cloudflare Pages routing.
+#
+# Single-page-app fallback. The site uses a history router, so
+# /journeys/spiti-circuit is a real URL with no file behind it. Without this,
+# Pages returns its own 404 for every deep link, shared link and refresh — the
+# dev server and Vercel's Vite preset were both doing this for us silently.
+#
+# 200, not 301: the page is served at the requested path rather than
+# redirected to /, so the address bar keeps the URL the router reads. Static
+# assets match before this rule, so it only catches routes.
+/*    /index.html   200
+
+# A NOTE ON /api/* — DO NOT ADD A RULE FOR IT HERE.
+#
+# An earlier version tried "/api/*  /api-offline.json  404" so that calls
+# made before the backend exists would fail cleanly. Pages ignores it:
+# _redirects supports 200 and the 30x codes only, so the line is dropped and
+# the catch-all above answers /api/v1/... with index.html and a 200.
+#
+# It does not matter, because the forms POST, and Cloudflare answers a POST to
+# a static path with 405 — so a submission fails visibly instead of being
+# quietly swallowed. Tested, not assumed.
+#
+# The right fix is to set VITE_API_URL on the Pages project to the API's own
+# host, even before that host exists. The request then leaves this origin
+# entirely, fetch rejects, and lib/api.js shows "We could not reach our
+# servers" rather than a generic server error.

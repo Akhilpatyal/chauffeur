@@ -2,15 +2,17 @@ import React from 'react';
 import { ArrowRight, CircleCheckBig, Heart, Star } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { AmenityChip, money } from './hotelUi';
+import { responsiveImage } from '../../lib/images';
 
 /* Compact hero-style card used in the "Taifer Recommends" rail */
 export function RecommendedCard({ stay, favorite, onToggleFavorite, onOpen }) {
   return (
     <article className="group relative h-[218px] overflow-hidden rounded-2xl">
       <img
-        src={stay.image}
-        alt={stay.name}
-        loading="lazy"
+          {...responsiveImage(stay.image, '(min-width: 1024px) 360px, 100vw')}
+          alt={stay.name}
+          loading="lazy"
+          decoding="async"
         className="absolute inset-0 h-full w-full object-cover transition duration-[900ms] group-hover:scale-[1.06]"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#02170F] via-[#02170F]/45 to-[#02170F]/10" />
@@ -125,9 +127,10 @@ export default function StayCard({
       {/* Media */}
       <div className={cn('relative h-44', row && 'sm:h-full sm:min-h-[176px]')}>
         <img
-          src={stay.image}
+          {...responsiveImage(stay.image, '(min-width: 1024px) 360px, 100vw')}
           alt={stay.name}
           loading="lazy"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover transition duration-[900ms] group-hover:scale-[1.04]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#02170F]/35 to-transparent" />

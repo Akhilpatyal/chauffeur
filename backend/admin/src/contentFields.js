@@ -25,8 +25,50 @@ const STATUS_FIELD = {
   kind: 'select',
   options: ['published', 'draft', 'archived'],
 };
+/*
+ * Whether the thing is on sale.
+ *
+ * Separate from Status on purpose. Status decides whether the page exists at
+ * all; this decides whether the booking controls appear on it. A trip shut for
+ * the winter still wants its page, its photographs and its itinerary — hiding
+ * it loses the demand as well as the sale.
+ *
+ * "Opens on" is the useful one: set it and the trip opens by itself on that
+ * date, with nothing to remember and nothing to deploy. Leave it empty and the
+ * state above is simply what it is.
+ */
+const AVAILABILITY_FIELDS = [
+  {
+    name: 'availability.state',
+    label: 'Availability',
+    kind: 'select',
+    options: ['coming_soon', 'open', 'seasonal'],
+    hint: 'open = bookable · seasonal = ours, out of season · coming_soon = no date promised',
+  },
+  {
+    name: 'availability.opensOn',
+    label: 'Opens on',
+    kind: 'date',
+    hint: 'Optional. On this date it becomes bookable automatically.',
+  },
+  {
+    name: 'availability.headline',
+    label: 'Closed heading',
+    kind: 'text',
+    hint: 'Shown instead of the booking panel, e.g. "Spiti is shut for the winter"',
+  },
+  {
+    name: 'availability.note',
+    label: 'Closed explanation',
+    kind: 'textarea',
+    rows: 2,
+    hint: 'Why, in a sentence. Left empty the site uses its own wording.',
+  },
+];
+
 const COMMON_TAIL = [
   STATUS_FIELD,
+  ...AVAILABILITY_FIELDS,
   { name: 'isFeatured', label: 'Featured', kind: 'boolean' },
   { name: 'sortOrder', label: 'Sort order', kind: 'number', hint: 'Lower sorts first' },
 ];

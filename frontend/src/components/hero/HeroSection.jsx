@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { navigateTo } from '../../router';
 import { ShieldCheck, Sparkles } from 'lucide-react';
 import SearchBar from '../navigation/SearchBar';
+import Photo from '../common/Photo';
 
-const slides = ['/banner1.jpg', '/banner2.jpg', '/banner3.jpg'];
+const slides = ['banner1', 'banner2', 'banner3'];
 
 function FlightPlane({ x, y, rotate, className = '' }) {
   return (
@@ -58,7 +59,22 @@ export default function HeroSection({ onSearchSubmit }) {
       <div className="absolute inset-0 z-0">
         {slides.map((slide, index) => {
           const isActive = activeSlide === index;
-          return <img key={slide} src={slide} alt="" aria-hidden={!isActive} className="absolute inset-0 h-full w-full object-cover object-center" style={{ opacity: isActive ? 1 : 0, transform: isActive ? 'scale(1.09)' : 'scale(1)', transition: isActive ? 'opacity 1.2s ease-in-out, transform 6s ease-out' : 'opacity 1.2s ease-in-out, transform 1.2s ease-in-out' }} />;
+          return (
+            <Photo
+              key={slide}
+              name={slide}
+              alt=""
+              aria-hidden={!isActive}
+              /* Full-bleed, so the browser needs roughly the viewport width.
+                 The first slide is the largest thing on the first screen and
+                 is fetched eagerly; the other two are lazy and arrive long
+                 before their turn in the rotation. */
+              sizes="100vw"
+              priority={index === 0}
+              className="absolute inset-0 h-full w-full object-cover object-center"
+              style={{ opacity: isActive ? 1 : 0, transform: isActive ? 'scale(1.09)' : 'scale(1)', transition: isActive ? 'opacity 1.2s ease-in-out, transform 6s ease-out' : 'opacity 1.2s ease-in-out, transform 1.2s ease-in-out' }}
+            />
+          );
         })}
         <div className="absolute inset-0 bg-gradient-to-b from-[#062f48]/60 via-[#073c56]/10 to-[#032d3c]/35" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_28%,rgba(0,37,53,.34)_100%)]" />
@@ -69,7 +85,7 @@ export default function HeroSection({ onSearchSubmit }) {
       <div className="relative z-20 mx-auto flex w-full max-w-[1360px] flex-1 flex-col px-4 sm:px-6 lg:px-8">
         <div className="flex flex-1 flex-col items-center justify-center pb-4 pt-12 text-center sm:pt-16">
           <div className="absolute left-[11%] top-[39%] hidden w-40 rounded-2xl border border-white/15 bg-[#07586a]/75 px-5 py-4 text-left shadow-xl backdrop-blur-md xl:block">
-            <Sparkles className="mb-2 h-4 w-4 text-[#ffd85d]" /><p className="text-sm font-bold">Best Price</p><p className="text-sm font-bold">Guaranteed</p><p className="mt-1 text-[10px] leading-relaxed text-white/75">Get the best deals on every booking.</p>
+            <Sparkles className="mb-2 h-4 w-4 text-[#ffd85d]" /><p className="text-sm font-bold">Curated</p><p className="text-sm font-bold">Experiences</p><p className="mt-1 text-[10px] leading-relaxed text-white/75">Thoughtfully planned journeys, made for stories that stay with you.</p>
           </div>
           <div className="absolute right-[10%] top-[39%] hidden w-40 rounded-2xl border border-white/15 bg-[#07586a]/75 px-5 py-4 text-center shadow-xl backdrop-blur-md xl:block">
             {/* Was "Trusted by 50K+ Travelers — Real reviews. Real
@@ -80,14 +96,14 @@ export default function HeroSection({ onSearchSubmit }) {
                 India's 2023 dark-pattern guidelines treat fabricated reviews
                 as a prohibited practice, so this is not only a trust problem.
                 Replaced with something that is true by construction. */}
-            <ShieldCheck className="mx-auto mb-2 h-4 w-4 text-[#ffd85d]" /><p className="text-sm font-bold">Led by</p><p className="text-sm font-bold">local guides</p><p className="mt-1 text-[10px] leading-relaxed text-white/75">Every route driven and walked by the people who plan it.</p>
+            <ShieldCheck className="mx-auto mb-2 h-4 w-4 text-[#ffd85d]" /><p className="text-sm font-bold">Guided by</p><p className="text-sm font-bold">Locals</p><p className="mt-1 text-[10px] leading-relaxed text-white/75">Discover places through the eyes of those who call them home, know their hidden paths and share stories no map can tell.</p>
           </div>
 
           <div className="relative">
-            <p className="relative z-10 -mb-2 text-5xl leading-none text-white drop-shadow-md sm:-mb-4 sm:text-7xl" style={{ fontFamily: "'Caveat', cursive", fontWeight: 500 }}>Travel Beyond</p>
-            <h1 className="relative z-0 font-light uppercase leading-[.83] text-[#e7fbff] drop-shadow-lg" style={{ fontFamily: "'Oswald', 'Arial Narrow', sans-serif", fontSize: 'clamp(3.75rem, 9.2vw, 8.5rem)', letterSpacing: '-.055em' }}>Boundaries</h1>
+            <p className="relative z-10 -mb-2 text-5xl leading-none text-white drop-shadow-md sm:-mb-4 sm:text-7xl" style={{ fontFamily: "'Caveat', cursive", fontWeight: 500 }}>Beyond the</p>
+            <h1 className="relative z-0 font-light uppercase leading-[.83] text-[#e7fbff] drop-shadow-lg" style={{ fontFamily: "'Oswald', 'Arial Narrow', sans-serif", fontSize: 'clamp(3.75rem, 9.2vw, 8.5rem)', letterSpacing: '-.055em' }}>ORDINARY</h1>
           </div>
-          <p className="mt-5 max-w-xs text-sm font-medium leading-relaxed text-white/90 sm:max-w-md sm:text-base">Curated journeys to the world's most breathtaking places.</p>
+          <p className="mt-5 max-w-xs text-sm font-medium leading-relaxed text-white/90 sm:max-w-md sm:text-base">Go far enough to see the world differently and yourself a little clearer.</p>
 
           <div className="mt-6 flex rounded-full border border-white/20 bg-[#258198]/75 p-1.5 text-xs font-semibold shadow-xl backdrop-blur-sm sm:mt-7 sm:text-sm">
             {HERO_TABS.map((item, index) => <button key={item.label} type="button" onClick={() => navigateTo(item.path)} className={`rounded-full px-3 py-2.5 transition-colors sm:px-7 ${index === 0 ? 'bg-[#04354e] text-white shadow-md' : 'text-white/85 hover:bg-white/10'}`}>{item.label}</button>)}

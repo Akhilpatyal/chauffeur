@@ -22,6 +22,7 @@ import HotelDetailDrawer from './HotelDetailDrawer';
 import StayCard, { RecommendedCard } from './StayCard';
 import { money } from './hotelUi';
 import { useDocumentMeta } from '../../lib/seo';
+import Photo from '../common/Photo';
 
 const PAGE_SIZE = 4;
 
@@ -412,10 +413,13 @@ export default function HotelsPage({ onEnquire }) {
 
             {/* Closing banner */}
             <section className="relative mt-4 overflow-hidden rounded-2xl bg-[#02170F] lg:col-start-2 xl:col-span-2">
-              <img
-                src="/banner3.jpg"
+              <Photo
+                name="banner3"
                 alt=""
                 aria-hidden="true"
+                /* Sits inside the content column, not full bleed, and well
+                   below the fold — so no priority and a smaller candidate. */
+                sizes="(min-width: 1280px) 900px, 100vw"
                 className="absolute inset-0 h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-[#02170F]/92 via-[#02170F]/70 to-[#02170F]/25" />

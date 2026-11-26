@@ -84,7 +84,7 @@ export function usePathname() {
  * the homepage.
  */
 export function resolveRoute(pathname) {
-  const [first, second] = pathname.replace(/^\/+|\/+$/g, '').split('/');
+  const [first, second, third] = pathname.replace(/^\/+|\/+$/g, '').split('/');
 
   if (!first) return { page: 'home', param: null };
 
@@ -117,6 +117,23 @@ export function resolveRoute(pathname) {
     case 'terms':
     case 'cancellation':
       return { page: 'legal', param: first };
+
+    /*
+     * The signed-in area. One `account` page with a sub-route rather than a
+     * page per screen, because they share a shell — the nav, the session
+     * guard and the sign-in redirect all live in one place instead of being
+     * repeated six times.
+     *
+     * `/account/trips/<reference>` carries the booking reference rather than
+     * an id: it is what the customer has in their email and can read down
+     * the phone, and it means a link in a notification is one they recognise.
+     */
+    case 'account':
+      return { page: 'account', param: second ?? 'overview', extra: third ?? null };
+
+    case 'signin':
+    case 'signup':
+      return { page: 'auth', param: first };
 
     default:
       return { page: 'notFound', param: first };

@@ -26,9 +26,9 @@ export default function Testimonials() {
         <div className="mb-12 sm:mb-16 text-center">
           <SectionHeading
             align="center"
-            eyebrow="VOICES FROM THE TRAIL"
-            title="Stories etched in mountain dust."
-            subtitle="Real reflections from wanderers who crossed high passes with TAIFER."
+            eyebrow="VOICES OF CHAUFER"
+            title="Every journey leaves a story."
+            subtitle="Real experiences. Honest reflections. Memories made along the way."
           />
         </div>
 

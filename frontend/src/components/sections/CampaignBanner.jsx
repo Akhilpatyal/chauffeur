@@ -7,8 +7,8 @@ export default function CampaignBanner({ onExploreDeals }) {
       {/* Full-bleed Background */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=2400&q=85"
-          alt="Spiti Valley mountain road"
+          src="/img/banner2-1600.webp"
+          alt="The Kangra valley below the Billing ridge"
           loading="lazy"
           className="w-full h-full object-cover object-center brightness-[0.4] contrast-110"
         />
@@ -19,28 +19,28 @@ export default function CampaignBanner({ onExploreDeals }) {
         <div className="max-w-2xl">
           
           <span className="text-[11px] font-mono font-bold tracking-[0.25em] uppercase text-[#B89A5A] block mb-4">
-            FEATURED EXPEDITION
+            FEATURED JOURNEY
           </span>
 
           <h2 className="font-display text-4xl sm:text-5xl lg:text-7xl text-[#F4F1E8] font-normal leading-[1.05] tracking-tight mb-4">
-            SPITI VALLEY
+            BIR BILLING
           </h2>
 
           <h3 className="font-display text-2xl sm:text-3xl text-[#DDD4C1] font-normal leading-tight mb-6">
-            BEYOND THE ORDINARY
+            A LITTLE CLOSER TO THE SKY.
           </h3>
 
           {/* Metadata Chips */}
           <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[#DDD4C1]/90 mb-8">
-            <span className="px-3 py-1.5 rounded-md bg-white/10 border border-white/15">6 DAYS</span>
             <span className="px-3 py-1.5 rounded-md bg-white/10 border border-white/15">SMALL GROUP</span>
-            <span className="px-3 py-1.5 rounded-md bg-white/10 border border-white/15">HIGH ALTITUDE</span>
-            <span className="px-3 py-1.5 rounded-md bg-white/10 border border-white/15 text-[#B89A5A]">From ₹14,999</span>
+            <span className="px-3 py-1.5 rounded-md bg-white/10 border border-white/15">MOUNTAIN ESCAPE</span>
+            <span className="px-3 py-1.5 rounded-md bg-white/10 border border-white/15">PARAGLIDING</span>
+            <span className="px-3 py-1.5 rounded-md bg-white/10 border border-white/15">ADVENTURE</span>
           </div>
 
           {/* Coordinates */}
           <div className="text-[11px] font-mono text-[#DDD4C1]/50 mb-6 tracking-wider">
-            32°14'32"N 77°10'18"E · KUNZUM PASS 14,931 FT
+            BIR BILLING · HIMACHAL PRADESH, INDIA
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
@@ -48,12 +48,12 @@ export default function CampaignBanner({ onExploreDeals }) {
               onClick={onExploreDeals}
               className="px-6 py-3 rounded-lg bg-[#F4F1E8] hover:bg-white text-[#003B24] text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 transition-colors cursor-pointer shadow-lg"
             >
-              <span>Discover the Journey</span>
+              <span>View the Journey</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
 
             <span className="text-xs font-mono text-[#DDD4C1]/60">
-              May & Sep 2026 Departures
+              Upcoming departures announced soon
             </span>
           </div>
 

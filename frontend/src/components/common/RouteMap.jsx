@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Layers, MapPin, Mountain } from 'lucide-react';
+import { ExternalLink, Layers, MapPin, Mountain } from 'lucide-react';
 import { straightLineKm } from '../../data/places';
+import { routeUrl } from '../../lib/maps';
 
 /*
  * A real map.
@@ -276,6 +277,12 @@ export default function RouteMap({
   );
   const highest = stops.reduce((max, stop) => Math.max(max, stop.place.ft ?? 0), 0);
 
+  /* Null when the stops carry no coordinates, which hides the link rather
+   * than opening Google on a guess. */
+  const googleRoute = routeUrl(
+    stops.map((stop) => ({ lat: stop.place.lat, lng: stop.place.lng, query: stop.place.name })),
+  );
+
   return (
     <section
       aria-labelledby="route-map-heading"
@@ -362,6 +369,29 @@ export default function RouteMap({
           ? 'Pins mark where each stage ends. The dashed line joins them in order and is not the road — real driving distance through these valleys is considerably longer.'
           : 'Pin marks the base for this trip. Distances by road are longer than they look on a map in this terrain.'}
       </p>
+
+      {/*
+        A plain link to Google Maps, not the Google Maps API.
+
+        The map above is the right tool for understanding the route — it draws
+        contours and named passes, costs nothing and needs no key. What it
+        cannot do is open on somebody's phone with their own location and
+        turn-by-turn directions, and that is a URL rather than a paid service:
+        no key, no quota, nothing to bill. Since the dashed line above is
+        deliberately not the road, this is also how a reader checks the real
+        driving route.
+      */}
+      {googleRoute && (
+        <a
+          href={googleRoute}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="-ml-1 mt-2 inline-flex min-h-[40px] items-center gap-1.5 px-1 text-[12px] font-semibold text-[#075333] transition-colors hover:text-[#012C18] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075333]"
+        >
+          <ExternalLink aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
+          Open the driving route in Google Maps
+        </a>
+      )}
     </section>
   );
 }

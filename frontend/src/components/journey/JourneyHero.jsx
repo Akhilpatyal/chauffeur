@@ -3,7 +3,7 @@ import { BadgeCheck, Star } from 'lucide-react';
 import { useHeroAnimation } from '../../animations/journey/heroAnimations';
 
 
-export default function JourneyHero({ journey, onCheckAvailability }) {
+export default function JourneyHero({ journey, onCheckAvailability, open = true }) {
   const scope = useRef(null);
 
   useHeroAnimation(scope);
@@ -110,11 +110,14 @@ export default function JourneyHero({ journey, onCheckAvailability }) {
               onClick={onCheckAvailability}
               className="group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#B89A5A] py-3.5 text-[12.5px] font-semibold text-[#012C18] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#C9AB6B] hover:shadow-lg"
             >
-              Check Availability
+              {/* A trip we are not running must not offer to check its
+                  availability: the honest action is to ask us to tell them
+                  when it comes back. */}
+              {open ? 'Check Availability' : 'Tell me when it opens'}
             </button>
 
             <p className="mt-3 text-center text-[10.5px] text-[#B89A5A]">
-              {journey.bookingFootnote}
+              {open ? journey.bookingFootnote : 'Nothing is booked and nothing is charged.'}
             </p>
           </aside>
         </div>

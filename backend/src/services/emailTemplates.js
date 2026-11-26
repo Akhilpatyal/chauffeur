@@ -134,3 +134,290 @@ export function newsletterWelcome({ email, unsubscribeToken }) {
     }),
   };
 }
+
+/*
+ * Booking emails.
+ *
+ * One rule governs every one of them: an unconfirmed booking is never written
+ * as though it were a ticket. A request-received email that opens "Your trip
+ * is booked!" is how a traveller ends up buying flights to Manali for a
+ * departure nobody has agreed to run — and the apology for that costs far
+ * more than the enthusiasm gained.
+ *
+ * So the subject lines and headings say what has actually happened, and the
+ * body says plainly what has not.
+ */
+
+/* The dashboard link that belongs in every booking email. Relative paths are
+ * built against the public site, never the API. */
+const bookingUrl = (booking) =>
+  `${env.SITE_PUBLIC_URL.replace(/\/$/, '')}/account/trips/${encodeURIComponent(booking.reference)}`;
+
+export function bookingRequestReceived(booking, customer) {
+  const firstName = String(customer?.name || booking.contact?.name || '').split(' ')[0] || 'there';
+  const tripName = booking.trip?.title || 'your custom trip';
+
+  const body = `
+<p style="margin:0 0 14px;font-size:15px">Hello ${esc(firstName)},</p>
+<p style="margin:0 0 14px;font-size:14px;line-height:1.7">We have your request for <strong>${esc(tripName)}</strong>. Your reference is <strong style="font-family:ui-monospace,monospace;letter-spacing:.04em">${esc(booking.reference)}</strong> — quote it if you call or write.</p>
+
+<div style="padding:14px;background:#FFF8E7;border:1px solid ${BRAND.gold};border-radius:10px;font-size:13.5px;line-height:1.7;color:${BRAND.ink}">
+  <strong>Nothing is booked yet.</strong><br>
+  Availability on these routes depends on guesthouses, drivers and permits that we confirm by hand. We are doing that now and will come back to you either way — usually within one working day.
+</div>
+
+${rows([
+  ['Trip', esc(tripName)],
+  ['Travellers', String(booking.travellerCount)],
+  booking.startDate
+    ? ['Dates', new Date(booking.startDate).toLocaleDateString('en-IN', { dateStyle: 'medium' })]
+    : null,
+  ['Reference', esc(booking.reference)],
+].filter(Boolean))}
+
+<p style="margin:18px 0 0;font-size:14px;line-height:1.7">You can follow progress at any time: <a href="${bookingUrl(booking)}" style="color:${BRAND.forest}">track this request</a>.</p>
+<p style="margin:18px 0 0;font-size:14px">Warmly,<br>The Taifer expedition desk</p>`;
+
+  return {
+    /* Says "request", not "booking". The subject line is the part most people
+     * read and the easiest place to create a false impression. */
+    subject: `Request received — ${booking.reference}`,
+    html: layout({
+      heading: 'We have your request',
+      bodyHtml: body,
+      footerNote:
+        'This confirms we received your request. It is not a booking confirmation — we will send that separately if and when the trip is confirmed.',
+    }),
+  };
+}
+
+/* The desk's copy. Terse, because it is read in a list. */
+export function bookingRequestAdminAlert(booking, customer) {
+  const body = `
+<p style="margin:0 0 14px;font-size:14px">A new ${booking.kind === 'custom' ? 'custom trip' : 'departure'} request.</p>
+${rows([
+  ['Reference', esc(booking.reference)],
+  ['Trip', esc(booking.trip?.title || '— custom —')],
+  ['Customer', esc(customer?.name || booking.contact?.name || 'Unknown')],
+  ['Email', esc(customer?.email || booking.contact?.email || '')],
+  ['Phone', esc(customer?.phone || booking.contact?.phone || '—')],
+  ['Travellers', String(booking.travellerCount)],
+  booking.startDate
+    ? ['Dates', new Date(booking.startDate).toLocaleDateString('en-IN', { dateStyle: 'medium' })]
+    : null,
+  booking.preferences?.specialRequests
+    ? ['Notes', esc(booking.preferences.specialRequests)]
+    : null,
+].filter(Boolean))}
+<p style="margin:18px 0 0;font-size:13px;color:${BRAND.muted}">Check availability and quote from the reservations board.</p>`;
+
+  return {
+    subject: `New request ${booking.reference} — ${booking.trip?.title || 'custom trip'}`,
+    html: layout({ heading: 'New reservation request', bodyHtml: body }),
+  };
+}
+
+/* Money, formatted for a mail client. Amounts are stored in paise, so the
+ * division happens here and nowhere earlier. */
+const inr = (minor, currency = 'INR') =>
+  new Intl.NumberFormat('en-IN', { style: 'currency', currency, maximumFractionDigits: 0 }).format(
+    (minor ?? 0) / 100,
+  );
+
+/*
+ * The quotation.
+ *
+ * The lines are itemised in the email rather than hidden behind a link,
+ * because a price somebody has to click to see is a price they read with
+ * suspicion. The email still links to the account, which is where accepting
+ * actually happens — acceptance needs a signed-in customer, not a link that
+ * anyone the mail was forwarded to could press.
+ */
+export function quotationSent(booking, quotation, customer) {
+  const firstName = String(customer?.name || booking.contact?.name || '').split(' ')[0] || 'there';
+  const tripName = booking.trip?.title || 'your trip';
+  const revision = quotation.version > 1;
+
+  const lines = (quotation.items ?? [])
+    .map(
+      (item) => `
+  <tr>
+    <td style="padding:7px 0;font-size:13.5px;color:${BRAND.ink}">
+      ${esc(item.label)}
+      ${item.quantity && item.quantity !== 1 ? `<span style="color:${BRAND.muted}"> · ${esc(String(item.quantity))}${item.unitLabel ? ` ${esc(item.unitLabel)}` : ''} × ${inr(item.unitAmount, quotation.currency)}</span>` : ''}
+    </td>
+    <td style="padding:7px 0;font-size:13.5px;text-align:right;color:${BRAND.ink};white-space:nowrap">${inr(item.amount, quotation.currency)}</td>
+  </tr>`,
+    )
+    .join('');
+
+  const body = `
+<p style="margin:0 0 14px;font-size:15px">Hello ${esc(firstName)},</p>
+<p style="margin:0 0 14px;font-size:14px;line-height:1.7">${
+    revision
+      ? `Here is a revised quotation for <strong>${esc(tripName)}</strong>.`
+      : `Here is your quotation for <strong>${esc(tripName)}</strong>.`
+  } Reference <strong style="font-family:ui-monospace,monospace;letter-spacing:.04em">${esc(booking.reference)}</strong>.</p>
+
+${revision && quotation.revisionReason ? `<p style="margin:0 0 14px;padding:12px;background:#F4F1E8;border-radius:10px;font-size:13.5px;line-height:1.7;color:${BRAND.ink}"><strong>What changed:</strong> ${esc(quotation.revisionReason)}</p>` : ''}
+
+${quotation.summary ? `<p style="margin:0 0 16px;font-size:14px;line-height:1.7;color:${BRAND.ink}">${esc(quotation.summary)}</p>` : ''}
+
+<table role="presentation" width="100%" style="border-collapse:collapse;margin:0 0 4px">
+  ${lines}
+  <tr><td colspan="2" style="border-top:1px solid #E3DDCB;padding:0"></td></tr>
+  <tr>
+    <td style="padding:10px 0 0;font-size:15px;font-weight:600;color:${BRAND.ink}">Total</td>
+    <td style="padding:10px 0 0;font-size:15px;font-weight:600;text-align:right;color:${BRAND.ink}">${inr(quotation.totalAmount, quotation.currency)}</td>
+  </tr>
+  ${quotation.advanceAmount > 0 ? `<tr><td style="padding:4px 0 0;font-size:13.5px;color:${BRAND.muted}">Deposit to confirm</td><td style="padding:4px 0 0;font-size:13.5px;text-align:right;color:${BRAND.muted}">${inr(quotation.advanceAmount, quotation.currency)}</td></tr>` : ''}
+</table>
+
+${
+  quotation.expiresAt
+    ? `<p style="margin:16px 0 0;font-size:13.5px;line-height:1.7;color:${BRAND.muted}">This price holds until <strong>${new Date(quotation.expiresAt).toLocaleDateString('en-IN', { dateStyle: 'medium' })}</strong>. Guesthouses and drivers on these routes will not hold space longer than that on a maybe.</p>`
+    : ''
+}
+
+${
+  quotation.cancellationTerms
+    ? `<div style="margin:16px 0 0;padding:12px;background:#FFF8E7;border:1px solid ${BRAND.gold};border-radius:10px;font-size:13px;line-height:1.7;color:${BRAND.ink}"><strong>If you need to cancel</strong><br>${esc(quotation.cancellationTerms)}</div>`
+    : ''
+}
+
+<p style="margin:20px 0 0;font-size:14px;line-height:1.7"><a href="${bookingUrl(booking)}" style="display:inline-block;padding:11px 20px;background:${BRAND.forest};color:#FAF9F5;border-radius:10px;text-decoration:none;font-weight:600">Review and accept</a></p>
+<p style="margin:14px 0 0;font-size:13px;line-height:1.7;color:${BRAND.muted}">Nothing is charged by accepting — it tells us to hold the trip and send payment details.</p>
+<p style="margin:18px 0 0;font-size:14px">Warmly,<br>The Taifer expedition desk</p>`;
+
+  return {
+    subject: revision
+      ? `Revised quotation (v${quotation.version}) — ${booking.reference}`
+      : `Your quotation — ${booking.reference}`,
+    html: layout({
+      heading: revision ? 'A revised quotation' : 'Your quotation',
+      bodyHtml: body,
+      footerNote:
+        'Accepting a quotation does not charge you. It confirms the price so we can hold your trip and send payment details separately.',
+    }),
+  };
+}
+
+/* The desk's copy when a customer accepts. Terse: it is read in a list, and
+ * what matters is that money is now expected. */
+export function quotationAcceptedAlert(booking, quotation, customer) {
+  const body = `
+<p style="margin:0 0 12px;font-size:14px;line-height:1.7"><strong>${esc(customer?.name ?? booking.contact?.name ?? 'A customer')}</strong> accepted quotation v${quotation.version} on <strong>${esc(booking.reference)}</strong>.</p>
+${rows(
+  [
+    ['Trip', esc(booking.trip?.title ?? 'Custom trip')],
+    ['Total', inr(quotation.totalAmount, quotation.currency)],
+    quotation.advanceAmount > 0
+      ? ['Deposit due', inr(quotation.advanceAmount, quotation.currency)]
+      : null,
+    ['Travellers', String(booking.travellerCount)],
+  ].filter(Boolean),
+)}
+<p style="margin:16px 0 0;font-size:13.5px;line-height:1.7;color:${BRAND.muted}">The booking is now awaiting payment. It is not confirmed until the suppliers are, which the confirmation gate still checks.</p>`;
+
+  return {
+    subject: `Quotation accepted — ${booking.reference}`,
+    html: layout({ heading: 'Quotation accepted', bodyHtml: body }),
+  };
+}
+
+/* And when they decline or ask for changes — the desk needs this at least as
+ * much as the acceptance, because it is the one that can still be rescued. */
+export function quotationRespondedAlert(booking, quotation, customer) {
+  const declined = quotation.status === 'declined';
+  const body = `
+<p style="margin:0 0 12px;font-size:14px;line-height:1.7"><strong>${esc(customer?.name ?? booking.contact?.name ?? 'A customer')}</strong> ${declined ? 'declined' : 'asked for changes to'} quotation v${quotation.version} on <strong>${esc(booking.reference)}</strong>.</p>
+${
+  quotation.customerResponse
+    ? `<div style="padding:12px;background:#F4F1E8;border-radius:10px;font-size:13.5px;line-height:1.7;color:${BRAND.ink}"><strong>They said:</strong><br>${esc(quotation.customerResponse)}</div>`
+    : `<p style="font-size:13.5px;color:${BRAND.muted}">They left no message.</p>`
+}
+<p style="margin:16px 0 0;font-size:13.5px;line-height:1.7;color:${BRAND.muted}">The booking is still open. ${declined ? 'Decide whether a different price or trip is worth offering.' : 'Send a new version when you have one.'}</p>`;
+
+  return {
+    subject: `${declined ? 'Quotation declined' : 'Changes requested'} — ${booking.reference}`,
+    html: layout({ heading: declined ? 'Quotation declined' : 'Changes requested', bodyHtml: body }),
+  };
+}
+
+/*
+ * A booking changed status.
+ *
+ * One template for every move rather than a dozen near-identical ones: what
+ * differs between "we are checking" and "you are confirmed" is a sentence,
+ * and a dozen files drift apart in tone the moment anyone edits one of them.
+ *
+ * Statuses with nothing useful to say to a customer are absent from this map
+ * and send no mail at all. An email that says "your booking changed" without
+ * saying what that means for the reader is worse than silence.
+ */
+const STATUS_MAIL = {
+  AVAILABILITY_CHECK: {
+    heading: 'We are checking availability',
+    line: 'We are speaking to the guesthouses, drivers and permit offices for your dates. We will come back to you either way.',
+  },
+  CONFIRMED: {
+    heading: 'Your trip is confirmed',
+    line: 'Everything is booked and held. We will send joining instructions and what to pack nearer the time.',
+  },
+  REJECTED: {
+    heading: 'We cannot run this trip',
+    line: 'We are sorry — we could not make these dates work.',
+  },
+  CANCELLED: {
+    heading: 'Your booking is cancelled',
+    line: 'Your booking has been cancelled.',
+  },
+  COMPLETED: {
+    heading: 'Welcome home',
+    line: 'Thank you for travelling with us. If you have a few minutes, we would genuinely like to hear how it went.',
+  },
+  EXPIRED: {
+    heading: 'This request has lapsed',
+    line: 'We did not hear back, so we have closed this request. If you are still interested, just ask — we can pick it up again.',
+  },
+};
+
+export function hasStatusMail(status) {
+  return Boolean(STATUS_MAIL[status]);
+}
+
+export function bookingStatusChanged(booking, customer, { reason } = {}) {
+  const copy = STATUS_MAIL[booking.status];
+  if (!copy) return null;
+
+  const firstName = String(customer?.name || booking.contact?.name || '').split(' ')[0] || 'there';
+  const tripName = booking.trip?.title || 'your trip';
+
+  const body = `
+<p style="margin:0 0 14px;font-size:15px">Hello ${esc(firstName)},</p>
+<p style="margin:0 0 14px;font-size:14px;line-height:1.7">${esc(copy.line)}</p>
+${rows(
+  [
+    ['Trip', esc(tripName)],
+    ['Reference', esc(booking.reference)],
+    booking.startDate
+      ? ['Dates', new Date(booking.startDate).toLocaleDateString('en-IN', { dateStyle: 'medium' })]
+      : null,
+  ].filter(Boolean),
+)}
+${
+  /* The reason the desk gave, shown verbatim. A rejection the customer
+     cannot understand generates a phone call, and the person answering it
+     needs the customer to have read the same words they did. */
+  reason
+    ? `<div style="margin:16px 0 0;padding:12px;background:#FDF1EE;border:1px solid #F2D2C9;border-radius:10px;font-size:13.5px;line-height:1.7;color:#7A2E1F"><strong>Why</strong><br>${esc(reason)}</div>`
+    : ''
+}
+<p style="margin:18px 0 0;font-size:14px;line-height:1.7"><a href="${bookingUrl(booking)}" style="color:${BRAND.forest}">See your booking</a></p>
+<p style="margin:18px 0 0;font-size:14px">Warmly,<br>The Taifer expedition desk</p>`;
+
+  return {
+    subject: `${copy.heading} — ${booking.reference}`,
+    html: layout({ heading: copy.heading, bodyHtml: body }),
+  };
+}

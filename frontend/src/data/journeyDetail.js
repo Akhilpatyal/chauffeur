@@ -10,7 +10,7 @@ const photo = (id, w = 1200) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=85`;
 
 export const images = {
-  hero: '/banner1.jpg',
+  hero: '/img/banner1-1600.webp',
   manaliArrival: photo('1601918774946-25832a4be0d6'),
   solangValley: photo('1516483638261-f4dbaf036963'),
   rohtangPass: photo('1519681393784-d120267933ba'),

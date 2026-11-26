@@ -30,7 +30,7 @@ export default function Logo({
     <div className={cn('inline-flex items-center select-none', className)}>
       <img
         src={isLight ? LOGO_SRC.light : LOGO_SRC.dark}
-        alt="TAIFER — The Great Outdoors"
+        alt="Chaufer — Journeys that stay with you"
         className={cn(
           'w-auto object-contain transition-transform duration-300',
           sizeClasses[size] || sizeClasses.md
@@ -43,7 +43,7 @@ export default function Logo({
             isLight ? 'border-white/20 text-[#DDD4C1]' : 'border-[#012C18]/20 text-[#043A25]'
           )}
         >
-          The Great Outdoors
+          Journeys that stay with you
         </span>
       )}
     </div>

@@ -6,7 +6,13 @@ import { SocialIcon } from './contactUi';
 /* Stylised office locator - same illustrated language as the journey route map */
 function OfficeMap() {
   return (
-    <div className="relative h-[150px] overflow-hidden rounded-xl border border-[#E0E6DC] bg-[#E8EFE4]">
+    /*
+     * The box matches the drawing's 2:1 ratio instead of being a fixed 150px
+     * tall. With a fixed height the SVG kept its own proportions and was
+     * letterboxed inside a wider box — at a 768px viewport the box was 676px
+     * across with the map occupying 300 of them, so 380px of it was empty.
+     */
+    <div className="relative aspect-[2/1] w-full overflow-hidden rounded-xl border border-[#E0E6DC] bg-[#E8EFE4]">
       <svg
         viewBox="0 0 300 150"
         className="block h-full w-full"
@@ -55,12 +61,8 @@ function OfficeMap() {
         {/* 11 user units in a 300-unit viewBox, so about 12px rendered at
             phone width. At 8 it came out near 9px — the two labels on this
             map were the smallest text anywhere on the site. */}
-        {/* Moved left, away from the pin. At the original x it sat directly
-            above "Taifer Desk" and the two collided once both were raised to
-            a readable size. */}
-        <text x="34" y="80" fontSize="11" fill="#7A827B">
-          Mall Road
-        </text>
+        {/* The two labels are HTML, below, not SVG text — see the note
+            there. */}
 
         {/* Office pin */}
         <g transform="translate(150 86)">
@@ -70,11 +72,33 @@ function OfficeMap() {
             fill="#D65A3A"
           />
           <circle cy="-15.2" r="3.1" fill="#FAF9F5" />
-          <text x="14" y="-11" fontSize="12" fontWeight="700" fill="#012C18">
-            Taifer Desk
-          </text>
         </g>
       </svg>
+
+      {/*
+        Labels as HTML on top of the map rather than <text> inside it.
+        SVG text is part of the drawing, so it shrinks with the viewBox: at a
+        320px viewport these rendered at 8.9px, the smallest type anywhere on
+        the site and well under the floor every other label respects. As HTML
+        they hold their size at any width and pick up the same font stack and
+        mobile floor as the rest of the page.
+
+        Positions are percentages of the box, which land exactly where the old
+        SVG coordinates did now that the container shares the drawing's ratio.
+        aria-hidden because the <svg> above already carries the description.
+      */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute left-[11%] top-[46%] text-[11px] text-[#7A827B]"
+      >
+        Mall Road
+      </span>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute left-[55%] top-[43%] text-[12px] font-bold text-[#012C18]"
+      >
+        Taifer Desk
+      </span>
     </div>
   );
 }

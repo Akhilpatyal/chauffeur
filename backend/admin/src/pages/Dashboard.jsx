@@ -137,6 +137,7 @@ function TeamDashboard({ onOpenLeads }) {
   const [range, setRange] = useState('30');
   const [data, setData] = useState(null);
   const [queues, setQueues] = useState(null);
+  const [bookings, setBookings] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -146,11 +147,22 @@ function TeamDashboard({ onOpenLeads }) {
     Promise.all([
       api.analytics({ from: since(range), granularity: range === '90' ? 'week' : 'day' }),
       api.queues().catch(() => null),
+      /*
+       * Reservations, which the analytics endpoint knows nothing about.
+       *
+       * This dashboard predates the booking system and counted only
+       * enquiries, so somebody submitting a booking request watched every
+       * number stay still — which reads as a broken dashboard rather than as
+       * two different things being measured. The pipeline counts come back on
+       * the list endpoint's meta, already scoped to what this admin may see.
+       */
+      api.reservations.list({ view: 'open', pageSize: 1 }).catch(() => null),
     ])
-      .then(([analytics, queueCounts]) => {
+      .then(([analytics, queueCounts, reservations]) => {
         if (cancelled) return;
         setData(analytics.data);
         setQueues(queueCounts?.data ?? null);
+        setBookings(reservations?.meta ?? null);
       })
       .catch((caught) => !cancelled && setError(caught.message));
 
@@ -162,12 +174,18 @@ function TeamDashboard({ onOpenLeads }) {
 
   const totals = data?.totals;
 
+  /* Per-status counts for the whole pipeline, not just the page returned. */
+  const counts = bookings?.counts ?? {};
+  const countOf = (...statuses) => statuses.reduce((sum, key) => sum + (counts[key] ?? 0), 0);
+  const awaitingUs = countOf('REQUESTED', 'AVAILABILITY_CHECK');
+  const awaitingThem = countOf('QUOTED', 'AWAITING_PAYMENT');
+
   return (
     <>
       <div className="page-head">
         <div>
           <h2>Dashboard</h2>
-          <p>Where enquiries are coming from and what is happening to them.</p>
+          <p>Enquiries, booking requests, and what is waiting on somebody.</p>
         </div>
         <select
           className="shrink"
@@ -203,6 +221,31 @@ function TeamDashboard({ onOpenLeads }) {
         <p className="muted">Loading…</p>
       ) : (
         <div className="stack">
+          {/*
+            Reservations first, because these are the numbers with money and a
+            promise attached. "Waiting on us" is the one that should send
+            somebody to the Reservations tab, so it is styled as a warning
+            when it is not zero rather than sitting quietly beside the rest.
+
+            The date range above deliberately does not apply here: a request
+            from five weeks ago that nobody has answered is still waiting
+            today, and hiding it behind "last 7 days" is how it stays
+            unanswered.
+          */}
+          {bookings && (
+            <div className="grid cols-4">
+              <Stat
+                label="Waiting on us"
+                value={awaitingUs}
+                note="Requested or being checked"
+                warn={awaitingUs > 0}
+              />
+              <Stat label="Waiting on the customer" value={awaitingThem} note="Quoted or unpaid" />
+              <Stat label="Confirmed trips" value={countOf('CONFIRMED')} note="Booked and held" />
+              <Stat label="Open bookings" value={bookings.total ?? 0} note="Everything not closed" />
+            </div>
+          )}
+
           <div className="grid cols-4">
             <Stat label="Enquiries" value={totals.total} note={RANGES.find((r) => r.key === range)?.label} />
             <Stat label="Unhandled" value={totals.unhandled} note="Still marked new" warn={totals.unhandled > 0} />

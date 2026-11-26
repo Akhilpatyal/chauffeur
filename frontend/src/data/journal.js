@@ -37,7 +37,7 @@ export const journalArticles = [
     author: 'Rohan Varma',
     authorRole: 'Senior Expedition Leader',
     date: 'May 2026',
-    image: '/banner3.jpg',
+    image: '/img/banner3-1024.webp',
     excerpt:
       "From the wind-carved pinnacles of Spiti's Pin Valley to the azure heights of Gurudongmar, these are the sacred sanctuaries where the Himalayas test your endurance and reward your spirit.",
     featured: true,
@@ -293,7 +293,7 @@ export const journalArticles = [
     authorRole: 'Naturalist & Astrophotography Guide',
     date: 'Mar 2026',
     /* Placeholder: a Bortle 1 night-sky photograph belongs here. */
-    image: '/banner3.jpg',
+    image: '/img/banner3-1024.webp',
     excerpt:
       'Standing at 14,000 ft where the atmosphere is razor-thin, the Milky Way casts actual shadows on the Himalayan scree slopes.',
     featured: false,
@@ -322,7 +322,7 @@ export const journalArticles = [
       },
       {
         type: 'image',
-        src: '/banner3.jpg',
+        src: '/img/banner3-1024.webp',
         alt: 'A bare high-altitude ridge above a glacial lake in Spiti',
         caption: 'The Langza plateau, late September.',
       },

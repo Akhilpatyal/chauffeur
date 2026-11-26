@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { featuredStays, popularDestinations } from '../../data/hotels';
 import { nextWeekend } from '../../utils/defaultDates';
+import Photo from '../common/Photo';
 
 const trustPoints = [
   { icon: Sparkles, label: 'Curated Stays' },
@@ -51,10 +52,12 @@ export default function HotelsHero({ destination, onDestinationChange, onSearch 
   return (
     <section className="relative overflow-hidden bg-[#012C18]">
       {/* Backdrop */}
-      <img
-        src="/banner2.jpg"
+      <Photo
+        name="banner2"
         alt=""
         aria-hidden="true"
+        sizes="100vw"
+        priority
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-b from-[#02170F]/85 via-[#022014]/65 to-[#02170F]/90" />

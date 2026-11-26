@@ -1,6 +1,14 @@
 import Fastify from 'fastify';
 import multipart from '@fastify/multipart';
 import { env } from './config/env.js';
+/*
+ * Imported for the side effect of registering every schema.
+ *
+ * Mongoose resolves a `ref` through its model registry at populate time, so a
+ * model nothing imports is invisible to a populate even though the file is
+ * right there. VendorAllocation -> Vendor failed exactly this way.
+ */
+import './models/index.js';
 import { logger } from './config/logger.js';
 import { zodValidatorCompiler, zodSerializerCompiler } from './lib/validate.js';
 
@@ -10,6 +18,7 @@ import errorHandlerPlugin from './plugins/errorHandler.js';
 import performancePlugin from './plugins/performance.js';
 import authPlugin from './plugins/auth.js';
 import observabilityPlugin from './plugins/observability.js';
+import customerAuthPlugin from './plugins/customerAuth.js';
 import swaggerPlugin from './plugins/swagger.js';
 
 import healthRoutes from './modules/health/routes.js';
@@ -25,7 +34,14 @@ import adminTeamRoutes from './modules/admin/teams.routes.js';
 import uploadRoutes from './modules/admin/uploads.routes.js';
 import complianceRoutes from './modules/admin/compliance.routes.js';
 import adminObservabilityRoutes from './modules/admin/observability.routes.js';
+import adminReservationRoutes from './modules/admin/reservations.routes.js';
+import adminQuotationRoutes from './modules/admin/quotations.routes.js';
 import telemetryRoutes from './modules/telemetry/routes.js';
+import customerAuthRoutes from './modules/customerAuth/routes.js';
+import bookingRoutes from './modules/bookings/routes.js';
+import customerQuotationRoutes from './modules/quotations/routes.js';
+import departureRoutes from './modules/departures/routes.js';
+import availabilityRoutes from './modules/content/availability.routes.js';
 
 export const API_PREFIX = '/api/v1';
 
@@ -71,6 +87,7 @@ export async function buildApp({ logger: loggerOption = logger, observability = 
   await app.register(securityPlugin);
   await app.register(authPlugin);
   await app.register(observabilityPlugin, { enabled: observability });
+  await app.register(customerAuthPlugin);
   await app.register(multipart, {
     limits: { fileSize: env.UPLOAD_MAX_BYTES, files: 1, fields: 10 },
   });
@@ -87,6 +104,11 @@ export async function buildApp({ logger: loggerOption = logger, observability = 
       await publicApi.register(contentRoutes);
       await publicApi.register(authRoutes);
       await publicApi.register(telemetryRoutes);
+      await publicApi.register(customerAuthRoutes);
+      await publicApi.register(bookingRoutes);
+      await publicApi.register(customerQuotationRoutes);
+      await publicApi.register(departureRoutes);
+      await publicApi.register(availabilityRoutes);
     },
     { prefix: API_PREFIX },
   );
@@ -105,6 +127,8 @@ export async function buildApp({ logger: loggerOption = logger, observability = 
       await adminApi.register(uploadRoutes);
       await adminApi.register(complianceRoutes);
       await adminApi.register(adminObservabilityRoutes);
+      await adminApi.register(adminReservationRoutes);
+      await adminApi.register(adminQuotationRoutes);
     },
     { prefix: `${API_PREFIX}/admin` },
   );

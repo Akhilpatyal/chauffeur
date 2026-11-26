@@ -7,6 +7,7 @@ import Breadcrumb from '../common/Breadcrumb';
 import FilterTabs from '../common/FilterTabs';
 import CTABand from '../common/CTABand';
 import TripCard from '../cards/TripCard';
+import { openFirst } from '../../data/availability';
 import { escapeFilters, weekendEscapes } from '../../data/weekendEscapes';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
 import { useDocumentMeta } from '../../lib/seo';
@@ -50,11 +51,13 @@ export default function WeekendEscapesPage({ onPlanTrip }) {
     []
   );
 
+  /* Bookable escapes first — see the same note on the journeys page. */
   const visible = useMemo(
     () =>
-      category === 'all'
-        ? weekendEscapes
-        : weekendEscapes.filter((escape) => escape.category === category),
+      (category === 'all'
+        ? [...weekendEscapes]
+        : weekendEscapes.filter((escape) => escape.category === category)
+      ).sort((a, b) => openFirst(a.slug, b.slug)),
     [category]
   );
 
@@ -119,6 +122,7 @@ export default function WeekendEscapesPage({ onPlanTrip }) {
                   href={`/weekend-escapes/${escape.slug}`}
                   ctaLabel="View escape"
                   trip={{
+                    id: escape.slug,
                     title: escape.title,
                     location: escape.location,
                     duration: escape.duration,

@@ -2,6 +2,7 @@ import { Lead } from '../models/Lead.js';
 import { NewsletterSubscriber } from '../models/NewsletterSubscriber.js';
 import { logger } from '../config/logger.js';
 import { enqueue, QUEUE_NAMES, JOB_NAMES } from '../lib/queue.js';
+import { expireLapsedQuotations } from '../modules/quotations/service.js';
 
 /*
  * Outbox sweeper.
@@ -86,14 +87,19 @@ async function sweepWelcomeEmails() {
 }
 
 export async function sweepOutbox() {
-  const [adminEmail, adminWhatsapp, customerEmail, welcome] = await Promise.all([
+  const [adminEmail, adminWhatsapp, customerEmail, welcome, quotations] = await Promise.all([
     sweepChannel('adminEmail', JOB_NAMES.leadAdminAlert),
     sweepChannel('adminWhatsapp', JOB_NAMES.leadAdminAlert),
     sweepChannel('customerEmail', JOB_NAMES.leadCustomerEmail),
     sweepWelcomeEmails(),
+    /* An offer past its date still shows the customer an Accept button, and
+     * letting them press it means honouring a price the guesthouse may no
+     * longer hold. Lapsing them here is what makes the expiry real rather
+     * than decorative. */
+    expireLapsedQuotations(),
   ]);
 
-  const summary = { adminEmail, adminWhatsapp, customerEmail, welcome };
+  const summary = { adminEmail, adminWhatsapp, customerEmail, welcome, quotations };
   logger.debug(summary, 'outbox sweep complete');
   return summary;
 }

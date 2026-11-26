@@ -70,7 +70,7 @@ export default function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.55fr_1fr_1fr_1fr_1.2fr]">
           <div className="flex flex-col items-start">
             <Logo variant="light" size="lg" showTagline={false} />
-            <p className="mt-1 text-[10.5px] font-bold tracking-[.12em] text-[#d8b56a]">JOURNEYS THAT STAY WITH YOU FOREVER.</p>
+            <p className="mt-1 text-[10.5px] font-bold tracking-[.12em] text-[#d8b56a]">JOURNEYS THAT STAY WITH YOU.</p>
             {/*
               Social icons render only where a real URL is configured in
               data/contact.js. A link with href="#" looks live and does

@@ -1,50 +1,79 @@
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
-import { publishedFacts } from '../../data/companyFacts';
 
 /*
- * Every figure here is counted from the live catalogue. The five hardcoded
- * numbers that used to sit in this file — including a 4.9 rating attributed to
- * Google and Tripoto, and "250+ Journeys" against a catalogue of five — are
- * gone. See data/companyFacts.js for how to publish a real one.
+ * What travelling with us is like, in three parts.
+ *
+ * WHY THERE ARE NO NUMBERS HERE ANY MORE
+ *
+ * This section used to publish counts — "5 Journeys", "8 Regions" — read from
+ * the live catalogue so they could never be invented. That was the right fix
+ * for the five hardcoded figures it replaced, including a 4.9 rating credited
+ * to Google and "250+ Journeys" against a catalogue of five.
+ *
+ * It is now three described ideas rather than three tallies, and the 01/02/03
+ * are an index, not a quantity. That sidesteps the problem the counting was
+ * solving: with one region open, a truthful count is a small number, and a
+ * small number presented as a milestone reads worse than no number at all.
+ *
+ * If a figure comes back here it must come from data/companyFacts.js, which
+ * only publishes what is either derived from the catalogue or marked verified.
  */
+const PILLARS = [
+  {
+    id: 'journeys',
+    index: '01',
+    label: 'Curated Journeys',
+    body: 'Multi-day experiences shaped around remarkable places, local perspectives and meaningful moments.',
+  },
+  {
+    id: 'escapes',
+    index: '02',
+    label: 'Short Escapes',
+    body: 'Thoughtfully planned getaways that make every opportunity to explore count.',
+  },
+  {
+    id: 'destinations',
+    index: '03',
+    label: 'Destinations',
+    body: 'Places to discover, explored through local knowledge and experiences worth travelling for.',
+  },
+];
+
 export default function TrustStats() {
-  const stats = publishedFacts;
-
-  /* With nothing verified yet this section could be a row of three. Rather
-   * than show a thin strip pretending to be a milestone wall, it reframes
-   * honestly as what we run. */
-  if (stats.length === 0) return null;
-
   return (
-    <section className="py-14 sm:py-16 bg-[#012C18] text-[#F4F1E8]">
+    <section
+      aria-labelledby="chaufer-experience-heading"
+      className="py-14 sm:py-16 bg-[#012C18] text-[#F4F1E8]"
+    >
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Header Label */}
         <div className="flex items-center gap-3 mb-8">
-          <ShieldCheck className="w-4 h-4 text-[#B89A5A]" />
-          <span className="text-[11px] font-mono font-bold tracking-[0.2em] uppercase text-[#B89A5A]">
-            WHAT WE RUN
-          </span>
+          <ShieldCheck className="w-4 h-4 text-[#B89A5A]" aria-hidden="true" />
+          <h2
+            id="chaufer-experience-heading"
+            className="text-[11px] font-mono font-bold tracking-[0.2em] uppercase text-[#B89A5A]"
+          >
+            The Chaufer Experience
+          </h2>
         </div>
 
-        {/* Stats Grid: 5 columns */}
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 sm:gap-6">
-          {stats.map((stat) => (
-            <div key={stat.id} className="text-left">
-              <div className="font-display text-4xl sm:text-5xl text-[#F4F1E8] font-normal mb-1">
-                {stat.value}
-              </div>
-              <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#B89A5A] mb-0.5">
-                {stat.label}
-              </div>
-              <p className="text-[11px] text-[#DDD4C1]/60 font-sans leading-snug">
-                {stat.sub}
+        <ul className="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-6">
+          {PILLARS.map((pillar) => (
+            <li key={pillar.id} className="text-left">
+              <p className="font-display text-4xl sm:text-5xl text-[#F4F1E8]/35 font-normal mb-2 tabular-nums">
+                {pillar.index}
               </p>
-            </div>
+              <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#B89A5A] mb-1.5">
+                {pillar.label}
+              </p>
+              {/* A readable measure rather than the full column width: these
+                  are sentences now, not three-word captions. */}
+              <p className="max-w-[42ch] text-[12.5px] leading-[1.7] text-[#DDD4C1]/70 font-sans">
+                {pillar.body}
+              </p>
+            </li>
           ))}
-        </div>
-
+        </ul>
       </div>
     </section>
   );

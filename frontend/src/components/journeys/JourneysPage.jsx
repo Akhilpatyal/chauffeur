@@ -7,6 +7,7 @@ import Breadcrumb from '../common/Breadcrumb';
 import FilterTabs from '../common/FilterTabs';
 import CTABand from '../common/CTABand';
 import TripCard from '../cards/TripCard';
+import { openFirst } from '../../data/availability';
 import { journeys as bundledJourneys } from '../../data/journeys';
 import { weekendEscapes } from '../../data/weekendEscapes';
 import { useScrollReveal } from '../../animations/journey/scrollAnimations';
@@ -87,20 +88,32 @@ export default function JourneysPage({ onPlanTrip }) {
         ? [...journeys]
         : journeys.filter((journey) => journey.difficulty === difficulty);
 
+    /*
+     * Whatever the chosen sort, what somebody can actually book comes first.
+     *
+     * Sorting by price across a catalogue where most entries are closed puts
+     * four unbookable trips above the one open one, and the reader concludes
+     * we sell nothing. `Array.sort` is stable, so applying this after the
+     * chosen ordering keeps that ordering intact within each group.
+     */
+    const byAvailability = (list) => list.sort((a, b) => openFirst(a.id, b.id));
+
     switch (sort) {
       case 'price-asc':
-        return filtered.sort((a, b) => priceValue(a.price) - priceValue(b.price));
+        return byAvailability(filtered.sort((a, b) => priceValue(a.price) - priceValue(b.price)));
       case 'price-desc':
-        return filtered.sort((a, b) => priceValue(b.price) - priceValue(a.price));
+        return byAvailability(filtered.sort((a, b) => priceValue(b.price) - priceValue(a.price)));
       case 'duration':
-        return filtered.sort((a, b) => durationDays(a.duration) - durationDays(b.duration));
+        return byAvailability(filtered.sort((a, b) => durationDays(a.duration) - durationDays(b.duration)));
       case 'rating':
-        return filtered.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+        return byAvailability(filtered.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0)));
       default:
         /* Featured first, then by rating - the editorial default. */
-        return filtered.sort(
-          (a, b) =>
-            Number(b.isFeatured) - Number(a.isFeatured) || (b.rating ?? 0) - (a.rating ?? 0)
+        return byAvailability(
+          filtered.sort(
+            (a, b) =>
+              Number(b.isFeatured) - Number(a.isFeatured) || (b.rating ?? 0) - (a.rating ?? 0)
+          )
         );
     }
   }, [difficulty, sort, journeys]);
@@ -177,6 +190,7 @@ export default function JourneysPage({ onPlanTrip }) {
                   href={`/journeys/${journey.id}`}
                   ctaLabel="View journey"
                   trip={{
+                    id: journey.id,
                     title: journey.title,
                     location: journey.location,
                     duration: journey.duration,

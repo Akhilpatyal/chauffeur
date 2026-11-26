@@ -2,7 +2,7 @@ const photo = (id, w = 1400) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=85`;
 
 export const aboutImages = {
-  hero: '/aboutus.png',
+  hero: '/img/aboutus-1600.webp',
   /* Sepia summit sketch used as section atmosphere */
   mountainSketch: '/footer.png',
   whoWeAre: photo('1601918774946-25832a4be0d6'),

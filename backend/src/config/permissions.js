@@ -48,6 +48,14 @@ export const PERMISSIONS = [
   'users.manage_roles',
   'users.manage_permissions',
 
+  /* Reservations. Separate from leads: an enquiry is a conversation, a
+   * booking is money and a commitment, and the people trusted with one are
+   * not automatically trusted with the other. */
+  'bookings.view',
+  'bookings.manage',
+  'bookings.assign',
+  'bookings.refund',
+
   'teams.view',
   'teams.create',
   'teams.edit',
@@ -88,6 +96,7 @@ const CALLER = [
   'leads.view',
   'leads.edit_status',
   'leads.add_activity',
+  'bookings.view',
   'content.view',
 ];
 
@@ -96,6 +105,8 @@ const TEAM_MANAGER = [
   'leads.edit',
   'leads.assign',
   'leads.export',
+  'bookings.manage',
+  'bookings.assign',
   'teams.view',
   'users.view',
   'analytics.view',
@@ -105,6 +116,8 @@ const ADMIN = [
   ...TEAM_MANAGER,
   'leads.create',
   'leads.delete',
+  /* Money back is an admin decision, not a manager's. */
+  'bookings.refund',
   'users.create',
   'users.edit',
   'users.deactivate',

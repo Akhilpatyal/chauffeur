@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { stripTags, sanitizeRichText } from '../../utils/sanitize.js';
 import { paginationQuery } from '../../utils/pagination.js';
-import { CONTENT_STATUSES } from '../../models/contentBase.js';
+import { CONTENT_STATUSES, AVAILABILITY_STATES } from '../../models/contentBase.js';
 
 const text = (max) =>
   z.string().max(max).transform((value) => stripTags(value));
@@ -36,6 +36,18 @@ const baseWrite = {
   isFeatured: z.boolean().optional(),
   sortOrder: z.coerce.number().int().optional(),
   publishedAt: z.coerce.date().optional(),
+  /* Whether the thing is on sale, and the date it opens by itself. Accepted
+   * on every collection because every collection can be closed. */
+  availability: z
+    .object({
+      state: z.enum(AVAILABILITY_STATES).optional(),
+      /* Nullable as well as optional: clearing a date is a real edit, and
+         `undefined` would leave the old one in place. */
+      opensOn: z.coerce.date().nullable().optional(),
+      headline: z.string().trim().max(160).nullable().optional(),
+      note: z.string().trim().max(600).nullable().optional(),
+    })
+    .optional(),
   seo,
 };
 

@@ -23,6 +23,12 @@ export const QUEUE_NAMES = {
 export const JOB_NAMES = {
   leadAdminAlert: 'lead.admin-alert',
   leadCustomerEmail: 'lead.customer-confirmation',
+  bookingRequestCustomer: 'booking.request-received',
+  bookingRequestAdmin: 'booking.request-admin-alert',
+  quotationSent: 'quotation.sent',
+  quotationAccepted: 'quotation.accepted',
+  quotationResponded: 'quotation.responded',
+  bookingStatusChanged: 'booking.status-changed',
   newsletterOptIn: 'newsletter.opt-in',
   newsletterWelcome: 'newsletter.welcome',
   sweepOutbox: 'maintenance.sweep-outbox',

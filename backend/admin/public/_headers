@@ -1,0 +1,10 @@
+# The admin dashboard is not a public page.
+#
+# noindex keeps it out of search results; it is reachable by URL and the real
+# protection is the login behind it, but an indexed admin panel invites
+# traffic that has no business being there.
+/*
+  X-Robots-Tag: noindex, nofollow
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff

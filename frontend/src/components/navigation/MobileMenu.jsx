@@ -13,10 +13,10 @@ export default function MobileMenu({ isOpen, onClose, navLinks, onLinkClick, onP
         <Logo variant="light" size="sm" showTagline={false} />
         <button
           onClick={onClose}
-          className="p-2 text-white hover:text-[#B89A5A] cursor-pointer"
+          className="grid h-11 w-11 place-items-center rounded-full border border-white/35 bg-white text-[#003B24] shadow-lg transition hover:scale-105 hover:bg-[#B89A5A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B89A5A] cursor-pointer"
           aria-label="Close menu"
         >
-          <X className="w-7 h-7" />
+          <X className="h-5 w-5" strokeWidth={2.5} />
         </button>
       </div>
 

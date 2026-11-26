@@ -2,6 +2,9 @@ import React from 'react';
 import { ArrowRight, Clock, MapPin, Star } from 'lucide-react';
 import { linkProps } from '../../router';
 import { SHOW_TRIP_RATINGS } from '../../data/companyFacts';
+import { responsiveImage } from '../../lib/images';
+import { AvailabilityTag } from '../common/Availability';
+import { availabilityFor, OPEN } from '../../data/availability';
 
 /*
  * One card for journeys and weekend escapes.
@@ -33,6 +36,7 @@ import { SHOW_TRIP_RATINGS } from '../../data/companyFacts';
  */
 export default function TripCard({ trip, href, ctaLabel = 'View details' }) {
   const {
+    id,
     title,
     location,
     duration,
@@ -48,17 +52,37 @@ export default function TripCard({ trip, href, ctaLabel = 'View details' }) {
     meta,
   } = trip;
 
+  /*
+   * A card for something we are not selling says so, and stops selling it.
+   *
+   * The discount flash and the struck-through price are the two bits of
+   * persuasion on this card, and both are actively misleading on a trip
+   * nobody can book — "32% OFF" above "Coming soon" reads as a deal being
+   * withheld. So the availability tag takes the flash's place and the
+   * price shows as indicative rather than as an offer.
+   */
+  const availability = availabilityFor(id);
+  const open = availability.state === OPEN;
+
   return (
     <a
       {...linkProps(href)}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#E3DDCB] bg-[#FAF9F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#043A25]/40 hover:shadow-[0_12px_28px_rgba(1,44,24,0.10)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#043A25]"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
+        {/* The card is one of three columns on a desktop grid, two on a
+            tablet and full width on a phone — so the browser is told that
+            rather than being handed one file for all three. */}
         <img
-          src={image}
+          {...responsiveImage(image, '(min-width: 1024px) 420px, (min-width: 640px) 50vw, 100vw')}
           alt={title}
           loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-[900ms] group-hover:scale-[1.06]"
+          decoding="async"
+          className={`h-full w-full object-cover transition-transform duration-[900ms] group-hover:scale-[1.06] ${
+            /* Desaturated rather than dimmed: a darker photo just looks like
+               a worse photo, where a greyer one reads as inactive. */
+            open ? '' : 'saturate-[0.45]'
+          }`}
         />
         <span className="absolute inset-0 bg-gradient-to-t from-[#02170F]/55 via-transparent to-transparent" />
 
@@ -67,11 +91,12 @@ export default function TripCard({ trip, href, ctaLabel = 'View details' }) {
             {badge}
           </span>
         )}
-        {discount && (
+        {open && discount && (
           <span className="absolute right-3 top-3 rounded-md bg-[#B89A5A] px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-[#012C18]">
             {discount}
           </span>
         )}
+        {!open && <AvailabilityTag id={id} className="absolute right-3 top-3" />}
 
         {duration && (
           <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 text-[12px] font-medium text-[#F4F1E8]">
@@ -124,8 +149,12 @@ export default function TripCard({ trip, href, ctaLabel = 'View details' }) {
           <div>
             {price && (
               <p className="flex items-baseline gap-1.5">
-                <span className="font-display text-[20px] text-[#012C18]">{price}</span>
-                {originalPrice && (
+                <span
+                  className={`font-display text-[20px] ${open ? 'text-[#012C18]' : 'text-[#5E6B63]'}`}
+                >
+                  {price}
+                </span>
+                {open && originalPrice && (
                   <span className="text-[12px] text-[#98A09A] line-through">{originalPrice}</span>
                 )}
               </p>
@@ -141,8 +170,17 @@ export default function TripCard({ trip, href, ctaLabel = 'View details' }) {
             ) : null}
           </div>
 
-          <span className="inline-flex items-center gap-1 whitespace-nowrap text-[12px] font-bold uppercase tracking-wider text-[#012C18] transition-colors group-hover:text-[#075333]">
-            {ctaLabel}
+          {/* The card still opens — there is a page worth reading behind it,
+              and it explains when the trip comes back. Only the wording
+              changes, so nobody expects a booking form. */}
+          <span
+            className={`inline-flex items-center gap-1 whitespace-nowrap text-[12px] font-bold uppercase tracking-wider transition-colors ${
+              open
+                ? 'text-[#012C18] group-hover:text-[#075333]'
+                : 'text-[#5E6B63] group-hover:text-[#012C18]'
+            }`}
+          >
+            {open ? ctaLabel : 'Read more'}
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
           </span>
         </div>

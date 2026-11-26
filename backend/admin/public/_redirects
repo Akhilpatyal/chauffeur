@@ -1,0 +1,3 @@
+# Single-page-app fallback — see the public site's _redirects for the detail,
+# including why there is deliberately no /api/* rule here.
+/*    /index.html   200

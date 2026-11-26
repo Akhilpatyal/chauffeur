@@ -245,6 +245,20 @@ export const formatAgo = (value) => {
 
 export const roleLabel = (role) => String(role ?? '').replace(/_/g, ' ');
 
+/*
+ * Amounts are stored as integer minor units (paise), so the division happens
+ * here, at the point of display, and nowhere earlier — every total stays an
+ * exact integer right up until it is rendered.
+ */
+export function money(minor, currency = 'INR') {
+  if (minor === null || minor === undefined) return '—';
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 2,
+  }).format(minor / 100);
+}
+
 export function Empty({ children }) {
   return <p className="muted" style={{ padding: '24px 0', textAlign: 'center' }}>{children}</p>;
 }
